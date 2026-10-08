@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <fstream>
+#include <algorithm>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -104,20 +105,60 @@ int main(int argc, char** argv) {
         std::cout << "ENTRY_PROBE=original-external-ios-arm64-instructions\n"
                   << "INITIALIZERS=not-executed\n"
                   << "FRAMEWORK_RUNTIME=not-provided\n";
-        const auto event = cpu->run_until_event(10000, kReturn);
-        state = cpu->state();
-        if (event.kind == anyios::cpu::CpuEventKind::svc &&
-            event.svc_immediate == 0x80 &&
-            state.x[16] < imports.size() &&
-            state.pc == imports[static_cast<std::size_t>(state.x[16])] + 8) {
-            std::cout << "FIRST_RUNTIME_BLOCKER="
-                      << image.chained_imports[static_cast<std::size_t>(state.x[16])]
+        // The only permitted ObjC runtime subset here is an *empty* pool:
+        // a push yields a unique opaque guest token; pop must match LIFO.
+        // No autoreleased objects, retain/release, nested drain callbacks,
+        // exceptions, or cross-thread semantics are claimed.
+        std::vector<std::uint64_t> empty_pools;
+        std::uint64_t budget = 10000;
+        while (budget--) {
+            const auto event = cpu->step();
+            state = cpu->state();
+            if (event.kind == anyios::cpu::CpuEventKind::stepped) {
+                if (state.pc == kReturn) {
+                    std::cerr << "ENTRY_PROBE=returned-without-real-frameworks\n";
+                    return 3;
+                }
+                continue;
+            }
+            if (event.kind != anyios::cpu::CpuEventKind::svc ||
+                event.svc_immediate != 0x80 ||
+                state.x[16] >= imports.size() ||
+                state.pc != imports[static_cast<std::size_t>(state.x[16])] + 8) {
+                std::cerr << "ENTRY_PROBE=unexpected-event\nGUEST_PC="
+                          << state.pc << "\nEVENT_DIAGNOSTIC=" << event.diagnostic << "\n";
+                return 3;
+            }
+            const auto& symbol = image.chained_imports[static_cast<std::size_t>(state.x[16])];
+            if (symbol == "_objc_autoreleasePoolPush") {
+                if (empty_pools.size() >= 16) {
+                    std::cerr << "ENTRY_PROBE=pool-depth-exceeded\n";
+                    return 3;
+                }
+                const std::uint64_t token = 0x300000 + empty_pools.size() * 16;
+                empty_pools.push_back(token);
+                state.x[0] = token;
+                cpu->set_state(state);
+                std::cout << "SUPPORTED_NARROW_IMPORT=_objc_autoreleasePoolPush"
+                          << "\nPOOL_SCOPE=empty-only\n";
+                continue;
+            }
+            if (symbol == "_objc_autoreleasePoolPop") {
+                if (empty_pools.empty() || empty_pools.back() != state.x[0]) {
+                    std::cerr << "ENTRY_PROBE=invalid-empty-pool-token\n";
+                    return 3;
+                }
+                empty_pools.pop_back();
+                cpu->set_state(state);
+                std::cout << "SUPPORTED_NARROW_IMPORT=_objc_autoreleasePoolPop"
+                          << "\nPOOL_SCOPE=empty-only\n";
+                continue;
+            }
+            std::cout << "FIRST_RUNTIME_BLOCKER=" << symbol
                       << "\nEXECUTION=stopped-at-unimplemented-import\n";
             return 0;
         }
-        std::cerr << "ENTRY_PROBE=unsupported-unexpected-event\n"
-                  << "GUEST_PC=" << state.pc
-                  << "\nEVENT_DIAGNOSTIC=" << event.diagnostic << "\n";
+        std::cerr << "ENTRY_PROBE=instruction-budget-exhausted\n";
         return 3;
     } catch (const std::exception& e) {
         std::cerr << "ENTRY_PROBE=blocked\nFIRST_LOADER_OR_GUEST_ERROR="
