@@ -1,0 +1,112 @@
+name: Interactive Windows ARM64 iOS guest GUI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-owned-ios-guest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install owned SDK-free iPhoneOS compiler and linker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-19 lld-19 llvm-19
+      - name: Build and validate original ARM64 guest executable
+        run: |
+          cmake -S . -B build-gui-tools -DBUILD_TESTING=OFF
+          cmake --build build-gui-tools --target anyios-inspect --parallel 2
+          python3 tests/build_2048_guest.py --clang clang-19 --linker ld64.lld-19 --nm llvm-nm-19 --inspector build-gui-tools/anyios-inspect --output-dir gui-output/guest
+          python3 tools/macho_gap.py gui-output/guest/AnyiOS2048Guest --output gui-output/owned-2048-gap.json
+          python3 - <<'PY'
+          import json
+          j = json.load(open("gui-output/owned-2048-gap.json",encoding="utf-8"))
+          assert len(j["reports"]) == 1
+          assert not j["reports"][0]["imports"], "owned GUI guest must be SDK-free with zero external imports"
+          print("Compiled SDK-free ARM64 iOS guest with no Objective-C/UIKit/SpriteKit imports")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: anyios-owned-interactive-arm64-app
+          path: gui-output/
+          if-no-files-found: error
+          retention-days: 7
+
+  windows-interactive-gui:
+    needs: build-owned-ios-guest
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: anyios-owned-interactive-arm64-app
+          path: gui-output
+      - name: Install Dynarmic 0BSD build prerequisites
+        shell: pwsh
+        run: |
+          nuget install boost -Version 1.87.0 -OutputDirectory "$env:RUNNER_TEMP\anyios-deps" -ExcludeVersion -NonInteractive
+          $found = Get-ChildItem -Path "$env:RUNNER_TEMP\anyios-deps\boost" -Filter version.hpp -Recurse | Where-Object { $_.Directory.Name -eq 'boost' } | Select-Object -First 1
+          if (-not $found) { throw "Missing pinned Boost headers" }
+          $include = Split-Path -Parent $found.Directory.FullName
+          "BOOST_INCLUDEDIR=$include" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Compile actual interactive Windows GDI host and ARM64 guest bridge
+        shell: pwsh
+        run: |
+          cmake -S . -B build-win-gui -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=OFF -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
+          if ($LASTEXITCODE -ne 0) { throw "Dynarmic build configuration failed" }
+          cmake --build build-win-gui --config Release --target anyios-win-2048 --parallel 2
+          if ($LASTEXITCODE -ne 0) { throw "Native Windows interactive GUI build failed" }
+      - name: Exercise genuine Windows keyboard, swipe and button events against guest ARM64 functions
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path "build-win-gui/Release/anyios-win-2048.exe").Path
+          $guest = (Resolve-Path "gui-output/guest/AnyiOS2048Guest").Path
+          $preview = Join-Path (Get-Location) "anyios-ui-preview.bmp"
+          $process = Start-Process -FilePath $exe -ArgumentList @("--self-test", """$guest""", """$preview""") -PassThru -Wait
+          if ($process.ExitCode -ne 0) { throw "Win32 interaction/GDI/ARM64 guest self test exited $($process.ExitCode)" }
+          if (-not (Test-Path $preview) -or (Get-Item $preview).Length -lt 100000) {
+            throw "Win32 offscreen screenshot not produced"
+          }
+          Add-Type -AssemblyName System.Drawing
+          $bitmap = [System.Drawing.Image]::FromFile($preview)
+          try {
+            $bitmap.Save((Join-Path (Get-Location) "anyios-ui-preview.png"), [System.Drawing.Imaging.ImageFormat]::Png)
+          } finally { $bitmap.Dispose() }
+          if (-not (Test-Path "anyios-ui-preview.png")) { throw "PNG screenshot conversion failed" }
+          Write-Output "PASS: guest ARM64 main, model mutation, arrow keys, mouse swipe, mouse click, host GDI frame, screenshot"
+      - name: Package Windows runnable executable, true ARM64 iOS Mach-O and visual proof
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force gui-output/windows | Out-Null
+          Copy-Item build-win-gui/Release/anyios-win-2048.exe gui-output/windows/
+          Copy-Item gui-output/guest/AnyiOS2048Guest gui-output/windows/
+          Copy-Item anyios-ui-preview.bmp gui-output/windows/
+          Copy-Item anyios-ui-preview.png gui-output/windows/
+          Copy-Item gui-output/guest/guest-receipt.json gui-output/windows/
+          @'
+          AnyiOS interactive GUI compatibility proof (Windows x64)
+          ========================================================
+          Double-click anyios-win-2048.exe; it loads AnyiOS2048Guest next to it.
+          Use arrows, WASD, mouse swipes/drag, or click NEW GAME.
+          This is an ORIGINAL SDK-free ARM64 iPhoneOS GAME-STATE FIXTURE
+          rendered with native Windows GDI (genuine Dynarmic guest execution).
+          It is NOT danqing/2048's original UIKit/SpriteKit application.
+          It is NOT Procreate or Brushes. UIKit/ObjC graphics remain missing.
+          Build, screenshot and event interaction were tested on Windows x64 CI.
+          '@ | Set-Content gui-output/windows/README.txt
+          Compress-Archive -Path gui-output/windows/* -DestinationPath gui-output/AnyiOS-interactive-Windows.zip -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: anyios-interactive-windows-gui
+          path: |
+            gui-output/AnyiOS-interactive-Windows.zip
+            gui-output/windows/anyios-ui-preview.png
+            gui-output/windows/guest-receipt.json
+          if-no-files-found: error
+          retention-days: 7
