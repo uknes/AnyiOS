@@ -11,12 +11,15 @@ Updated 2026-10-08. Source history and green GitHub Actions job results are auth
 - 16 KiB iOS guest-page API with private 4 KiB backing granules and alignment tests: https://github.com/uknes/AnyiOS/actions/runs/37752529646.
 - Restricted chained pointer formats 2/6 and import format 1, symbol/export trie lookup, fixup staging and imported-call guest memory tests: https://github.com/uknes/AnyiOS/actions/runs/37751343388.
 
-## Implemented and still in CI review
+## Recently verified hardening
 
-- A page-level `GuestMemory::MappingJournal` replaces `auto draft = memory` and supports whole-library-pair rollback. Tests exist in `tests/guest_memory_tests.cpp` and linked-image loader suites.
-- Signed chained import **format 2 (32-bit addend)** and **format 3 (64-bit addend)** with bounds checks, overflow/underflow cases and fail-closed parser integration.
-- Bounded `CpuBackend::run_until_event` and explicit native ARM64 SVC-refusal checks.
-- Live result of latest source commits must be checked before marking these enhancements complete: https://github.com/uknes/AnyiOS/actions.
+- A page-level `GuestMemory::MappingJournal` replaces `auto draft = memory` and supports whole-library-pair rollback. Its memory, synthetic loader, staged-image, native and x64 integration tests passed the complete 11-job run: https://github.com/uknes/AnyiOS/actions/runs/37753473659.
+- Signed chained import **format 2 (32-bit addend)** and **format 3 (64-bit addend)**, with bounds checking and signed overflow/underflow negative tests, passed the same complete run.
+- The Windows ARM64 native backend rejected guest Darwin SVC before attempting host execution, verified by successful native ARM64 job: https://github.com/uknes/AnyiOS/actions/runs/37753783845.
+
+## Still under CI review
+
+- Bounded `CpuBackend::run_until_event` and an additional import64 reserved-bit validation regression are committed, but their newest full run must finish before they are marked as verified.
 - Open-source license survey for 23 candidates, with license-path links, commit SHAs and verdicts: [_docs/OSS_SURVEY.md](OSS_SURVEY.md).
 
 ## Critical missing features

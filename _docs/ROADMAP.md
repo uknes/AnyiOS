@@ -49,9 +49,9 @@ Commercial games, protected App Store IPAs, arm64e and modern Metal support are 
 ## Memory, dyld and native ABI hardening
 
 - [x] Define and test 16 KiB iOS arm64 guest-page policy with 4 KiB private backing (run 37752529646)
-- [ ] Confirm page-mapping rollback journal with latest full CI
-- [ ] Confirm signed chained import formats 2/3 with latest full CI
-- [ ] Confirm explicit SVC refusal in native ARM64 backend with latest CI
+- [x] Confirm page-mapping rollback journal with full 11-job CI (run 37753473659)
+- [x] Signed chained import formats 2/3 with negative tests verified in full CI (run 37753473659)
+- [x] Explicit guest SVC refusal in native Windows ARM64 CI job (run 37753783845)
 - [ ] Test Apple ABI ↔ Windows ARM64 typed thunk for x18, narrow arguments and variadics
 - [ ] Enforce a separately isolated native guest process (the current owned linked CI test runs in-process)
 - [ ] Link owned iPhoneOS fixtures on Linux/Windows with original libSystem .tbd metadata
