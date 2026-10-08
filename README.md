@@ -4,6 +4,21 @@ Research into a clean-room compatibility layer for legally accessible, unprotect
 
 **Current status:** AnyiOS can inspect ARM64 Mach-O metadata and execute a project-owned compiled ARM64 Mach-O function on Windows x86-64 through Dynarmic. A restricted synthetic executable loader, experimental Darwin syscall bridge, and limited dyld dependency planner exist. **It cannot currently launch a complete iOS `.app`.**
 
+## Implementation progress
+
+[![AnyiOS tracked guest API progress](docs/progress.svg)](docs/progress.json)
+
+The card counts **only the 9 explicitly tracked guest ABI symbols** in [the evidence manifest](tools/api_manifest.json): **3 implemented, 1 partial, 5 not implemented**. This is **33% of the current tracked manifest**, **not 33% of iOS APIs, Apple frameworks, or app compatibility**. The denominator will increase as additional APIs are inventoried. An implemented narrow fixture ABI is not a complete system library. Objective-C, UIKit, SpriteKit and app lifecycle are still blocked.
+
+Regenerate the [SVG](docs/progress.svg) and [JSON](docs/progress.json) after changing the manifest:
+
+```bash
+python3 tools/progress.py
+python3 tools/progress.py --check
+```
+
+See [_docs/APP_COMPATIBILITY.md](_docs/APP_COMPATIBILITY.md) for per-app execution evidence and blockers. Windows x86-64 and Windows ARM64 must be verified independently; an ARM64 Windows launcher using x64 emulation does not imply native iOS ARM64 execution.
+
 ## Build and test
 
 Requires CMake 3.20+ and a C++20 compiler (Linux GCC/Clang, Windows MSVC, and macOS Clang are tested).
