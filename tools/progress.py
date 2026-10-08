@@ -75,8 +75,8 @@ def collect(root):
             if status in ("implemented", "partial"):
                 require(isinstance(meta.get("scope"), str) and meta["scope"].strip(),
                         "implemented/partial API lacks its exact evidence scope: " + name)
-            ("implemented" == status and done or
-             "partial" == status and partial or pending).append(name)
+            (done if status == "implemented" else
+             partial if status == "partial" else pending).append(name)
         api_groups.append({
             "name": entry["name"], "label": entry["name"],
             "total": len(names), "done_names": sorted(done),
