@@ -10,6 +10,20 @@
 #include <string_view>
 
 namespace {
+class MutatingBackend final : public anyios::cpu::CpuBackend {
+public:
+    explicit MutatingBackend(unsigned changed_register) : changed_(changed_register) {}
+    anyios::cpu::CpuState state() const override { return guest_; }
+    void set_state(const anyios::cpu::CpuState& s) override { guest_ = s; }
+    anyios::cpu::CpuEvent step() override {
+        guest_.x[changed_] ^= 0x1;
+        guest_.pc = guest_.x[30];
+        return {};
+    }
+private:
+    unsigned changed_;
+    anyios::cpu::CpuState guest_{};
+};
 using namespace anyios::abi;
 void expect(bool valid, std::string_view message) {
     if (!valid) throw std::runtime_error(std::string(message));
@@ -87,6 +101,28 @@ int main() {
             const auto original = guest;
             expect(guest.x[18] == original.x[18], "variadic adapter changed guest x18");
             guest.sp = 0x20000;
+        }
+
+        for (const auto register_id : {18u, 19u, 29u}) {
+            MutatingBackend backend(register_id);
+            anyios::cpu::CpuState saved{};
+            saved.pc = 0x10000;
+            saved.sp = 0x20000;
+            saved.x[18] = 0xaa;
+            saved.x[19] = 0xbb;
+            saved.x[29] = 0xcc;
+            backend.set_state(saved);
+            const std::array<std::uint64_t, 1> input{42};
+            try {
+                (void)invoke_guest_callback(backend, 0x11000, input, 0x12000, 4);
+                throw std::runtime_error("guest register clobber was accepted");
+            } catch (const std::runtime_error& error) {
+                if (std::string_view(error.what()).find("clobbered") == std::string_view::npos)
+                    throw;
+            }
+            expect(backend.state().pc == saved.pc &&
+                   backend.state().x[register_id] == saved.x[register_id],
+                   "failing guest callback did not restore original state");
         }
 
         denies([&] { (void)decode_fixed_arguments(guest, {{ScalarKind::pointer}}); },
