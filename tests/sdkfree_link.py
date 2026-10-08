@@ -42,6 +42,9 @@ def main():
             "targets: [ arm64-ios ]\n"
             "install-name: '/usr/lib/libSystem.B.dylib'\n"
             "current-version: 1.0\n"
+            "exports:\n"
+            "  - targets: [ arm64-ios ]\n"
+            "    symbols: [ '_malloc', '_write', '_exit' ]\n"
             "...\n", encoding="utf-8"
         )
         clang_flags = [
@@ -71,6 +74,23 @@ def main():
             "-L", str(work), "-lRuntimeWidget", "-lSystem",
             "-rpath", "@executable_path/Frameworks", "-o", str(app),
         ])
+        libsystem_obj = work / "LibSystemApp.o"
+        libsystem_app = work / "LibSystemApp"
+        run(clang_flags + [
+            str(fixtures / "arm64_libsystem_app.c"), "-o", str(libsystem_obj)
+        ])
+        run(link + [
+            "-execute", str(libsystem_obj), "-e", "_main",
+            "-L", str(work), "-lSystem", "-o", str(libsystem_app),
+        ])
+        libsystem_info = run([str(inspector), str(libsystem_app)])
+        for symbol in ("_malloc", "_write", "_exit"):
+            if f"Import: {symbol}" not in libsystem_info:
+                raise AssertionError(
+                    f"Missing {symbol} in SDK-free C fixture:\\n{libsystem_info}"
+                )
+        if "Dylib: /usr/lib/libSystem.B.dylib" not in libsystem_info:
+            raise AssertionError("SDK-free fixture missing libSystem dependency")
         exe = run([str(inspector), str(app)])
         dep = run([str(inspector), str(dylib)])
         checks = [
