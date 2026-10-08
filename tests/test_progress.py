@@ -18,7 +18,7 @@ class ProgressTests(unittest.TestCase):
         self.assertEqual(state["libraries"]["done"], 3)
         self.assertEqual(state["libraries"]["partial"], 1)
         self.assertEqual(state["runtime"]["done"], 6)
-        self.assertEqual(state["runtime"]["partial"], 10)
+        self.assertEqual(state["runtime"]["partial"], 11)
         self.assertLess(state["libraries"]["percent"], 3)
         self.assertLess(state["runtime"]["percent"], 5)
         self.assertEqual(

@@ -1,7 +1,7 @@
 name: Compatibility Progress
 on:
   push:
-    branches: [main, feature/full-compatibility-treemap-and-sasquatch-intake]
+    branches: [main, feature/full-compatibility-treemap-and-sasquatch-intake, feature/objc-static-class-registry]
     paths:
       - 'tools/**'
       - 'tests/test_progress.py'
@@ -70,7 +70,7 @@ jobs:
 
   publish:
     needs: progress
-    if: github.event_name == 'push' && github.ref == 'refs/heads/feature/full-compatibility-treemap-and-sasquatch-intake'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/feature/full-compatibility-treemap-and-sasquatch-intake' || github.ref == 'refs/heads/feature/objc-static-class-registry')
     permissions:
       contents: write
     runs-on: ubuntu-24.04
