@@ -60,6 +60,7 @@ Image inspect(std::span<const std::byte> bytes) {
     const bool big_endian = bytes0 == 0xca;
     if (bytes.size() < 8) throw FormatError("truncated universal header");
     const auto count = read32(bytes, 4, big_endian);
+    if (count > 4096) throw FormatError("universal architecture count exceeds safety limit");
     const std::uint64_t entry_size = fat64 ? 32 : 20;
     const auto table_size = std::uint64_t(count) * entry_size;
     if (table_size > bytes.size() - 8) throw FormatError("universal architecture table out of bounds");

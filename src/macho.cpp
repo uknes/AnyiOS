@@ -93,6 +93,7 @@ Image inspect_thin(std::span<const std::byte> bytes) {
     image.cpu_subtype = reader.u32(8, "CPU subtype");
     image.file_type = reader.u32(12, "file type");
     image.command_count = reader.u32(16, "load command count");
+    if (image.command_count > 16384) throw FormatError("load command count exceeds safety limit");
     const auto commands_size = reader.u32(20, "load command region size");
     reader.require(32, commands_size, "load command region");
     if (image.command_count > commands_size / 8) {

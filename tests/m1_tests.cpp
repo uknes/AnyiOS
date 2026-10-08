@@ -96,7 +96,7 @@ void test_universal() {
         require(result.file_type == 1 && result.slice_size == 32, "selected Mach-O");
         auto broken = input;
         put32(broken, 4, 0xffffffff, big);
-        rejects(broken, "architecture table");
+        rejects(broken, "count exceeds safety limit");
         broken = input;
         put32(broken, 8, 0x01000007, big);
         rejects(broken, "no ARM64");
@@ -121,7 +121,7 @@ void test_linkedit() {
     require(result.has_chained_fixups && result.chained_imports.size() == 1 &&
             result.chained_imports[0] == "foo", "chained import");
     put32(p, 16, UINT32_MAX);
-    rejects(linkedit(0x80000034, p), "import table");
+    rejects(linkedit(0x80000034, p), "count exceeds safety limit");
     p = import_data();
     put32(p, 24, 1);
     rejects(linkedit(0x80000034, p), "compression");

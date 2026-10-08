@@ -36,7 +36,8 @@ public:
     std::string string(std::size_t off, std::string_view context) const {
         require(off, 1, context);
         auto end = off;
-        while (end < data_.size() && data_[end] != std::byte{0}) ++end;
+        while (end < data_.size() && data_[end] != std::byte{0} && end - off < 16384) ++end;
+        if (end - off == 16384) throw FormatError(std::string(context) + " exceeds symbol length limit");
         if (end == data_.size()) throw FormatError(std::string(context) + " is not NUL-terminated");
         return {reinterpret_cast<const char*>(data_.data() + off), end - off};
     }
@@ -70,6 +71,7 @@ std::vector<std::string> parse_chained_imports(std::span<const std::byte> bytes,
     const auto imports = data.u32(8, "fixup imports offset");
     const auto symbols = data.u32(12, "fixup symbols offset");
     const auto count = data.u32(16, "fixup import count");
+    if (count > 100000) throw FormatError("chained import count exceeds safety limit");
     const auto format = data.u32(20, "fixup imports format");
     const auto symbol_format = data.u32(24, "fixup symbols format");
     if (format < 1 || format > 3) throw FormatError("unsupported chained imports format");
@@ -103,6 +105,7 @@ std::vector<std::string> parse_chained_imports(std::span<const std::byte> bytes,
     if (symbols > data.size()) throw FormatError("chained symbol pool out of bounds");
     std::vector<std::string> names;
     names.reserve(count);
+    std::size_t total_name_bytes = 0;
     for (std::uint32_t i = 0; i < count; ++i) {
         const auto at = std::size_t(imports) + std::size_t(i) * entry_size;
         const std::uint32_t name_offset = format == 3 ?
@@ -110,7 +113,12 @@ std::vector<std::string> parse_chained_imports(std::span<const std::byte> bytes,
             data.u32(at, "import descriptor") >> 9;
         const auto absolute = std::uint64_t(symbols) + name_offset;
         if (absolute >= data.size()) throw FormatError("chained import name offset out of bounds");
-        names.push_back(data.string(static_cast<std::size_t>(absolute), "chained import name"));
+        auto name = data.string(static_cast<std::size_t>(absolute), "chained import name");
+        if (name.size() > 8 * 1024 * 1024 - total_name_bytes) {
+            throw FormatError("chained import names exceed safety limit");
+        }
+        total_name_bytes += name.size();
+        names.push_back(std::move(name));
     }
     return names;
 }
@@ -129,7 +137,7 @@ std::vector<std::string> parse_exports(std::span<const std::byte> bytes,
         auto node = std::move(pending.back());
         pending.pop_back();
         if (!visited.insert(node.offset).second) throw FormatError("export trie contains a cycle or shared node");
-        if (visited.size() > data.size()) throw FormatError("export trie contains too many nodes");
+        if (visited.size() > 65536) throw FormatError("export trie exceeds node safety limit");
         auto [terminal_size, cursor] = uleb(data, node.offset);
         if (terminal_size > data.size() - cursor) throw FormatError("export terminal out of bounds");
         const auto terminal_end = cursor + static_cast<std::size_t>(terminal_size);
