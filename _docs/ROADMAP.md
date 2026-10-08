@@ -1,35 +1,39 @@
-# Milestones
+# Milestones and acceptance
 
-## M0 — Passive Mach-O inspector
+## M0 — Portable passive Mach-O inspector
 
-- [x] ARM64 thin header and load-command parsing
-- [x] Segment, dependencies, entry, runpath, deployment versions and encrypted-code indicators
-- [x] Synthetic invalid-input and mutation tests
-- [x] GCC and Clang ASan/UBSan local builds
-- [ ] GitHub Actions verified across Linux and another host
+- [x] Thin little-endian ARM64 Mach-O metadata
+- [x] Load commands, segments, dependencies, rpaths, entry, versions, encrypted-code flags
+- [x] Negative regression fixtures and deterministic mutation tests
+- [x] Cross-platform CI and local Clang sanitizer checks
 
-## M1 — Expanded image analysis
+## M1 — Expanded static image analysis (in progress)
 
-- [ ] Select ARM64 universal/fat binary slices safely
-- [ ] Parse dependency, section, dyld chained fixup and export metadata
-- [ ] Parse project-owned app bundle and Info.plist
-- [ ] Differential validation against independently compiled own Mach-O examples
-- [ ] Add coverage-guided fuzzing and corpus governance
+- [x] Safely locate ARM64 in FAT/FAT64 and swapped-endian universal containers
+- [x] Inspect chained dyld import-name metadata and exported-symbol trie names
+- [x] Test with Clang-built owned iOS ARM64 object files; independent LLVM verification when present
+- [x] LLVM libFuzzer with ASan/UBSan, original synthetic corpus and CI run
+- [x] Explicit count, symbol length, path traversal and aggregate allocation limits
+- [ ] Inspect sections, symbol tables and indirect symbol ranges
+- [ ] Validate full chained pointer formats, export terminal variants and import ordinals
+- [ ] Inspect original app bundle metadata and Info.plist
+- [ ] Obtain reproducible independently linked owned MH_EXECUTE and MH_DYLIB fixtures
 
-## M2 — Controlled owned-binary execution
+## M2 — Controlled owned code execution (not started)
 
-- [ ] Host ARM64/Linux design for Darwin process ABI, syscalls, linking and exceptions
-- [ ] Minimal safe mappings and relocations for a project-owned CLI executable
-- [ ] Demonstrate owned hello-world guest program with documented constraints
+- [ ] Document ARM64 host/guest calling conventions, Darwin syscalls and Mach facilities
+- [ ] Define page-mapping and relocation contracts with executable security isolation
+- [ ] Prove an owned hello-world MH_EXECUTE can be correctly loaded and called
+- [ ] Introduce precise unsupported-API diagnostics
 
-## M3 — Runtime contracts
+## M3 — Runtime contracts (not started)
 
-- [ ] libSystem and Darwin API contract tests
-- [ ] Objective-C/Swift runtime strategy and executable samples
+- [ ] Test libSystem/Darwin APIs against owned samples
+- [ ] Evaluate ObjC/Swift ABI requirements and license compatibility
 
-## M4 — Minimal app lifecycle
+## M4 — App lifecycle (not started)
 
-- [ ] Original iOS sample bootstraps its window and input
-- [ ] Verifiable supported-host and API compatibility table
+- [ ] Owned iOS sample window/input/bootstrap with reproducible evidence
+- [ ] Versioned support matrix and negative API tests
 
-Not promised: encrypted retail content, online Apple services, arbitrary iOS releases, modern commercial games or x86 execution.
+Not promised: retail decrypted content, Apple services, ARM64e/PAC support, Metal translation, arbitrary commercial applications or x86 execution.

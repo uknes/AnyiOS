@@ -24,3 +24,15 @@ Unknown command types are skipped only after verifying their command sizes; this
 - host adapters: Linux ARM64 first; Android, Windows ARM64 and x86 JIT only after feasibility evidence.
 
 No empty framework stubs pretending to be supported. Use reproducible narrow vertical slices. Untrusted offsets and sizes are checked before use. Avoid importing GPLv2-only AnyPS5 implementation into MIT code.
+
+
+## M1 implemented module boundaries
+
+- src/universal.cpp: FAT/FAT64 input validation, endian decoding, slice selection and metadata; dispatches only to the thin parser.
+- src/macho.cpp: thin ARM64 load-command metadata scanning; delegates complex linkedit payloads to separate functions.
+- src/linkedit.cpp: bounded dyld chained-import and export-name inspection; no runtime relocation performed.
+- src/internal.hpp: private inter-module interfaces. The public metadata API remains include/anyios/macho.hpp.
+- tests/m1_tests.cpp and tests/real_fixture.py: systematic negative inputs and original cross-compiled object verification.
+- tests/fuzz_macho.cpp: standalone instrumentation (not an uninstrumented static-library wrapper).
+
+No code maps guest executable pages or calls an entry point. Important future proof obligations include decomposed CPU subtype/capabilities, fixup pointer-format correctness, ObjC metadata ABI and signed executable constraints.

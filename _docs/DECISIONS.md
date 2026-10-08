@@ -19,3 +19,12 @@ Accepted 2026-10-08. Public format descriptions and owned fixtures are allowed. 
 ## ADR-005 — Git and CI over project claims
 
 Accepted 2026-10-08. Notion tracks tasks and research, but source history, versioned state, actual tests and CI decide whether something works.
+
+
+## ADR-006 — FAT container and dyld metadata are separate from execution
+
+Accepted 2026-10-08. Select ARM64 from a bounded universal wrapper and parse each thin image as a subspan. Verify table/slice overlap, alignment and matching subtype. Chained import and export analysis returns diagnostic names only, not relocations or native linking.
+
+## ADR-007 — Untrusted input resource ceilings
+
+Accepted 2026-10-08. Cap arch count at 4096, load command count at 16384, chained imports at 100000, per-name length at 16384 bytes, aggregate imported name data at 8 MiB and exported trie nodes at 65536. Limits are defensive policy and are not file-format specifications.

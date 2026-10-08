@@ -26,3 +26,15 @@ PS5 is ELF/x86-64 with PRX NIDs; iOS is Mach-O/ARM64 with dylib/dyld semantics, 
 ## Outstanding evidence
 
 Our current binary samples are synthetic. Test using independently built legitimate ARM64 Mach-O executables, compare with LLVM/Apple inspection tools, and distinguish simulator vs device binaries. No claim of iOS app or game execution is warranted.
+
+
+## M1 references consulted (2026-10-08)
+
+- Apple's FAT wrapper header: https://github.com/apple-oss-distributions/xnu/blob/main/EXTERNAL_HEADERS/mach-o/fat.h
+- LLVM Mach-O structs: https://llvm.org/doxygen/BinaryFormat_2MachO_8h_source.html
+- Apple's dyld chained-fixup definitions: https://github.com/apple-oss-distributions/dyld/blob/main/include/mach-o/fixup-chains.h
+- Apple dyld validation/reference implementation: https://github.com/apple-oss-distributions/dyld/blob/main/common/MachOAnalyzer.cpp
+- Clang cross-compilation guidance: https://clang.llvm.org/docs/CrossCompilation.html
+- GNUstep libobjc2: https://github.com/gnustep/libobjc2
+
+An owned iOS ARM64 MH_OBJECT generated with Clang was successfully parsed and compared with LLVM output. Compiling an object does not validate actual app binary loading. GNUstep libobjc2 is a research candidate, not a proven binary-compatible replacement for Apple's iOS Objective-C runtime. Darwin syscall, dyld, Mach IPC, app services and frameworks remain open design problems.
