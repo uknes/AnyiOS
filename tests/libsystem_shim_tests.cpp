@@ -1,5 +1,6 @@
 #include <anyios/libsystem_shim.hpp>
 
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <exception>
@@ -32,6 +33,52 @@ int main() {
         require(lib.invoke("_malloc", {16, 0, 0}).value != 0,
                 "heap failed after oversized allocation");
         require(!memory.fetch(first.value), "heap memory became executable");
+        const auto rw = anyios::cpu::bits(anyios::cpu::Access::read) |
+                        anyios::cpu::bits(anyios::cpu::Access::write);
+        require(memory.map_ios(0x40000, 0x4000, rw), "C primitives test data page");
+        const std::array<std::byte, 8> c_string{
+            std::byte{'A'}, std::byte{'B'}, std::byte{0},
+            std::byte{'C'}, std::byte{'D'}, std::byte{0},
+            std::byte{0xff}, std::byte{0}
+        };
+        require(memory.load(0x40000, c_string), "C primitive string bytes");
+        require(lib.invoke("_strlen", {0x40000, 0, 0}).value == 2,
+                "strlen bounded termination");
+        require(lib.invoke("_strlen", {0x40006, 0, 0}).value == 1,
+                "strlen unsigned-byte high bit");
+        require(lib.invoke("_strcmp", {0x40000, 0x40000, 0}).value == 0,
+                "strcmp exact equality");
+        require(lib.invoke("_strcmp", {0x40000, 0x40003, 0}).value == 0xffffffffULL,
+                "strcmp negative signed int must use low 32 bits");
+        require(lib.invoke("_strcmp", {0x40003, 0x40000, 0}).value == 1,
+                "strcmp positive unsigned-byte ordering");
+        require(lib.invoke("_memcpy", {0x40080, 0x40000, 3}).value == 0x40080,
+                "memcpy must return original guest destination pointer");
+        require(memory.read(0x40080, 1) == static_cast<unsigned>('A') &&
+                memory.read(0x40081, 1) == static_cast<unsigned>('B') &&
+                memory.read(0x40082, 1) == 0, "memcpy copied bytes incorrectly");
+        require(lib.invoke("_memset", {0x40080, 0x1234ff, 2}).value == 0x40080 &&
+                memory.read(0x40080, 1) == 255 && memory.read(0x40081, 1) == 255 &&
+                memory.read(0x40082, 1) == 0,
+                "memset must truncate c to unsigned char without clobbering tail");
+        require(lib.invoke("_memcpy", {0, 0, 0}).value == 0,
+                "zero-length memcpy should not dereference pointers");
+        require(lib.invoke("_memset", {0, 0x1234, 0}).value == 0,
+                "zero-length memset should not dereference pointers");
+        auto refuse = [&](std::string_view symbol, const std::array<std::uint64_t, 3>& args) {
+            try {
+                static_cast<void>(lib.invoke(symbol, args));
+                throw std::runtime_error("unsupported guest libc access returned success");
+            } catch (const std::invalid_argument&) {}
+        };
+        refuse("_memcpy", {0x40001, 0x40000, 4});
+        refuse("_memcpy", {0x50000, 0x40000, 4});
+        refuse("_memset", {0x50000, 0, 4});
+        refuse("_memcpy", {0x40080, 0x40000, 65537});
+        refuse("_strlen", {0x50000, 0, 0});
+        refuse("_strcmp", {0x40000, 0x50000, 0});
+        require(memory.read(0x40082, 1) == 0,
+                "invalid libc call corrupted previously copied destination");
         try {
             (void)lib.invoke("_unknown", {0, 0, 0});
             throw std::runtime_error("missing libSystem symbol was accepted");
