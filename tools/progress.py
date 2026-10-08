@@ -129,7 +129,7 @@ def tile(x, y, w, h, color, border=0.55):
 def note(x, y, label, size=12):
     return (f'<text x="{x:.2f}" y="{y:.2f}" font-size="{size}" '
             f'font-family="Arial,DejaVu Sans,sans-serif" fill="{WHITE}" '
-            f'paint-order="stroke" stroke="{DARK}" stroke-width="2.5">'
+            f'font-weight="600">'
             f'{escape(label)}</text>')
 
 
