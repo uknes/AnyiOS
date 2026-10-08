@@ -1,11 +1,10 @@
 #include <anyios/guest_memory.hpp>
+#include <anyios/cpu_backend.hpp>
 #include <anyios/object_code.hpp>
 #include <anyios/executable.hpp>
 #include <anyios/linked_pair.hpp>
 #include <anyios/darwin_syscall.hpp>
 
-#include <dynarmic/interface/A64/a64.h>
-#include <dynarmic/interface/A64/config.h>
 
 #include <algorithm>
 #include <array>
@@ -22,125 +21,44 @@ namespace {
 using anyios::cpu::Access;
 using anyios::cpu::GuestMemory;
 
-class Callbacks final : public Dynarmic::A64::UserCallbacks {
-public:
-    explicit Callbacks(GuestMemory& memory) : memory_(memory) {}
-
-    std::optional<std::uint32_t> MemoryReadCode(Dynarmic::A64::VAddr address) override {
-        const auto word = memory_.fetch(address);
-        if (!word) fault_ = true;
-        return word;
-    }
-
-    std::uint8_t MemoryRead8(Dynarmic::A64::VAddr addr) override {
-        return static_cast<std::uint8_t>(load(addr, 1));
-    }
-    std::uint16_t MemoryRead16(Dynarmic::A64::VAddr addr) override {
-        return static_cast<std::uint16_t>(load(addr, 2));
-    }
-    std::uint32_t MemoryRead32(Dynarmic::A64::VAddr addr) override {
-        return static_cast<std::uint32_t>(load(addr, 4));
-    }
-    std::uint64_t MemoryRead64(Dynarmic::A64::VAddr addr) override {
-        return load(addr, 8);
-    }
-    Dynarmic::A64::Vector MemoryRead128(Dynarmic::A64::VAddr addr) override {
-        if (addr > UINT64_MAX - 8) {
-            fault_ = true;
-            return {0, 0};
-        }
-        return {load(addr, 8), load(addr + 8, 8)};
-    }
-    void MemoryWrite8(Dynarmic::A64::VAddr addr, std::uint8_t val) override {
-        store(addr, val, 1);
-    }
-    void MemoryWrite16(Dynarmic::A64::VAddr addr, std::uint16_t val) override {
-        store(addr, val, 2);
-    }
-    void MemoryWrite32(Dynarmic::A64::VAddr addr, std::uint32_t val) override {
-        store(addr, val, 4);
-    }
-    void MemoryWrite64(Dynarmic::A64::VAddr addr, std::uint64_t val) override {
-        store(addr, val, 8);
-    }
-    void MemoryWrite128(Dynarmic::A64::VAddr addr, Dynarmic::A64::Vector val) override {
-        if (addr > UINT64_MAX - 15 || !memory_.allowed(addr, 16, Access::write)) {
-            fault_ = true;
-            return;
-        }
-        store(addr, val[0], 8);
-        store(addr + 8, val[1], 8);
-    }
-
-    void InterpreterFallback(Dynarmic::A64::VAddr, std::size_t) override { fault_ = true; }
-    void CallSVC(std::uint32_t immediate) override {
-        if (trap_) fault_ = true;
-        trap_ = immediate;
-    }
-    std::optional<std::uint32_t> take_trap() {
-        auto result = trap_;
-        trap_.reset();
-        return result;
-    }
-    void ExceptionRaised(Dynarmic::A64::VAddr, Dynarmic::A64::Exception) override {
-        fault_ = true;
-    }
-    void AddTicks(std::uint64_t ticks) override { ticks_ += ticks; }
-    std::uint64_t GetTicksRemaining() override { return 1; }
-    std::uint64_t GetCNTPCT() override { return ticks_; }
-    bool failed() const { return fault_; }
-
-private:
-    std::uint64_t load(std::uint64_t addr, unsigned width) {
-        const auto value = memory_.read(addr, width);
-        if (!value) fault_ = true;
-        return value.value_or(0);
-    }
-    void store(std::uint64_t addr, std::uint64_t value, unsigned width) {
-        if (!memory_.write(addr, value, width)) fault_ = true;
-    }
-    GuestMemory& memory_;
-    std::uint64_t ticks_ = 0;
-    bool fault_ = false;
-    std::optional<std::uint32_t> trap_;
-};
-
 void execute_guest(GuestMemory& memory, std::uint64_t entry, std::uint64_t return_address,
                    anyios::darwin::SyscallBridge* bridge = nullptr,
                    std::uint64_t syscall_buffer = 0,
                    std::uint64_t syscall_length = 0) {
-    Callbacks callbacks(memory);
-    Dynarmic::A64::UserConfig config{};
-    config.callbacks = &callbacks;
-    config.enable_cycle_counting = false;
-    Dynarmic::A64::Jit jit(config);
-    jit.SetPC(entry);
-    jit.SetRegister(30, return_address);
+    auto backend = anyios::cpu::make_dynarmic_backend(memory);
+    anyios::cpu::CpuState guest;
+    guest.pc = entry;
+    guest.x[30] = return_address;
     if (bridge) {
-        jit.SetRegister(1, syscall_buffer);
-        jit.SetRegister(2, syscall_length);
+        guest.x[1] = syscall_buffer;
+        guest.x[2] = syscall_length;
     }
+    backend->set_state(guest);
     bool returned = false;
     for (unsigned i = 0; i < 128; ++i) {
-        static_cast<void>(jit.Step());
-        if (callbacks.failed()) throw std::runtime_error("guest execution raised a fault");
-        if (const auto immediate = callbacks.take_trap()) {
+        const auto event = backend->step();
+        if (event.kind == anyios::cpu::CpuEventKind::fault ||
+            event.kind == anyios::cpu::CpuEventKind::unsupported) {
+            throw std::runtime_error(event.diagnostic);
+        }
+        guest = backend->state();
+        if (event.kind == anyios::cpu::CpuEventKind::svc) {
             if (!bridge) throw std::runtime_error("guest SVC requires a Darwin bridge");
-            const auto result = bridge->dispatch(*immediate, jit.GetRegister(16),
-                {jit.GetRegister(0), jit.GetRegister(1), jit.GetRegister(2)}, memory);
+            const auto result = bridge->dispatch(event.svc_immediate, guest.x[16],
+                {guest.x[0], guest.x[1], guest.x[2]}, memory);
             if (!result.supported) throw std::runtime_error(result.diagnostic);
             if (result.exited) throw std::runtime_error("unexpected guest exit syscall");
-            jit.SetRegister(0, result.value);
-            const auto pstate = jit.GetPstate();
-            jit.SetPstate((pstate & ~(std::uint32_t(1) << 29)) |
-                           (std::uint32_t(result.carry) << 29));
+            guest.x[0] = result.value;
+            guest.pstate = (guest.pstate & ~(std::uint32_t(1) << 29)) |
+                           (std::uint32_t(result.carry) << 29);
+            backend->set_state(guest);
         }
-        if (jit.GetPC() == return_address) {
+        if (guest.pc == return_address) {
             returned = true;
             break;
         }
     }
-    if (!returned || jit.GetRegister(0) != 42) {
+    if (!returned || guest.x[0] != 42) {
         throw std::runtime_error("ARM64 code returned an incorrect result");
     }
 }
@@ -178,36 +96,34 @@ void verify_real_linked_call(const std::vector<std::byte>& main_image,
     if (!memory.fetch(loaded.imported_function) || !memory.fetch(loaded.entry)) {
         throw std::runtime_error("linked guest function is not executable");
     }
-    Callbacks callbacks(memory);
-    Dynarmic::A64::UserConfig config{};
-    config.callbacks = &callbacks;
-    config.enable_cycle_counting = false;
-    Dynarmic::A64::Jit jit(config);
-    jit.SetPC(loaded.entry);
-    jit.SetSP(stack_address + stack_bytes);
-    jit.SetRegister(30, return_sentinel);
-    jit.SetRegister(0, 0);
-    jit.SetRegister(1, 0);
+    auto backend = anyios::cpu::make_dynarmic_backend(memory);
+    anyios::cpu::CpuState guest;
+    guest.pc = loaded.entry;
+    guest.sp = stack_address + stack_bytes;
+    guest.x[30] = return_sentinel;
+    backend->set_state(guest);
     bool completed = false;
     for (unsigned step = 0; step < 4096; ++step) {
-        static_cast<void>(jit.Step());
-        if (callbacks.failed()) {
-            throw std::runtime_error("linked ARM64 iOS code raised a guest memory/CPU fault at PC " +
-                                     std::to_string(jit.GetPC()));
+        const auto event = backend->step();
+        guest = backend->state();
+        if (event.kind == anyios::cpu::CpuEventKind::fault ||
+            event.kind == anyios::cpu::CpuEventKind::unsupported) {
+            throw std::runtime_error(event.diagnostic + " at guest PC " +
+                                     std::to_string(guest.pc));
         }
-        if (callbacks.take_trap()) {
+        if (event.kind == anyios::cpu::CpuEventKind::svc) {
             throw std::runtime_error("linked ARM64 iOS code requested unsupported Darwin SVC");
         }
-        if (jit.GetPC() == return_sentinel) {
+        if (guest.pc == return_sentinel) {
             completed = true;
             break;
         }
     }
     if (!completed) {
         throw std::runtime_error("linked ARM64 guest exceeded execution step limit, last PC " +
-                                 std::to_string(jit.GetPC()));
+                                 std::to_string(guest.pc));
     }
-    if (jit.GetRegister(0) != 42) {
+    if (guest.x[0] != 42) {
         throw std::runtime_error("cross-dylib ARM64 guest call returned incorrect value");
     }
     std::cout << "Executed real iPhoneOS MH_EXECUTE -> MH_DYLIB call on Windows x64: 42\n";
