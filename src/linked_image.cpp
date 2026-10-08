@@ -117,6 +117,7 @@ LinkedImage stage_linked_image(
             }
             if (segment.vm_size % cpu::GuestMemory::ios_page_size != 0) {
                 const auto safe_tail = segment.name == "__LINKEDIT" &&
+                                       &segment == &image.segments.back() &&
                                        segment.init_protection == 1 &&
                                        segment.file_size <= segment.vm_size &&
                                        segment.vm_size > 0;
