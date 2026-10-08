@@ -1,0 +1,66 @@
+name: Compatibility Progress
+on:
+  push:
+    branches: [main, feature/full-compatibility-treemap-and-sasquatch-intake]
+    paths:
+      - 'tools/**'
+      - 'tests/test_progress.py'
+      - 'tests/test_unchanged_ipa_probe.py'
+      - 'compatibility/targets/**'
+      - '.github/workflows/progress-status.yml'
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: anyios-progress-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  progress:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Test evidence scope and original immutable IPA
+        run: |
+          python3 -m unittest discover -s tests -p test_progress.py -v
+          python3 -m unittest discover -s tests -p test_unchanged_ipa_probe.py -v
+      - name: Render AnyPS5-style status and confirm game blocked honestly
+        run: |
+          python3 tools/progress.py docs
+          python3 tools/progress.py docs --check
+          set +e
+          python3 tools/unchanged_ipa_probe.py --target sneaky-sasquatch --output docs/sneaky-sasquatch-intake.json
+          result=$?
+          set -e
+          if [ "$result" -ne 2 ]; then echo 'Original game missing must return blocked status'; exit 1; fi
+          python3 -c "import json; j=json.load(open('docs/sneaky-sasquatch-intake.json')); assert j['status']=='blocked-no-original-app-binary' and not j['execution_attempted']"
+      - name: Upload visual progress and real-game no-binary evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: anyios-comprehensive-compatibility-map
+          path: |
+            docs/progress.json
+            docs/progress.svg
+            docs/progress.html
+            docs/badge-apis.svg
+            docs/badge-runtime.svg
+            docs/sneaky-sasquatch-intake.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Commit generated first-party status assets on feature branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/feature/full-compatibility-treemap-and-sasquatch-intake'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/progress.json docs/progress.svg docs/progress.html docs/badge-apis.svg docs/badge-runtime.svg docs/sneaky-sasquatch-intake.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'docs(progress): regenerate full compatibility coverage assets'
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+      - name: Verify committed status is current on main
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git diff --exit-code -- docs/progress.json docs/progress.svg docs/progress.html docs/badge-apis.svg docs/badge-runtime.svg
