@@ -20,6 +20,7 @@ struct Segment {
     std::uint64_t file_offset;
     std::uint64_t file_size;
     std::uint32_t sections;
+    std::uint32_t init_protection = 0;
 };
 
 struct Version {
