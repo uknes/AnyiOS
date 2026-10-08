@@ -4,7 +4,7 @@ Status is **not tested** until an owned, reproducible build and gap-report artif
 
 | App | License verified from file | Tier | Build / report status | Blocking APIs |
 | --- | --- | --- | --- | --- |
-| Candidate A (selection pending) | No | T1 | Not tested | Unknown |
+| Bitrise sample-apps-ios-simple-objc @ `91fef6f` | **Yes**, actual MIT LICENSE checked | T3 | Original Objective-C sources in SDK-free compile + Windows staging CI (pending) | Objective-C runtime, Foundation, UIKit, Core Data; exact binary gaps pending |
 | Candidate B (selection pending) | No | T1 | Not tested | Unknown |
 | Candidate C (selection pending) | No | T2 | Not tested | Unknown |
 | Candidate D (selection pending) | No | T3 | Not tested | Unknown |
@@ -38,3 +38,11 @@ After five license-file-checked applications produce artifacts, aggregate missin
 - Multi-module initializer ordering.
 - Objective-C ABI metadata and dispatch notes.
 - Hot-path ADR evaluating guest-side fast paths against SVC-per-call overhead.
+
+## First external build and staging protocol
+
+- Upstream: `https://github.com/bitrise-io/sample-apps-ios-simple-objc`, immutable commit `91fef6f5a096220669934793a9256128bc73f25b`. Actual upstream `LICENSE` text confirmed as MIT, copyright 2014 Bitrise. External code stays fetched from the pinned upstream repository; no code from prior-art emulators is copied.
+- `tests/build_bitrise_probe.py` attempts to compile **original** `main.m`, `AppDelegate.m`, `ViewController.m`, using **AnyiOS-authored declaration-only** Foundation/UIKit/CoreData headers. Apple SDK and Apple framework implementations are absent.
+- Linking uses an automatically generated TAPI **metadata-only placeholder** that declares unresolved original object imports. This only produces a binary for gap analysis and staging; it is **not an implementation**. A successful link/stage **does not mean this app can run**.
+- Windows `anyios-app-stage-probe` inspects and attempts guest-image section/fixup staging against inert placeholder addresses. It **never executes** external ObjC instructions or considers the placeholder dylib a working runtime. First stage error and full unimplemented import list are preserved in CI artifacts. App starts/renders/touches: **not implemented**.
+- CI workflow `.github/workflows/compatibility.yml`: owned gap test, upstream SDK-free compile attempt, static import report, Windows x64 staging classification. Trust the exact run and step only after green CI; never promote a "blocked" app build to "app runs".
