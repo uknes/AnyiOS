@@ -13,6 +13,8 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+      - name: Validate README progress card matches evidence manifest
+        run: python3 tools/progress.py --check
       - name: Test strict Mach-O and ObjC gap analyzer
         run: python3 -m unittest discover -s tests -p test_macho_gap.py -v
       - name: Install SDK-free ARM64 linker tools

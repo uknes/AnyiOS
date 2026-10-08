@@ -5,8 +5,8 @@ Status is **not tested** until an owned, reproducible build and gap-report artif
 | App | License verified from file | Tier | Build / report status | Blocking APIs |
 | --- | --- | --- | --- | --- |
 | Bitrise sample-apps-ios-simple-objc @ `91fef6f` | **Yes**, actual MIT LICENSE checked | T3 | Three upstream .m files SDK-free compiled/linked via metadata-only placeholder; Windows x64 staging passed in CI 37797367626; not runnable | 29 symbols unresolved, including ObjC messaging/allocation, UIKit launch, Core Data; 24 encoded selector refs unresolved |
-| Candidate B (selection pending) | No | T1 | Not tested | Unknown |
-| Candidate C (selection pending) | No | T2 | Not tested | Unknown |
+| danqing/2048 @ 6f89eab | Yes, actual MIT LICENSE checked | T4 (SpriteKit), startup T3 | SDK-free original main.m + M2AppDelegate.m compile/link CI pending. Full storyboard and SpriteKit gameplay not linked/run | ObjC registry, Foundation, UIApplicationMain, UIStoryboard, SpriteKit rendering and events |
+| sprang/Brushes @ 825d2c7 | Yes, actual MPL-2.0 LICENSE checked | T4 painting | Source inventoried; not built or executed | CoreGraphics, OpenGL ES, UIKit, gesture/Pencil-like input |
 | Candidate D (selection pending) | No | T3 | Not tested | Unknown |
 | Candidate E (selection pending) | No | T3 | Not tested | Unknown |
 
@@ -54,3 +54,15 @@ After five license-file-checked applications produce artifacts, aggregate missin
 - `ios-gap-windows-x64`: exact Linux-produced binary inspection and sections/fixups mapped: `STAGING=passed-metadata-only`, guest entry 81920. **No guest code executed** in this step. Artifact `anyios-windows-compatibility-probe`.
 - Windows x64 Dynarmic **entry-only** execution added, verification pending; must stop on the first unsupported guest import without pretending ObjC initializer or UIKit startup occurred.
 - Evidence gates: `compiled` and `staged` verified; `launched`, `window`, `touch`, `interactive` **not implemented**.
+
+## Interactive Windows-hosted iOS ARM64 guest (a separate owned fixture)
+
+This is NOT the original Danqing 2048 iOS app. `tests/fixtures/arm64_2048_ui_guest.c` is new AnyiOS-owned SDK-free ARM64 iPhoneOS tile/score game-state code with reset/move entrypoints and zero Apple dependencies. The actual ARM64 game instructions execute under Dynarmic on Windows x64. Win32 GDI draws the original guest memory state, and keyboard/mouse input invokes guest ARM64 move/reset.
+
+A resizable Windows window, keyboard arrows/WASD, mouse swipe, restart button and offscreen BMP/PNG screenshot constitute a real Win32 interactive GUI backend, **not UIWindow, UIKit, SpriteKit or CoreGraphics compatibility**. The executable shows an independently authored 2048 game instead of the upstream original app.
+
+Windows x86-64 runs the GDI host and Dynarmic natively; Windows 11 ARM64 uses a native ARM64 launcher to start the bundled x64 guest engine under Windows x64 app emulation, then Dynarmic executes guest ARM64. No claim of native ARM64 guest execution on Windows ARM64. ARM64 full guest native backend remains unavailable.
+
+Laptop reproducibility: unzip the x64 Windows package, double-click anyios-win-2048.exe (loads adjacent AnyiOS2048Guest), use keyboard/swipe/restart and run verify_windows_gui.ps1 to exercise input, guest state and actual GDI framebuffer. Both architecture CI proofs pending until green.
+
+Procreate is commercial closed-source and has not been obtained, decrypted, linked or run.
