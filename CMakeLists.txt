@@ -17,8 +17,15 @@ endif()
 add_executable(anyios-inspect tools/inspect.cpp)
 target_link_libraries(anyios-inspect PRIVATE anyios_macho)
 
+add_library(anyios_guest_memory STATIC src/guest_memory.cpp)
+target_include_directories(anyios_guest_memory PUBLIC include)
+target_compile_features(anyios_guest_memory PUBLIC cxx_std_20)
+
 include(CTest)
 if(BUILD_TESTING)
+    add_executable(anyios-memory-tests tests/guest_memory_tests.cpp)
+    target_link_libraries(anyios-memory-tests PRIVATE anyios_guest_memory)
+    add_test(NAME guest-memory COMMAND anyios-memory-tests)
     add_executable(anyios-tests tests/macho_tests.cpp)
     target_link_libraries(anyios-tests PRIVATE anyios_macho)
     add_test(NAME macho-parser COMMAND anyios-tests)
@@ -40,4 +47,29 @@ if(ANYIOS_BUILD_FUZZER)
     target_include_directories(anyios-fuzz PRIVATE include)
     target_compile_options(anyios-fuzz PRIVATE -fsanitize=fuzzer,address,undefined -fno-omit-frame-pointer)
     target_link_options(anyios-fuzz PRIVATE -fsanitize=fuzzer,address,undefined)
+endif()
+
+
+option(ANYIOS_WITH_DYNARMIC "Enable experimental ARM64 translation backend (Dynarmic 0BSD)" OFF)
+if(ANYIOS_WITH_DYNARMIC)
+    include(FetchContent)
+    set(DYNARMIC_TESTS OFF CACHE BOOL "" FORCE)
+    set(DYNARMIC_FRONTENDS "A64" CACHE STRING "" FORCE)
+    set(DYNARMIC_USE_BUNDLED_EXTERNALS ON CACHE BOOL "" FORCE)
+    set(DYNARMIC_USE_PRECOMPILED_HEADERS OFF CACHE BOOL "" FORCE)
+    set(DYNARMIC_USE_LLVM OFF CACHE BOOL "" FORCE)
+    FetchContent_Declare(
+        dynarmic
+        GIT_REPOSITORY https://github.com/azahar-emu/dynarmic.git
+        GIT_TAG a46601580d5512d324104f985b5f0209dc980ddc
+        GIT_SHALLOW FALSE
+        GIT_PROGRESS TRUE
+    )
+    FetchContent_MakeAvailable(dynarmic)
+
+    add_executable(anyios-a64-smoke tests/a64_smoke.cpp)
+    target_link_libraries(anyios-a64-smoke PRIVATE anyios_guest_memory dynarmic)
+    if(BUILD_TESTING)
+        add_test(NAME arm64-on-x64 COMMAND anyios-a64-smoke)
+    endif()
 endif()
