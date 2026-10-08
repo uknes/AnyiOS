@@ -48,6 +48,31 @@ def main():
             shutil.copyfile(executable, destination / "SampleApp")
             shutil.copyfile(dylib, destination / "libWidget.dylib")
             print(f"Saved independently linked project-owned iOS binaries to {destination}")
+        bare_executable = output / "BareApp"
+        bare_dylib = output / "libBareWidget.dylib"
+        bare_common = ["xcrun", "--sdk", "iphoneos", "clang",
+                       "--target=arm64-apple-ios15.0", "-isysroot", sdk,
+                       "-arch", "arm64", "-nostdlib"]
+        run(bare_common + ["-dynamiclib", "-Wl,-fixup_chains",
+                           "-Wl,-install_name,@rpath/libBareWidget.dylib",
+                           str(root / "arm64_widget.c"), "-o", str(bare_dylib)])
+        run(bare_common + [str(root / "arm64_linked_app.c"),
+                           "-L", str(output), "-lBareWidget",
+                           "-Wl,-fixup_chains", "-Wl,-e,_main",
+                           "-Wl,-rpath,@executable_path/Frameworks",
+                           "-o", str(bare_executable)])
+        bare_app_text = run([str(inspector), str(bare_executable)])
+        bare_lib_text = run([str(inspector), str(bare_dylib)])
+        assert "File type: 2" in bare_app_text, bare_app_text
+        assert "File type: 6" in bare_lib_text, bare_lib_text
+        assert "Dylib: @rpath/libBareWidget.dylib" in bare_app_text, bare_app_text
+        assert "Install name: @rpath/libBareWidget.dylib" in bare_lib_text, bare_lib_text
+        print("Owned -nostdlib iOS image dependencies:")
+        print("\\n".join(line for line in bare_app_text.splitlines()
+                        if line.startswith(("Dylib:", "Chained imports:", "Import:", "Segment:"))))
+        if len(sys.argv) >= 3:
+            shutil.copyfile(bare_executable, destination / "BareApp")
+            shutil.copyfile(bare_dylib, destination / "libBareWidget.dylib")
         print("Linked iOS MH_EXECUTE + MH_DYLIB and dyld install-name metadata verified")
         print("Inspection only: dependent executable still requires dyld and libSystem emulation")
 
