@@ -247,6 +247,32 @@ void verify_sdkfree_libsystem(const std::vector<std::byte>& file, bool complete_
     throw std::runtime_error("owned libSystem fixture exhausted event budget");
 }
 
+void verify_unsupported_tls_registers() {
+    const auto rx = anyios::cpu::bits(Access::read) |
+                    anyios::cpu::bits(Access::execute);
+    for (const auto instruction : {0xd53bd060U, 0xd51bd060U}) {
+        GuestMemory memory(0x10000, 0x4000);
+        if (!memory.map(0x10000, 4096, rx)) {
+            throw std::runtime_error("owned TLS system-register test map failed");
+        }
+        std::array<std::byte, 4> bytes{};
+        for (unsigned i = 0; i < 4; ++i)
+            bytes[i] = std::byte((instruction >> (8 * i)) & 0xff);
+        if (!memory.load(0x10000, bytes)) {
+            throw std::runtime_error("TLS system-register test could not load instruction");
+        }
+        auto backend = anyios::cpu::make_dynarmic_backend(memory);
+        anyios::cpu::CpuState state{};
+        state.pc = 0x10000;
+        backend->set_state(state);
+        const auto event = backend->step();
+        if (event.kind != anyios::cpu::CpuEventKind::unsupported ||
+            backend->state().pc != 0x10000) {
+            throw std::runtime_error("unimplemented Darwin TLS MRS/MSR executed silently");
+        }
+    }
+}
+
 void verify_syscall_object(const std::vector<std::byte>& code) {
     GuestMemory memory(0x10000, 0x30000);
     const auto rx = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::execute);
@@ -355,6 +381,7 @@ void verify(const std::vector<std::byte>& code) {
 int main(int argc, char** argv) {
     try {
         std::vector<std::byte> code;
+        verify_unsupported_tls_registers();
         if (argc == 3 && std::string(argv[1]) == "--hello") {
             verify_sdkfree_libsystem(read_owned_binary(argv[2]), true);
             return 0;

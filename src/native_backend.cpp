@@ -19,6 +19,11 @@ public:
         const auto first = memory_.fetch(state_.pc);
         if (!first) return {CpuEventKind::fault, 0, "native guest instruction fetch denied"};
         // Never dispatch arbitrary ARM64 instructions directly into the host.
+        if ((*first & 0xfff00000U) == 0xd5300000U ||
+            (*first & 0xfff00000U) == 0xd5100000U) {
+            return {CpuEventKind::unsupported, 0,
+                    "native Darwin MRS/MSR system register is not supported"};
+        }
         if (*first == 0xd4001001U) {
             return {CpuEventKind::unsupported, 0,
                     "native Darwin SVC requires a dedicated isolated trap handler"};

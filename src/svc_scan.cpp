@@ -13,6 +13,10 @@ void reject_svc_in_executable_mapping(std::span<const std::byte> bytes) {
             instruction |= std::uint32_t(
                 std::to_integer<std::uint8_t>(bytes[offset + i])) << (8 * i);
         }
+        if ((instruction & 0xfff00000U) == 0xd5300000U ||
+            (instruction & 0xfff00000U) == 0xd5100000U) {
+            throw std::invalid_argument("unsupported MRS/MSR system register in native code");
+        }
         if ((instruction & 0xffe0001fU) == 0xd4000001U) {
             throw std::invalid_argument("possible Darwin SVC in executable mapping");
         }

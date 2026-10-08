@@ -108,7 +108,8 @@ Dynarmic::A64::UserConfig create_config(Callbacks* callbacks) {
 class DynarmicBackend final : public CpuBackend {
 public:
     explicit DynarmicBackend(GuestMemory& memory)
-        : callbacks_(memory), config_(create_config(&callbacks_)), jit_(config_) {}
+        : guest_memory_(memory), callbacks_(memory),
+          config_(create_config(&callbacks_)), jit_(config_) {}
 
     CpuState state() const override {
         CpuState result;
@@ -127,6 +128,12 @@ public:
     }
 
     CpuEvent step() override {
+        const auto instruction = guest_memory_.fetch(jit_.GetPC());
+        if (instruction && ((*instruction & 0xfff00000u) == 0xd5300000u ||
+                            (*instruction & 0xfff00000u) == 0xd5100000u)) {
+            return {CpuEventKind::unsupported, 0,
+                    "Darwin ARM64 MRS/MSR TLS/system register is not emulated"};
+        }
         static_cast<void>(jit_.Step());
         if (callbacks_.failed()) {
             return {CpuEventKind::fault, 0, "Dynarmic guest memory/CPU exception"};
@@ -137,6 +144,7 @@ public:
         return {};
     }
 private:
+    GuestMemory& guest_memory_;
     Callbacks callbacks_;
     Dynarmic::A64::UserConfig config_;
     Dynarmic::A64::Jit jit_;

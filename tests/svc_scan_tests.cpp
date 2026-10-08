@@ -1,6 +1,7 @@
 #include <anyios/svc_scan.hpp>
 #include <array>
 #include <cstddef>
+#include <cstdint>
 #include <exception>
 #include <iostream>
 #include <stdexcept>
@@ -26,6 +27,13 @@ int main() {
         for (std::size_t i = 0; i < svc.size(); ++i) image[8192+i] = svc[i];
         rejects(image);
         for (std::size_t i = 0; i < svc.size(); ++i) image[8192+i] = std::byte{0};
+        for (const auto instruction : {0xd53bd060U, 0xd51bd060U}) {
+            for (unsigned byte = 0; byte < 4; ++byte) {
+                image[256 + byte] = std::byte((instruction >> (byte * 8)) & 0xff);
+            }
+            rejects(image);
+        }
+        for (unsigned i = 0; i < 4; ++i) image[256+i] = std::byte{0};
         anyios::cpu::reject_svc_in_executable_mapping(image);
         rejects(std::span<const std::byte>(image).first(4095));
         rejects(std::span<const std::byte>(image).first(0));
