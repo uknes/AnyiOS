@@ -136,6 +136,59 @@ void run() {
         check(!strict.fetch(0x10300), "rejected 4 KiB image leaked guest mapping");
     }
     {
+        // Last read-only LINKEDIT may have a shorter declared VM extent;
+        // the actual iOS page mapping must still cover 16 KiB.
+        Bytes linked(32768);
+        u32(linked, 0, 0xfeedfacf);
+        u32(linked, 4, 0x0100000c);
+        u32(linked, 12, 6);
+        u32(linked, 16, 2);
+        u32(linked, 20, 144);
+        u32(linked, 32, 0x19); u32(linked, 36, 72);
+        constexpr char text_name[] = "__TEXT";
+        for (std::size_t i = 0; i < sizeof(text_name) - 1; ++i)
+            linked[40+i] = std::byte(text_name[i]);
+        u64(linked, 32+24, 0x100000000ULL);
+        u64(linked, 32+32, 16384);
+        u64(linked, 32+40, 0);
+        u64(linked, 32+48, 16384);
+        u32(linked, 32+56, 5);
+        u32(linked, 32+60, 5);
+        u32(linked, 104, 0x19); u32(linked, 108, 72);
+        constexpr char linkedit_name[] = "__LINKEDIT";
+        for (std::size_t i = 0; i < sizeof(linkedit_name) - 1; ++i)
+            linked[112+i] = std::byte(linkedit_name[i]);
+        u64(linked, 104+24, 0x100004000ULL);
+        u64(linked, 104+32, 4096);
+        u64(linked, 104+40, 16384);
+        u64(linked, 104+48, 64);
+        u32(linked, 104+56, 1);
+        u32(linked, 104+60, 1);
+        linked[16384] = std::byte{0x7f};
+        GuestMemory strict(0x10000, 0x20000);
+        const auto staged = anyios::loader::stage_linked_image(
+            linked, strict, 0x10000, {},
+            anyios::loader::LinkedImageOptions{true, nullptr});
+        check(staged.segment_count == 2, "read-only LINKEDIT mapping omitted");
+        check(strict.allowed(0x14000, 16384, Access::read) &&
+              strict.read(0x14000, 1) == 0x7f &&
+              strict.read(0x17fff, 1) == 0 &&
+              !strict.fetch(0x14000),
+              "LINKEDIT not rounded to one protected 16 KiB guest page");
+        auto malformed = linked;
+        u32(malformed, 104+60, 3);
+        GuestMemory refused(0x10000, 0x20000);
+        try {
+            (void)anyios::loader::stage_linked_image(
+                malformed, refused, 0x10000, {},
+                anyios::loader::LinkedImageOptions{true, nullptr});
+            throw std::runtime_error("writable 4 KiB LINKEDIT accepted");
+        } catch (const anyios::macho::FormatError&) {
+            check(!refused.allowed(0x14000, 4, Access::read),
+                  "rejected LINKEDIT leaked guest mapping");
+        }
+    }
+    {
         GuestMemory narrow(0x10000, 0x20000);
         throws(original, narrow, 0x2f000, imports, "linked guest mapping failed");
         check(!narrow.fetch(0x2f000), "failed load leaked partial mappings");
