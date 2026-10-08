@@ -4,13 +4,13 @@ Research into a clean-room compatibility layer for legally accessible, unprotect
 
 **Current status:** AnyiOS can inspect ARM64 Mach-O metadata and execute a project-owned compiled ARM64 Mach-O function on Windows x86-64 through Dynarmic. A restricted synthetic executable loader, experimental Darwin syscall bridge, and limited dyld dependency planner exist. **It cannot currently launch a complete iOS `.app`.**
 
-## Implementation progress
+## Status
 
-[![AnyiOS tracked guest API progress](docs/progress.svg)](docs/progress.json)
+[![Guest APIs](docs/badge-apis.svg)](docs/progress.json) [![Partial runtime](docs/badge-runtime.svg)](docs/progress.json)
 
-**3 of 9 tracked guest ABI symbols implemented (33%); 1 partial; 5 not implemented.** This measures only the explicitly inventoried functions in [the API manifest](tools/api_manifest.json), **not** all iOS APIs, frameworks, or app compatibility. The denominator grows as additional APIs are tracked.
+[![API implementation map](docs/progress.svg)](docs/progress.json)
 
-The card is generated from the manifest, not hand-maintained. Update with `python3 tools/progress.py` and verify with `python3 tools/progress.py --check`. For real-app blockers, see [_docs/APP_COMPATIBILITY.md](_docs/APP_COMPATIBILITY.md).
+<sub>*Like AnyPS5, these percentages are based only on functions known to this project so far. AnyiOS currently tracks **9 guest ABI symbols**: **3 implemented**, **1 partial**, **5 missing**. This is not 33% of all iOS APIs, nor evidence that UIKit apps are playable. The total grows as additional APIs are inventoried. See [API manifest](tools/api_manifest.json) and [compatibility evidence](_docs/APP_COMPATIBILITY.md).*</sub>
 
 ## Build and test
 
