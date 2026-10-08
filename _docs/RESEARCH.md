@@ -46,3 +46,14 @@ An owned iOS ARM64 MH_OBJECT generated with Clang was successfully parsed and co
 - Unicorn Engine's GPLv2 license makes copying into MIT AnyiOS unsuitable without relicensing review. https://github.com/unicorn-engine/unicorn
 - GNUstep libobjc2 and the Windows MSVC toolchain provide Objective-C service research targets, but their guest ABI is not automatically compatible with Apple-compiled ARM64 code. https://github.com/gnustep/libobjc2 and https://github.com/gnustep/tools-windows-msvc
 - Apple objc4 source uses APSL-2.0; review license before incorporating any code. https://github.com/apple-oss-distributions/objc4
+
+## Real iOS linked-image fixtures — 2026-10-08
+
+Apple's ld64 manual describes MH_EXECUTE, MH_DYLIB, dyld install names and explicitly limits static executables to kernel scenarios. Actual iOS user apps depend on dyld and system frameworks. References:
+- https://github.com/apple-oss-distributions/ld64/blob/main/doc/man/man1/ld-classic.1
+- https://developer.apple.com/forums/tags/linker
+- https://llvm.org/docs/CommandGuide/llvm-objdump.html
+
+Original minimal C sources now provide a dylib and an executable depending on it, compiled and linked with the iPhoneOS Xcode toolchain on a macOS GitHub runner. tests/linked_ios_fixture.py inspects the resulting ARM64 MH_EXECUTE/MH_DYLIB, install name and @rpath metadata. Fixture binaries are built only in CI; no Apple SDK binaries or proprietary runtime blobs are committed.
+
+This verifies actual linker-produced metadata only, not Windows execution. A linked app requires import binding, dynamic linker support and libSystem/API compatibility that AnyiOS has not implemented.

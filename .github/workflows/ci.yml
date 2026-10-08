@@ -41,6 +41,9 @@ jobs:
         run: cmake --build build --config Debug --parallel 2
       - name: Test
         run: ctest --test-dir build --build-config Debug --output-on-failure
+      - name: Compiler-linked iOS executable and dylib fixtures
+        if: runner.os == 'macOS'
+        run: python3 tests/linked_ios_fixture.py build/anyios-inspect
       - name: Compiler-generated ARM64 fixture
         if: runner.os == 'Linux' && matrix.preset == 'clang'
         run: python3 tests/real_fixture.py build/anyios-inspect

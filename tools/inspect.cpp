@@ -59,6 +59,7 @@ int main(int argc, char** argv) {
         if (result.has_export_trie) std::cout << "Exported symbols: " << result.exported_symbols.size() << "\n";
         for (const auto& symbol : result.chained_imports) std::cout << "Import: " << symbol << "\n";
         for (const auto& symbol : result.exported_symbols) std::cout << "Export: " << symbol << "\n";
+        if (!result.install_name.empty()) std::cout << "Install name: " << result.install_name << "\n";
         for (const auto& library : result.libraries) std::cout << "Dylib: " << library << "\n";
         for (const auto& rpath : result.rpaths) std::cout << "Rpath: " << rpath << "\n";
         return result.is_encrypted ? 3 : 0;
