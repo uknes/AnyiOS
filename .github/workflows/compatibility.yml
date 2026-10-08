@@ -136,7 +136,7 @@ jobs:
           $exit = $LASTEXITCODE
           $trace | Out-File compat-output/external/windows-entry-dynarmic.txt
           $trace | ForEach-Object { Write-Output $_ }
-          if ($exit -ne 0 -or -not ($trace -match "FIRST_RUNTIME_BLOCKER=")) {
+          if ($exit -ne 0 -or -not ($trace -match "FIRST_RUNTIME_BLOCKER=") -or -not ($trace -match "SUPPORTED_NARROW_IMPORT=_objc_autoreleasePoolPush")) {
             throw "Pinned upstream app failed to reach a recognized missing import in bounded guest execution; exit=$exit"
           }
       - name: Publish first runtime barrier evidence
