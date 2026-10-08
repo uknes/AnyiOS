@@ -44,3 +44,17 @@ jobs:
       - name: Compiler-generated ARM64 fixture
         if: runner.os == 'Linux' && matrix.preset == 'clang'
         run: python3 tests/real_fixture.py build/anyios-inspect
+
+  fuzz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++ -DANYIOS_BUILD_FUZZER=ON -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Debug
+      - name: Build
+        run: cmake --build build --target anyios-fuzz --parallel 2
+      - name: Seed corpus
+        run: python3 tests/fuzz_corpus.py build/fuzz-corpus
+      - name: Fuzz with ASan and UBSan
+        run: ./build/anyios-fuzz build/fuzz-corpus -runs=15000 -max_len=4096 -timeout=3 -print_final_stats=1
