@@ -39,6 +39,43 @@ int main() {
         check(read_string(memory, *memory.read(boot.apple, 8)) ==
               "executable_path=/AnyiOS/hello", "apple0");
         check(memory.write(boot.sp - 16, 42, 8), "guest stack has descending headroom");
+        {
+            anyios::cpu::GuestMemory code(0x10000, 0x30000);
+            const auto r = anyios::cpu::bits(anyios::cpu::Access::read);
+            const auto rx = r | anyios::cpu::bits(anyios::cpu::Access::execute);
+            check(code.map_ios(0x10000, 0x4000, rx), "constructor text map");
+            check(code.map_ios(0x14000, 0x4000, r), "constructor data map");
+            std::array<std::byte, 4> offset{std::byte{0x00}, std::byte{0x01},
+                                            std::byte{0}, std::byte{0}};
+            check(code.load(0x10080, offset), "modern initializer offset");
+            std::array<std::byte, 4> ret{std::byte{0xc0}, std::byte{0x03},
+                                         std::byte{0x5f}, std::byte{0xd6}};
+            check(code.load(0x10100, ret), "constructor function code");
+            anyios::macho::Image modern;
+            modern.segments.push_back({"__TEXT", 0x100000000ULL,
+                                       0x4000, 0, 0x4000, 0, 5, 5});
+            modern.sections.push_back({"__init_offsets", "__TEXT",
+                                       0x100000080ULL, 4, 0x80, 0, false});
+            const auto offsets = anyios::loader::find_owned_module_initializers(
+                modern, code, 0x10000);
+            check(offsets.size() == 1 && offsets[0] == 0x10100,
+                  "modern __init_offsets constructor target");
+            modern.sections.clear();
+            modern.sections.push_back({"__mod_init_func", "__DATA",
+                                       0x100004080ULL, 8, 0x4080, 0, false});
+            check(code.write(0x14080, 0x10100, 8) == false,
+                  "read-only constructor page should refuse guest writes");
+            std::array<std::byte, 8> old_ptr{
+                std::byte{0x00}, std::byte{0x01}, std::byte{0x01}, std::byte{0},
+                std::byte{0}, std::byte{0}, std::byte{0}, std::byte{0}
+            };
+            check(code.load(0x14080, old_ptr), "legacy initializer pointer");
+            const auto pointers = anyios::loader::find_owned_module_initializers(
+                modern, code, 0x10000);
+            check(pointers.size() == 1 && pointers[0] == 0x10100,
+                  "legacy __mod_init_func constructor target");
+        }
+
         try {
             (void)anyios::loader::prepare_owned_process_stack(
                 memory, 0x34000, 4096, argv, envp, apple);

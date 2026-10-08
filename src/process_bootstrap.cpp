@@ -99,23 +99,33 @@ std::vector<std::uint64_t> find_owned_module_initializers(
     }
     std::vector<std::uint64_t> functions;
     for (const auto& section : image.sections) {
-        if (section.name != "__mod_init_func") continue;
-        if (section.segment_name != "__DATA" &&
-            section.segment_name != "__DATA_CONST") {
-            throw macho::FormatError("initializer section outside supported data segment");
+        const bool pointer_array = section.name == "__mod_init_func";
+        const bool text_offsets = section.name == "__init_offsets";
+        if (!pointer_array && !text_offsets) continue;
+        if ((pointer_array &&
+             section.segment_name != "__DATA" &&
+             section.segment_name != "__DATA_CONST") ||
+            (text_offsets && section.segment_name != "__TEXT")) {
+            throw macho::FormatError("initializer section in unsupported segment");
         }
-        if (section.size > 64 * 8 || section.size % 8 != 0 ||
+        const auto width = pointer_array ? std::uint64_t{8} : std::uint64_t{4};
+        if (section.size == 0 || section.size > 64 * width ||
+            section.size % width != 0 ||
             section.address < text->vm_address) {
             throw macho::FormatError("invalid owned initializer section");
         }
         const auto offset = section.address - text->vm_address;
         const auto address = checked_add(guest_image_base, offset);
-        for (std::uint64_t i = 0; i < section.size; i += 8) {
-            const auto ptr = memory.read(checked_add(address, i), 8);
-            if (!ptr || !memory.fetch(*ptr)) {
+        for (std::uint64_t i = 0; i < section.size; i += width) {
+            const auto raw = memory.read(checked_add(address, i),
+                                         static_cast<unsigned>(width));
+            if (!raw) throw macho::FormatError("initializer descriptor is unreadable");
+            const auto target = text_offsets
+                ? checked_add(guest_image_base, *raw) : *raw;
+            if (!memory.fetch(target)) {
                 throw macho::FormatError("initializer target unmapped or not executable");
             }
-            functions.push_back(*ptr);
+            functions.push_back(target);
         }
     }
     return functions;

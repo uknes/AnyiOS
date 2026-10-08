@@ -96,8 +96,9 @@ def main():
         for symbol in ("_malloc", "_write", "_exit"):
             if f"Import: {symbol}" not in hello_info:
                 raise AssertionError(f"hello process unresolved import {symbol}")
-        if "Section: __DATA/__mod_init_func" not in hello_info and \
-           "Section: __DATA_CONST/__mod_init_func" not in hello_info:
+        if ("Section: __DATA/__mod_init_func" not in hello_info and
+            "Section: __DATA_CONST/__mod_init_func" not in hello_info and
+            "Section: __TEXT/__init_offsets" not in hello_info):
             raise AssertionError("hello process is missing expected initializer section:\\n" + hello_info)
         if "Entry file offset:" not in hello_info:
             raise AssertionError("hello process has no LC_MAIN entry")
