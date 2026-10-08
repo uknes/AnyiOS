@@ -95,7 +95,7 @@ void GuestTls::register_module(const macho::Image& image,
             section.segment_name.rfind("__DATA", 0) != 0 ||
             section.address < text->vm_address || section.size == 0 ||
             section.size > 24 * 64 || section.size % 24 != 0 ||
-            regions.empty()) {
+            module.initial.empty()) {
             throw macho::FormatError("unsupported __thread_vars metadata");
         }
         const auto begin = checked_add(guest_base, section.address - text->vm_address);
