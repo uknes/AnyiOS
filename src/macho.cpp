@@ -151,6 +151,7 @@ Image inspect_thin(std::span<const std::byte> bytes) {
                 image.sections.push_back(std::move(section));
             }
             segment.init_protection = reader.u32(cursor + 60, "segment initial protection");
+            segment.max_protection = reader.u32(cursor + 56, "segment maximum protection");
             image.segments.push_back(std::move(segment));
         } else if (command == lc_symtab) {
             if (size < 24) throw FormatError("truncated LC_SYMTAB");

@@ -56,6 +56,21 @@ LoadedExecutable load_static_executable(std::span<const std::byte> file,
         if (version.platform != 2) throw macho::FormatError("only iOS ARM64 executable images supported");
     }
     verify_commands(file, image.command_count);
+    const auto command_bytes = word(file, 20);
+    const auto commands_end = std::uint64_t(32) + command_bytes;
+
+    for (std::size_t i = 0; i < image.segments.size(); ++i) {
+        const auto& segment = image.segments[i];
+        if (segment.file_size == 0) continue;
+        for (std::size_t j = 0; j < i; ++j) {
+            const auto& earlier = image.segments[j];
+            if (earlier.file_size != 0 &&
+                segment.file_offset < earlier.file_offset + earlier.file_size &&
+                earlier.file_offset < segment.file_offset + segment.file_size) {
+                throw macho::FormatError("executable file segments overlap");
+            }
+        }
+    }
 
     auto draft = memory;
     const macho::Segment* text = nullptr;
@@ -71,8 +86,14 @@ LoadedExecutable load_static_executable(std::span<const std::byte> file,
         }
         const auto permissions = segment.init_protection;
         if (permissions == 0 || (permissions & ~7u) ||
+            (segment.max_protection & ~7u) ||
+            (permissions & ~segment.max_protection) ||
             ((permissions & 2u) && (permissions & 4u))) {
             throw macho::FormatError("unsupported segment permissions");
+        }
+        if (segment.name == "__TEXT" &&
+            (segment.file_offset != 0 || segment.file_size < commands_end)) {
+            throw macho::FormatError("__TEXT does not contain Mach-O header and load commands");
         }
         if (!draft.map(segment.vm_address, static_cast<std::size_t>(segment.vm_size), permissions)) {
             throw macho::FormatError("guest executable segment mapping failed");

@@ -100,6 +100,60 @@ void test() {
     rejects(b, "tools exceed command size");
     b = valid(); w32(b, 16, 2);
     rejects(b, "load command count does not consume declared region");
+    b = valid(); w32(b, 32 + 56, 1);
+    rejects(b, "unsupported segment permissions");
+    b = valid(); b.resize(8192); w64(b, 32 + 40, 0x100);
+    rejects(b, "__TEXT does not contain Mach-O header");
+    b = valid(); w64(b, 32 + 48, 128);
+    rejects(b, "__TEXT does not contain Mach-O header");
+
+    b = valid();
+    b.resize(8192);
+    w32(b, 16, 4);
+    w32(b, 20, 192);
+    w32(b, 152, 0x19);
+    w32(b, 156, 72);
+    constexpr char data_name[] = "__DATA";
+    for (std::size_t i = 0; i < sizeof(data_name) - 1; ++i) {
+        b[160 + i] = std::byte(data_name[i]);
+    }
+    w64(b, 152 + 24, 0x11000);
+    w64(b, 152 + 32, 4096);
+    w64(b, 152 + 40, 4096);
+    w64(b, 152 + 48, 16);
+    w32(b, 152 + 56, 3);
+    w32(b, 152 + 60, 3);
+    w64(b, 4096, 0x1122334455667788ULL);
+    {
+        GuestMemory segments(0x10000, 0x3000);
+        const auto loaded_image = anyios::loader::load_static_executable(b, segments);
+        check(loaded_image.entry_address == 0x10100 && loaded_image.mapped_segments == 2, "two mapped segments");
+        check(segments.read(0x11000, 8) == 0x1122334455667788ULL, "data segment initialized");
+        check(segments.read(0x11020, 8) == 0, "BSS is zero-filled");
+        check(!segments.fetch(0x11000), "writable segment is not executable");
+        check(!segments.write(0x10100, 0, 4), "text segment is not writable");
+    }
+    {
+        auto malformed = b;
+        w64(malformed, 152 + 40, 2048);
+        rejects(malformed, "executable file segments overlap");
+    }
+    {
+        auto malformed = b;
+        w64(malformed, 152 + 24, 0x10000);
+        rejects(malformed, "guest executable segment mapping failed");
+    }
+    {
+        auto malformed = b;
+        w32(malformed, 152 + 56, 1);
+        rejects(malformed, "unsupported segment permissions");
+    }
+    {
+        auto malformed = b;
+        w32(malformed, 152 + 60, 5);
+        rejects(malformed, "unsupported segment permissions");
+    }
+
 }
 }
 int main() {
