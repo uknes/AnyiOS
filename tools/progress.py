@@ -298,6 +298,30 @@ def make_html(state):
     ])
 
 
+def make_markdown(state):
+    lines = [
+        '# AnyiOS implementation map',
+        '',
+        'The percentages below count only explicitly inventoried candidate API exports and compatibility gates. They are **not percentages of all iOS functionality or playable apps**. Partial work does not count as complete.',
+        '',
+        '| Metric | Verified | Partial | Pending or unverified | Tracked | Coverage |',
+        '| --- | ---: | ---: | ---: | ---: | ---: |',
+    ]
+    for title, key in (('iOS API exports', 'libraries'), ('Compatibility gates', 'runtime')):
+        item = state[key]
+        lines.append(f'| {title} | {item["done"]} | {item["partial"]} | {item["pending"]} | {item["total"]} | {item["percent"]}% |')
+    for heading, key in (('Candidate API exports', 'libraries'), ('Runtime/framework/Windows gates', 'runtime')):
+        lines += ['', f'## {heading}', '']
+        for group in sorted(state[key]['groups'], key=lambda g: g['name'].casefold()):
+            lines.append(f'<details><summary><b>{escape(group["name"])}</b> — {len(group["done_names"])} verified, {len(group["partial_names"])} partial, {len(group["todo_names"])} pending / {group["total"]} total</summary>')
+            lines.append('')
+            for status, icon, entries in (('Verified', '✅', group['done_names']), ('Partial', '🟨', group['partial_names']), ('Pending / unverified', '⬜', group['todo_names'])):
+                for name in entries:
+                    lines.append(f'- {icon} `{name}` — {status}')
+            lines += ['', '</details>', '']
+    lines += ['', 'Generated from [API exports](../tools/api_inventory.json), [API evidence](../tools/api_manifest.json), [runtime gates](../tools/compat_capabilities.json), and [counting rules](../_docs/PROGRESS.md).', '']
+    return '\n'.join(lines)
+
 def generate(root):
     state = collect(root)
     output = {
@@ -306,6 +330,7 @@ def generate(root):
         "badge-apis.svg": make_badge("iOS APIs*", state["libraries"]),
         "badge-runtime.svg": make_badge("runtime*", state["runtime"]),
         "progress.html": make_html(state),
+        "progress.md": make_markdown(state),
     }
     return state, output
 
