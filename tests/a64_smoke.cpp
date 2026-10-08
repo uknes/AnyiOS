@@ -248,6 +248,86 @@ void verify_sdkfree_libsystem(const std::vector<std::byte>& file, bool complete_
     throw std::runtime_error("owned libSystem fixture exhausted event budget");
 }
 
+void verify_owned_memory_string(const std::vector<std::byte>& file) {
+    constexpr std::uint64_t stub_base = 0x80000;
+    constexpr std::uint64_t sentinel = 0x400000;
+    struct Stub {
+        const char* name;
+        std::uint32_t service;
+        std::uint64_t address;
+    };
+    constexpr std::array<Stub, 4> stubs{{
+        {"_memcpy", 0x2001, stub_base},
+        {"_memset", 0x2002, stub_base + 16},
+        {"_strlen", 0x2003, stub_base + 32},
+        {"_strcmp", 0x2004, stub_base + 48}
+    }};
+    const auto image = anyios::macho::inspect(file);
+    if (image.file_type != 2 || image.chained_imports.size() != stubs.size())
+        throw std::runtime_error("unexpected memory/string fixture import count");
+    std::vector<std::uint64_t> imported;
+    for (const auto& name : image.chained_imports) {
+        const auto stub = std::find_if(stubs.begin(), stubs.end(),
+            [&](const Stub& item) { return name == item.name; });
+        if (stub == stubs.end()) throw std::runtime_error("unapproved memory/string import");
+        imported.push_back(stub->address);
+    }
+    GuestMemory memory(0x10000, 4 * 1024 * 1024);
+    const auto loaded = anyios::loader::stage_linked_image(
+        file, memory, 0x10000, imported,
+        anyios::loader::LinkedImageOptions{true, nullptr});
+    const auto rx = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::execute);
+    const auto rw = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::write);
+    if (!memory.map_ios(stub_base, 0x4000, rx) ||
+        !memory.map_ios(0x300000, 0x10000, rw))
+        throw std::runtime_error("memory/string guest stub/stack mapping failed");
+    for (const auto& stub : stubs) {
+        // movz x16,service; svc #0x80; ret.
+        const std::array<std::uint32_t, 3> opcodes{
+            0xd2800010u | (stub.service << 5), 0xd4001001u, 0xd65f03c0u
+        };
+        std::array<std::byte, 12> bytes{};
+        for (std::size_t i = 0; i < opcodes.size(); ++i)
+            for (unsigned b = 0; b < 4; ++b)
+                bytes[i * 4 + b] = std::byte((opcodes[i] >> (8 * b)) & 255);
+        if (!memory.load(stub.address, bytes))
+            throw std::runtime_error("memory/string thunk bytes could not be staged");
+    }
+    anyios::darwin::LibSystemShim shim(memory, 0x200000, 0x10000);
+    auto backend = anyios::cpu::make_dynarmic_backend(memory);
+    anyios::cpu::CpuState state{};
+    state.pc = loaded.guest_entry;
+    state.sp = 0x310000;
+    state.x[30] = sentinel;
+    backend->set_state(state);
+    for (unsigned i = 0; i < 64; ++i) {
+        const auto event = backend->run_until_event(100000, sentinel);
+        state = backend->state();
+        if (event.kind == anyios::cpu::CpuEventKind::returned) {
+            if (static_cast<std::uint32_t>(state.x[0]) != 27)
+                throw std::runtime_error("Clang guest C ABI memory/string fixture returned error " +
+                                         std::to_string(state.x[0]));
+            std::cout << "Owned Clang iOS memory/string libSystem calls: return 27\n";
+            return;
+        }
+        if (event.kind != anyios::cpu::CpuEventKind::svc ||
+            event.svc_immediate != 0x80)
+            throw std::runtime_error("memory/string fixture reached unsupported CPU event: " +
+                                     event.diagnostic);
+        const auto stub = std::find_if(stubs.begin(), stubs.end(),
+            [&](const Stub& item) {
+                return state.pc == item.address + 8 && state.x[16] == item.service;
+            });
+        if (stub == stubs.end())
+            throw std::runtime_error("unregistered memory/string guest SVC origin");
+        const auto call = shim.invoke(stub->name, {state.x[0], state.x[1], state.x[2]});
+        if (call.exited) throw std::runtime_error("unexpected memory/string process exit");
+        state.x[0] = call.value;
+        backend->set_state(state);
+    }
+    throw std::runtime_error("memory/string guest call event budget exhausted");
+}
+
 void verify_unsupported_tls_registers() {
     const auto rx = anyios::cpu::bits(Access::read) |
                     anyios::cpu::bits(Access::execute);
@@ -517,6 +597,10 @@ int main(int argc, char** argv) {
         std::vector<std::byte> code;
         verify_unsupported_tls_registers();
         verify_guest_thread_tpidrro();
+        if (argc == 3 && std::string(argv[1]) == "--memory-strings") {
+            verify_owned_memory_string(read_owned_binary(argv[2]));
+            return 0;
+        }
         if (argc == 3 && std::string(argv[1]) == "--tlv") {
             verify_clang_tlv_process(read_owned_binary(argv[2]));
             return 0;
