@@ -360,11 +360,32 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
         auto* args = CommandLineToArgvW(GetCommandLineW(), &argc);
         if (!args) throw std::runtime_error("cannot parse Windows command line");
         const bool testing = argc == 4 && std::wstring_view(args[1]) == L"--self-test";
-        if (!testing && argc != 2) {
+        if (!testing && argc != 1 && argc != 2) {
             LocalFree(args);
             throw std::runtime_error("usage: anyios-win-2048 [--self-test] AnyiOS2048Guest [preview.bmp]");
         }
-        const std::wstring image = testing ? args[2] : args[1];
+        std::wstring image;
+        if (testing) {
+            image = args[2];
+        } else if (argc == 2) {
+            image = args[1];
+        } else {
+            std::array<wchar_t, 32768> executable{};
+            const auto length = GetModuleFileNameW(nullptr, executable.data(),
+                                                    static_cast<DWORD>(executable.size()));
+            if (length == 0 || length >= executable.size()) {
+                LocalFree(args);
+                throw std::runtime_error("cannot locate AnyiOS executable directory");
+            }
+            image.assign(executable.data(), length);
+            const auto slash = image.find_last_of(L"\\/");
+            if (slash == std::wstring::npos) {
+                LocalFree(args);
+                throw std::runtime_error("cannot locate bundled ARM64 iOS guest");
+            }
+            image.resize(slash + 1);
+            image += L"AnyiOS2048Guest";
+        }
         const std::wstring screenshot = testing ? args[3] : L"";
         LocalFree(args);
         App app(utf8(image.c_str()));
