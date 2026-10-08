@@ -139,6 +139,9 @@ void test_linkedit() {
     result = anyios::macho::inspect(linkedit(0x80000033, trie));
     require(result.has_export_trie && result.exported_symbols.size() == 1 &&
             result.exported_symbols[0] == "a", "export trie");
+    require(result.exports.size() == 1 && result.exports[0].name == "a" &&
+            result.exports[0].address == 42 && result.exports[0].flags == 0,
+            "export trie address metadata");
     trie[4] = std::byte{0};
     rejects(linkedit(0x80000033, trie), "cycle");
     trie[4] = std::byte{22};

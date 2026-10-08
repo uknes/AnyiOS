@@ -60,6 +60,12 @@ struct Dependency {
     bool upward = false;
 };
 
+struct Export {
+    std::string name;
+    std::uint64_t address = 0;
+    std::uint64_t flags = 0;
+};
+
 struct Image {
     std::uint32_t cpu_subtype = 0;
     std::uint32_t file_type = 0;
@@ -74,6 +80,7 @@ struct Image {
     std::vector<std::string> rpaths;
     std::vector<std::string> chained_imports;
     std::vector<std::string> exported_symbols;
+    std::vector<Export> exports;
     bool has_chained_fixups = false;
     std::optional<LinkeditRange> chained_fixups_range;
     bool has_export_trie = false;

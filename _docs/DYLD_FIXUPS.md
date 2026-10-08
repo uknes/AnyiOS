@@ -21,6 +21,12 @@ Research refreshed: 2026-10-08. Code is experimental and not a complete dynamic 
 - Failure cases: pointer format, multi-start page, missing library/symbol, invalid ordinal, reserved bits, truncated header, chain crossing a page, symbol visibility, duplicated symbols and overflowing locations.
 - Cross-platform CTest targets: `macho-chained-fixups` and `macho-chained-imports`; sanitizer fuzz test continues to exercise the Mach-O metadata parser.
 
+## Export trie symbol addresses
+
+For a loaded dylib with a stripped/static symbol table, the parser now preserves regular dyld export-trie terminal address offsets and flags. The narrow import resolver uses these offsets relative to the dylib's __TEXT base plus the supplied guest slide, and treats absolute exports separately. Reexports, resolver stubs and thread-local export kinds are explicitly unsupported and produce diagnostics. The legacy exported symbol-name list remains available.
+
+Test coverage includes trie value 42, regular offset resolution, absolute addresses, unsupported special kinds and malformed terminal bounds. This is **not** a complete export-trie/dyld resolver.
+
 ## Explicit gaps
 
 - No Apple `arm64e` pointer authentication, pointer formats 1/7/9/12, authenticated binds, multi-start pages, import addend formats 2/3, or reexport lookup.

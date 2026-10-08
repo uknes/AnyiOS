@@ -72,6 +72,19 @@ void run() {
     reject(payload, importer, lib, "unresolved chained exported symbol");
     lib.symbols = {{"_anyios_widget", 0x1000, 0x01, 0}};
     reject(payload, importer, lib, "unresolved chained exported symbol");
+    lib.symbols.clear();
+    lib.exports = {{"_anyios_widget", 0x300, 0}};
+    lib.segments = {{"__TEXT", 0x1000, 4096, 0, 4096, 0}};
+    check(anyios::dyld::resolve_chained_import_targets(payload, importer, libraries)[0] ==
+          0x11300, "dyld export trie offset resolution");
+    lib.exports[0].flags = 2;
+    check(anyios::dyld::resolve_chained_import_targets(payload, importer, libraries)[0] ==
+          0x300, "absolute trie export incorrectly slid");
+    lib.exports[0].flags = 8;
+    reject(payload, importer, lib, "unsupported reexport");
+    lib.exports[0].flags = 1;
+    reject(payload, importer, lib, "unsupported reexport");
+    lib.exports.clear();
     lib.symbols = {{"_anyios_widget", 0x1000, 0x0f, 1}};
     word(payload, 28, 0);
     reject(payload, importer, lib, "unsupported chained import library ordinal");

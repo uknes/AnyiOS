@@ -1,5 +1,6 @@
 #include <anyios/import_resolver.hpp>
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
@@ -100,6 +101,31 @@ std::vector<std::uint64_t> resolve_chained_import_targets(
             matched = true;
             const bool absolute = (symbol.type & 0x0e) == 0x02;
             target = absolute ? symbol.value : slide(symbol.value, library.slide);
+        }
+        if (!matched) {
+            for (const auto& entry : library.image->exports) {
+                if (entry.name != importer.chained_imports[index]) continue;
+                if (matched) throw macho::FormatError("ambiguous chained exported symbol");
+                if ((entry.flags & 0x18) != 0 || (entry.flags & 3) == 1) {
+                    throw macho::FormatError("unsupported reexport, resolver or TLS symbol");
+                }
+                if ((entry.flags & 3) > 2) {
+                    throw macho::FormatError("unsupported export symbol kind");
+                }
+                const bool absolute = (entry.flags & 3) == 2;
+                if (absolute) {
+                    target = entry.address;
+                } else {
+                    const auto text = std::find_if(library.image->segments.begin(),
+                        library.image->segments.end(),
+                        [](const macho::Segment& seg) { return seg.name == "__TEXT"; });
+                    if (text == library.image->segments.end()) {
+                        throw macho::FormatError("export trie target missing __TEXT base");
+                    }
+                    target = slide(slide(text->vm_address, entry.address), library.slide);
+                }
+                matched = true;
+            }
         }
         if (!matched || target == 0) {
             if (weak) {

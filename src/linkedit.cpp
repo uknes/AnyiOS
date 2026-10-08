@@ -123,7 +123,7 @@ std::vector<std::string> parse_chained_imports(std::span<const std::byte> bytes,
     return names;
 }
 
-std::vector<std::string> parse_exports(std::span<const std::byte> bytes,
+std::vector<Export> parse_exports(std::span<const std::byte> bytes,
                                        std::uint32_t offset, std::uint32_t size) {
     View image(bytes);
     image.require(offset, size, "export trie payload");
@@ -132,7 +132,7 @@ std::vector<std::string> parse_exports(std::span<const std::byte> bytes,
     struct Pending { std::size_t offset; std::string prefix; };
     std::vector<Pending> pending{{0, ""}};
     std::unordered_set<std::size_t> visited;
-    std::vector<std::string> exports;
+    std::vector<Export> exports;
     while (!pending.empty()) {
         auto node = std::move(pending.back());
         pending.pop_back();
@@ -144,12 +144,24 @@ std::vector<std::string> parse_exports(std::span<const std::byte> bytes,
         if (terminal_size) {
             const auto [flags, next] = uleb(data, cursor);
             if (next > terminal_end) throw FormatError("export flags outside terminal");
+            std::uint64_t address = 0;
             if ((flags & 0x08) == 0) {
                 const auto [value, end] = uleb(data, next);
-                static_cast<void>(value);
                 if (end > terminal_end) throw FormatError("export address outside terminal");
+                address = value;
+                if ((flags & 0x10) != 0) {
+                    const auto [resolver, resolver_end] = uleb(data, end);
+                    static_cast<void>(resolver);
+                    if (resolver_end > terminal_end) {
+                        throw FormatError("export resolver outside terminal");
+                    }
+                }
+            } else {
+                const auto [ordinal, end] = uleb(data, next);
+                static_cast<void>(ordinal);
+                if (end >= terminal_end) throw FormatError("export reexport name missing");
             }
-            exports.push_back(node.prefix);
+            exports.push_back({node.prefix, address, flags});
         }
         cursor = terminal_end;
         const auto child_count = data.u8(cursor++, "export trie child count");

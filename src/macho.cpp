@@ -238,7 +238,8 @@ Image inspect_thin(std::span<const std::byte> bytes) {
     }
     if (exports) {
         image.has_export_trie = true;
-        image.exported_symbols = parse_exports(bytes, exports->file_offset, exports->file_size);
+        image.exports = parse_exports(bytes, exports->file_offset, exports->file_size);
+        for (const auto& entry : image.exports) image.exported_symbols.push_back(entry.name);
     }
     return image;
 }
