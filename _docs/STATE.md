@@ -1,37 +1,37 @@
-# AnyiOS engineering state
+# AnyiOS engineering state — evidence-based
 
-Updated: 2026-10-08. Source commits and successful GitHub Actions jobs are authoritative.
+Updated 2026-10-08. Source history and green GitHub Actions job results are authoritative.
 
-## Current target hosts
+## Verified milestones
 
-- Windows x86-64: Dynarmic ARM64-to-x64 JIT executes original owned Mach-O MH_OBJECT functions and bounded Darwin SVC fixtures. See successful runs in the project's CI history.
-- Windows ARM64: optional native executable-page fixture runs project-owned, Clang-compiled ARM64 Mach-O MH_OBJECT function without instruction translation. Verified in https://github.com/uknes/AnyiOS/actions/runs/37748791787.
-- Linux ARM64: same native fixture, with mmap/mprotect/cache synchronization and own iOS-target Mach-O function. Verified in https://github.com/uknes/AnyiOS/actions/runs/37748791787.
-- Linux/macOS/Windows base: portable Mach-O parser, dependency planner, restricted linker/memory modules and regression suite.
+- **Genuine iPhoneOS linked MH_EXECUTE → MH_DYLIB call** executed and returned 42 on **both Windows x86-64 (Dynarmic)** and **Windows ARM64 (trusted native CI fixture)**: https://github.com/uknes/AnyiOS/actions/runs/37751343388.
+- Independent Apple iPhoneOS toolchain compiles the owned fixture pair; its exact bytes are transferred to both Windows architectures for Mach-O parsing, dylib import binding, staged fixes and CPU execution. CI: https://github.com/uknes/AnyiOS/actions/runs/37751343388.
+- Guest Darwin SVC #0x80 write fixture and rejected unknown calls on Windows x64 via Dynarmic: https://github.com/uknes/AnyiOS/actions/runs/37751343388.
+- **Dynarmic moved out of tests** into `src/dynarmic_backend.cpp`; `src/native_backend.cpp` shares the typed CPU register/event contract. The native path is still restricted to an owned two-instruction fixture. CI: https://github.com/uknes/AnyiOS/actions/runs/37752367548.
+- 16 KiB iOS guest-page API with private 4 KiB backing granules and alignment tests: https://github.com/uknes/AnyiOS/actions/runs/37752529646.
+- Restricted chained pointer formats 2/6 and import format 1, symbol/export trie lookup, fixup staging and imported-call guest memory tests: https://github.com/uknes/AnyiOS/actions/runs/37751343388.
 
-## Implemented analysis and staging
+## Implemented and still in CI review
 
-- Thin and universal ARM64 Mach-O inspection, segments, sections, dyld dependencies, symbols and export trie metadata.
-- Limited generic-64 chained fixup planning and exact two-level import resolution from explicitly supplied dylib metadata.
-- Bounded guest memory permissions, a restricted synthetic MH_EXECUTE loader and a staged linked-image mapper with rollback tests.
-- Genuine iPhoneOS MH_EXECUTE and MH_DYLIB are linked on macOS CI, shipped as owned workflow artifacts and inspected on Windows; ordinary linked binaries require libSystem.
-- Native ARM64 execution has an exact two-instruction whitelist: it is a safe ABI/CPU proof, NOT arbitrary iOS Mach-O loading.
+- A page-level `GuestMemory::MappingJournal` replaces `auto draft = memory` and supports whole-library-pair rollback. Tests exist in `tests/guest_memory_tests.cpp` and linked-image loader suites.
+- Signed chained import **format 2 (32-bit addend)** and **format 3 (64-bit addend)** with bounds checks, overflow/underflow cases and fail-closed parser integration.
+- Bounded `CpuBackend::run_until_event` and explicit native ARM64 SVC-refusal checks.
+- Live result of latest source commits must be checked before marking these enhancements complete: https://github.com/uknes/AnyiOS/actions.
+- Open-source license survey for 23 candidates, with license-path links, commit SHAs and verdicts: [_docs/OSS_SURVEY.md](OSS_SURVEY.md).
 
-## Not implemented
+## Critical missing features
 
-- Real multi-module executable execution of the linked iPhoneOS fixture (including libSystem import binding and actual dyld initializers).
-- Process isolation, thread semantics, guest stack/exception context, full Darwin syscall ABI/Mach IPC, ObjC/Swift, Foundation/UIKit, graphics/audio/input.
-- arm64e authenticated pointers, broader chained pointer variants, Apple dyld shared cache, retail/protected app support.
-- An ordinary iOS .app GUI or commercial iOS application on any non-Apple host.
+- Fully general dyld dependency and dynamic module initialization; legacy fixups, ARM64e PAC, shared cache, weak/reexport behavior.
+- Safe execution of arbitrary native guest code: process sandbox, Darwin SVC interception, exception/guard-page handling and ABI thunks.
+- Apple-compatible libSystem, Mach IPC, threading, Objective-C/Swift runtime, Foundation/CoreFoundation/UIKit, graphics/audio/input and a proper `.app` lifecycle.
+- Modern Metal/AIR graphics translation, application entitlement compatibility and protected IPA handling.
 
-## Next engineering goals
+## Next engineering actions
 
-1. Make the staged linked-image mapper accept realistic independently linked iOS library layouts and validate actual fixup metadata.
-2. Implement a unified guest CPU runtime interface with distinct Dynarmic/x64 and native ARM64 execution backends; keep guest OS calls isolated.
-3. Demonstrate a real cross-dylib call from the project-owned linked iOS executable on Windows x64 and Windows ARM64.
-4. Expand explicit libSystem/Darwin contracts with reproducible error behavior.
-5. Start ObjC and app window research only after multi-module linking passes.
+1. Confirm green CI for journal, signed import formats and run-until-event; update roadmap only when jobs pass.
+2. Add ABI contract fixtures (Apple↔Windows ARM64 varargs, narrow argument extension, x18 preservation, native SVC fail-closed) and process isolation.
+3. Stage two-module tests that call an owned libSystem-compatible symbol; no dummy successful stubs.
+4. Prototype cross-platform iOS ARM64 linking using LLVM ld64.lld and an original stub-only `libSystem.tbd`, with actual CI evidence.
+5. Only then work on Objective-C runtime and a first actual owned app lifecycle.
 
-References: [Windows x64 design](WINDOWS_X64.md), [ARM64 host design](ARM64_HOSTS.md), [dyld subset](DYLD_FIXUPS.md), [research](RESEARCH.md).
-
-No statement about iOS app usability is justified by these CPU smoke tests.
+Research / decision docs: [OSS survey](OSS_SURVEY.md), [ABI risks](ABI_BRIDGE.md), [architecture decisions](DECISIONS.md), [linked execution proofs](EXECUTION_PROOFS.md).

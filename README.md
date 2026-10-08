@@ -51,6 +51,10 @@ The experimental dyld modules can plan generic 64-bit chained rebases/binds and 
 
 Native ARM64 proof-of-execution is tested on **Windows ARM64** and **Linux ARM64**, alongside Dynarmic translation on Windows x86-64. The native test executes only a project-owned, two-instruction ARM64 function from a compiler-built iOS Mach-O object. It is not arbitrary application execution. See [_docs/ARM64_HOSTS.md](_docs/ARM64_HOSTS.md).
 
+## Clean-room dependency and ABI research
+
+See [_docs/OSS_SURVEY.md](_docs/OSS_SURVEY.md) for the verified-license survey (23 projects) and ranked integration experiments; see [_docs/ABI_BRIDGE.md](_docs/ABI_BRIDGE.md) for ARM64 ABI, SVC, sandboxing and thunk prerequisites.
+
 ## Project documentation
 
 - [_docs/STATE.md](_docs/STATE.md) — verified state and next milestone
