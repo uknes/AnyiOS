@@ -53,6 +53,18 @@ int main(int argc, char** argv) {
             backend->set_state(initial);
             check(backend->step().kind == anyios::cpu::CpuEventKind::fault,
                   "unmapped guest fetch accepted");
+            constexpr std::array<std::byte, 4> darwin_svc{
+                std::byte{0x01}, std::byte{0x10}, std::byte{0x00}, std::byte{0xd4}
+            };
+            check(memory.map(0x12000, 4096, rx), "SVC sentinel mapping");
+            check(memory.load(0x12000, darwin_svc), "SVC sentinel load");
+            initial.pc = 0x12000;
+            backend->set_state(initial);
+            const auto trap = backend->step();
+            check(trap.kind == anyios::cpu::CpuEventKind::unsupported,
+                  "native Darwin SVC reached the host kernel");
+            check(backend->state().pc == 0x12000,
+                  "native SVC failure mutated guest program counter");
         }
         auto invalid = known;
         invalid[4] = std::byte{0};
