@@ -14,10 +14,13 @@ else()
     target_compile_options(anyios_macho PRIVATE -Wall -Wextra -Wpedantic -Wconversion)
 endif()
 
+add_executable(anyios-link-probe tools/link_probe.cpp)
+target_link_libraries(anyios-link-probe PRIVATE anyios_owned_object)
+
 add_executable(anyios-inspect tools/inspect.cpp)
 target_link_libraries(anyios-inspect PRIVATE anyios_macho)
 
-add_library(anyios_owned_object STATIC src/object_code.cpp src/executable.cpp src/dyld_plan.cpp src/linked_image.cpp)
+add_library(anyios_owned_object STATIC src/object_code.cpp src/executable.cpp src/dyld_plan.cpp src/linked_image.cpp src/linked_pair.cpp)
 target_include_directories(anyios_owned_object PUBLIC include)
 target_link_libraries(anyios_owned_object PUBLIC anyios_macho)
 target_compile_features(anyios_owned_object PUBLIC cxx_std_20)

@@ -135,8 +135,8 @@ jobs:
           path: linked-images
       - name: Configure Windows inspector
         run: cmake -S . -B build-linked -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
-      - name: Build Windows inspector
-        run: cmake --build build-linked --config Release --target anyios-inspect --parallel 2
+      - name: Build Windows inspector and linked-image probe
+        run: cmake --build build-linked --config Release --target anyios-inspect anyios-link-probe --parallel 2
       - name: Validate the linked iOS executable and dylib on Windows
         shell: pwsh
         run: |
@@ -150,6 +150,11 @@ jobs:
               throw "Incorrect genuine iPhoneOS dependency metadata on Windows"
           }
           Write-Output "Windows x86-64 successfully inspected the exact original iPhoneOS linked binaries"
+      - name: Stage real chained-fixup iPhoneOS dependency pair on x64
+        shell: pwsh
+        run: |
+          & ./build-linked/Release/anyios-link-probe.exe linked-images/RuntimeApp linked-images/libRuntimeWidget.dylib
+          if ($LASTEXITCODE -ne 0) { throw "Real iPhoneOS dependency staging failed on Windows x64" }
 
   linux-arm64-native:
     runs-on: ubuntu-24.04-arm
@@ -188,3 +193,24 @@ jobs:
         run: |
           & ./build-native/Release/anyios-native-a64-smoke.exe build-native/owned-arm64.o
           if ($LASTEXITCODE -ne 0) { throw 'Native ARM64 Mach-O execution failed' }
+
+  windows-arm64-linked-staging:
+    needs: linked-ios-artifact
+    runs-on: windows-11-vs2026-arm
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download the same original linked iOS binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: anyios-linked-ios-owned
+          path: linked-images
+      - name: Configure ARM64 dependency stage
+        run: cmake -S . -B build-linked -A ARM64 -DBUILD_TESTING=OFF
+      - name: Build ARM64 linked-image probe
+        run: cmake --build build-linked --config Release --target anyios-link-probe --parallel 2
+      - name: Stage original iOS executable/dylib on Windows ARM64
+        shell: pwsh
+        run: |
+          & ./build-linked/Release/anyios-link-probe.exe linked-images/RuntimeApp linked-images/libRuntimeWidget.dylib
+          if ($LASTEXITCODE -ne 0) { throw "Real iPhoneOS dependency staging failed on Windows ARM64" }
