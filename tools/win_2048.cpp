@@ -183,8 +183,8 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
     try {
         switch (message) {
         case WM_SIZE:
-            app->width = std::max(1, LOWORD(lparam));
-            app->height = std::max(1, HIWORD(lparam));
+            app->width = std::max(1, static_cast<int>(LOWORD(lparam)));
+            app->height = std::max(1, static_cast<int>(HIWORD(lparam)));
             return 0;
         case WM_ERASEBKGND:
             return 1;
