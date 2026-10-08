@@ -1,0 +1,148 @@
+name: iOS app compatibility probe
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ios-gap-linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test strict Mach-O and ObjC gap analyzer
+        run: python3 -m unittest discover -s tests -p test_macho_gap.py -v
+      - name: Install SDK-free ARM64 linker tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-19 lld-19 llvm-19
+      - name: Build AnyiOS inspector
+        run: |
+          cmake -S . -B build-compat -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-compat --target anyios-inspect --parallel 2
+      - name: Link owned ARM64 Mach-O fixtures
+        run: python3 tests/sdkfree_link.py --clang clang-19 --linker ld64.lld-19 --inspector build-compat/anyios-inspect --output-dir compat-output/owned
+      - name: Report owned fixtures static API gaps
+        run: |
+          python3 tools/macho_gap.py compat-output/owned/HelloProcess compat-output/owned/TlvProcess compat-output/owned/RuntimeApp --output compat-output/owned-gap.json
+          python3 - <<'PY'
+          import json
+          d = json.load(open("compat-output/owned-gap.json", encoding="utf-8"))
+          assert len(d["reports"]) == 3
+          assert any(i["name"] == "_malloc" for i in d["reports"][0]["imports"])
+          print("Three original SDK-free owned Mach-O fixtures analyzed")
+          PY
+      - name: Compile pinned MIT Bitrise Objective-C app from original sources
+        run: python3 tests/build_bitrise_probe.py --clang clang-19 --linker ld64.lld-19 --nm llvm-nm-19 --output-dir compat-output/external
+      - name: Analyze external iOS app binary or record compiler blocker
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, subprocess, sys
+          p = pathlib.Path("compat-output/external")
+          status = json.loads((p / "bitrise-build-status.json").read_text())
+          if status["status"] == "linked-with-unimplemented-imports":
+              binary = p / "BitriseSimpleObjC"
+              if not binary.is_file(): raise SystemExit("linked state without binary")
+              result = subprocess.run([sys.executable, "tools/macho_gap.py", str(binary),
+                                       "--output", str(p / "bitrise-gap.json")], check=True)
+              gap = json.loads((p / "bitrise-gap.json").read_text())
+              if not gap["reports"][0]["imports"]: raise SystemExit("ObjC app unexpectedly has no imports")
+              print("External app original translation units LINKED; no Apple frameworks or ObjC runtime provided")
+          else:
+              print("External app full build BLOCKED (diagnostic recorded):", status.get("error", "")[-1200:])
+          PY
+      - name: Publish static compatibility evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: anyios-compatibility-probe
+          path: compat-output/
+          if-no-files-found: error
+          retention-days: 7
+
+  ios-gap-windows-x64:
+    needs: ios-gap-linux
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: anyios-compatibility-probe
+          path: compat-output
+      - name: Recheck owned Mach-O reports on Windows x64
+        shell: pwsh
+        run: |
+          python tools/macho_gap.py compat-output/owned/HelloProcess compat-output/owned/TlvProcess compat-output/owned/RuntimeApp --output compat-output/windows-owned-gap.json
+          if ($LASTEXITCODE -ne 0) { throw "Windows ARM64 Mach-O gap report failed" }
+      - name: Build native Windows external app stage probe
+        run: |
+          cmake -S . -B build-compat-win -DBUILD_TESTING=OFF
+          cmake --build build-compat-win --config Release --target anyios-app-stage-probe --parallel 2
+      - name: Stage original Objective-C app Mach-O on Windows x64; no guest execution
+        shell: pwsh
+        run: |
+          $status = Get-Content compat-output/external/bitrise-build-status.json -Raw | ConvertFrom-Json
+          if ($status.status -eq 'linked-with-unimplemented-imports') {
+            $result = & ./build-compat-win/Release/anyios-app-stage-probe.exe compat-output/external/BitriseSimpleObjC 2>&1
+            $exit = $LASTEXITCODE
+            $result | Out-File compat-output/external/windows-stage-probe.txt
+            $result | ForEach-Object { Write-Output $_ }
+            if ($exit -ne 0 -and $exit -ne 3) { throw "Unexpected stage-probe crash/fault: $exit" }
+            Write-Output "STAGE_PROBE_EXIT=$exit; no ObjC guest runtime or UIKit execution claimed"
+          } elseif ($status.status -eq 'blocked') {
+            Write-Output "APP_BUILD_BLOCKED: Windows stage probe cannot load a binary that was not built"
+          } else {
+            throw "Unknown upstream build result"
+          }
+      - name: Publish Windows loader compatibility evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: anyios-windows-compatibility-probe
+          path: compat-output/
+          if-no-files-found: error
+          retention-days: 7
+
+  ios-entry-windows-x64:
+    needs: [ios-gap-linux, ios-gap-windows-x64]
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: anyios-compatibility-probe
+          path: compat-output
+      - name: Install vetted Dynarmic build prerequisites
+        shell: pwsh
+        run: |
+          nuget install boost -Version 1.87.0 -OutputDirectory "$env:RUNNER_TEMP\anyios-deps" -ExcludeVersion -NonInteractive
+          $found = Get-ChildItem -Path "$env:RUNNER_TEMP\anyios-deps\boost" -Filter version.hpp -Recurse | Where-Object { $_.Directory.Name -eq 'boost' } | Select-Object -First 1
+          if (-not $found) { throw 'NuGet Boost package did not contain boost/version.hpp' }
+          $include = Split-Path -Parent $found.Directory.FullName
+          "BOOST_INCLUDEDIR=$include" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Configure bounded Dynarmic guest entry diagnostic
+        run: cmake -S . -B build-compat-jit -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
+      - name: Build external iOS app Dynarmic entry probe
+        run: cmake --build build-compat-jit --config Release --target anyios-app-entry-probe --parallel 2
+      - name: Execute real app entry until first missing iOS runtime import (fail closed)
+        shell: pwsh
+        run: |
+          $status = Get-Content compat-output/external/bitrise-build-status.json -Raw | ConvertFrom-Json
+          if ($status.status -ne 'linked-with-unimplemented-imports') { throw "Cannot execute missing external app binary" }
+          $trace = & ./build-compat-jit/Release/anyios-app-entry-probe.exe compat-output/external/BitriseSimpleObjC 2>&1
+          $exit = $LASTEXITCODE
+          $trace | Out-File compat-output/external/windows-entry-dynarmic.txt
+          $trace | ForEach-Object { Write-Output $_ }
+          if ($exit -ne 0 -or -not ($trace -match "FIRST_RUNTIME_BLOCKER=")) {
+            throw "Pinned upstream app failed to reach a recognized missing import in bounded guest execution; exit=$exit"
+          }
+      - name: Publish first runtime barrier evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: anyios-app-entry-guest-trace
+          path: compat-output/external/windows-entry-dynarmic.txt
+          if-no-files-found: error
+          retention-days: 7

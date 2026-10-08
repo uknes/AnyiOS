@@ -17,6 +17,9 @@ endif()
 add_executable(anyios-link-probe tools/link_probe.cpp)
 target_link_libraries(anyios-link-probe PRIVATE anyios_owned_object)
 
+add_executable(anyios-app-stage-probe tools/app_stage_probe.cpp)
+target_link_libraries(anyios-app-stage-probe PRIVATE anyios_owned_object)
+
 add_executable(anyios-inspect tools/inspect.cpp)
 target_link_libraries(anyios-inspect PRIVATE anyios_macho)
 
@@ -134,6 +137,8 @@ if(ANYIOS_WITH_DYNARMIC)
     add_library(anyios_dynarmic_backend STATIC src/dynarmic_backend.cpp)
     target_include_directories(anyios_dynarmic_backend PUBLIC include)
     target_link_libraries(anyios_dynarmic_backend PUBLIC anyios_guest_memory dynarmic)
+    add_executable(anyios-app-entry-probe tools/app_entry_probe.cpp)
+    target_link_libraries(anyios-app-entry-probe PRIVATE anyios_dynarmic_backend anyios_owned_object anyios_guest_memory)
     add_executable(anyios-a64-smoke tests/a64_smoke.cpp)
     target_link_libraries(anyios-a64-smoke PRIVATE anyios_guest_memory anyios_owned_object anyios_dynarmic_backend anyios_abi_thunk anyios_libsystem_shim anyios_guest_tls)
     if(BUILD_TESTING)
