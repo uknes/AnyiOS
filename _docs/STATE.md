@@ -1,3 +1,11 @@
+## TLS resource and teardown limits (owned-fixture subset)
+
+- Guest thread exit and TLS destructor/teardown are **unsupported**; `finish_thread` refuses rather than reporting success.
+- TLV allocation is **one 16 KiB page per (guest thread, module) pair**, drawn from a **1 MiB arena**; this is not general dynamic Darwin TLS allocation.
+- The guest thread header is mapped **read/write (RW)**; do not describe it as immutable or read-only.
+- The TLV descriptor's reserved word **must be zero**. Nonzero reserved fields are rejected.
+- These restrictions apply even though owned Clang two-thread TLV execution passed Windows x64 Dynarmic in CI run **37770789789**, step `Execute owned Clang iOS TLV process in two guest threads`. No concurrent host-thread or native Windows ARM64 TLS support is claimed.
+
 # AnyiOS evidence checkpoint
 
 Updated 2026-10-08. Committed source + successful GitHub Actions job evidence is authoritative.
