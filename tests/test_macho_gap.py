@@ -82,6 +82,15 @@ class GapTests(unittest.TestCase):
         data[34:40] = b"_puts\0"
         self.assertEqual(gap.decode_chained_imports(data, 0, len(data)), ["_puts"])
 
+    def test_zero_import_chained_fixups_ending_at_payload_size(self):
+        data = bytearray(28)
+        struct.pack_into("<7I", data, 0, 0, 28, 28, 28, 0, 1, 0)
+        self.assertEqual(gap.decode_chained_imports(data, 0, len(data)), [])
+        bad = bytearray(data)
+        struct.pack_into("<I", bad, 12, 29)
+        with self.assertRaises(gap.InvalidMachO):
+            gap.decode_chained_imports(bad, 0, len(bad))
+
     def test_manifest_scope_not_inferred(self):
         result = gap.analyze(bytes(valid_macho()), {
             "symbols": {"_objc_msgSend": {"status": "not implemented"}}})
