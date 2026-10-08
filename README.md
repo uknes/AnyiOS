@@ -6,11 +6,13 @@ Research into a clean-room compatibility layer for legally accessible, unprotect
 
 ## Status
 
-[![Guest APIs](docs/badge-apis.svg)](docs/progress.json) [![Partial runtime](docs/badge-runtime.svg)](docs/progress.json)
+[![iOS API exports](docs/badge-apis.svg)](docs/progress.html) [![runtime gates](docs/badge-runtime.svg)](docs/progress.html)
 
-[![API implementation map](docs/progress.svg)](docs/progress.json)
+[![progress map](docs/progress.svg)](docs/progress.html)
 
-<sub>*Like AnyPS5, these percentages are based only on functions known to this project so far. AnyiOS currently tracks **9 guest ABI symbols**: **3 implemented**, **1 partial**, **5 missing**. This is not 33% of all iOS APIs, nor evidence that UIKit apps are playable. The total grows as additional APIs are inventoried. See [API manifest](tools/api_manifest.json) and [compatibility evidence](_docs/APP_COMPATIBILITY.md).*</sub>
+<sub>* **iOS APIs:** explicitly inventoried candidate exports in [19 API families](tools/api_inventory.json); **runtime:** implementation gates covering [31 subsystems](tools/compat_capabilities.json). Green = narrowly verified with evidence, amber = partial, gray = pending or unverified. Partial implementations are **not** counted as complete. These totals are **not all Apple APIs, all iOS versions, or a percentage of iOS app compatibility**. They grow as real binaries and frameworks reveal more requirements. Read the [full function-by-function and gate-by-gate status](docs/progress.html) and [counting rules](_docs/PROGRESS.md).*</sub>
+
+**Real app target:** [Sneaky Sasquatch — unchanged-binary intake](compatibility/targets/sneaky-sasquatch.json). This Apple Arcade game has **not** been obtained or launched. The [read-only original IPA inspection tool](tools/unchanged_ipa_probe.py) reports missing/incompatible APIs without modifying game files or bypassing protection. [App compatibility evidence](_docs/APP_COMPATIBILITY.md).
 
 ## Build and test
 
