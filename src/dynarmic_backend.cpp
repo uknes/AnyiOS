@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <stdexcept>
 #include <utility>
 
 namespace anyios::cpu {
@@ -98,9 +99,10 @@ private:
 };
 
 
-Dynarmic::A64::UserConfig create_config(Callbacks* callbacks) {
+Dynarmic::A64::UserConfig create_config(Callbacks* callbacks, const std::uint64_t* guest_tpidrro) {
     Dynarmic::A64::UserConfig config{};
     config.callbacks = callbacks;
+    config.tpidrro_el0 = guest_tpidrro;
     config.enable_cycle_counting = false;
     return config;
 }
@@ -109,7 +111,7 @@ class DynarmicBackend final : public CpuBackend {
 public:
     explicit DynarmicBackend(GuestMemory& memory)
         : guest_memory_(memory), callbacks_(memory),
-          config_(create_config(&callbacks_)), jit_(config_) {}
+          config_(create_config(&callbacks_, &tpidrro_)), jit_(config_) {}
 
     CpuState state() const override {
         CpuState result;
@@ -117,10 +119,22 @@ public:
         result.pc = jit_.GetPC();
         result.sp = jit_.GetSP();
         result.pstate = jit_.GetPstate();
+        result.guest_thread_id = thread_id_;
+        result.tpidrro_el0 = tpidrro_;
+        result.tpidrro_valid = tls_active_;
         return result;
     }
 
     void set_state(const CpuState& value) override {
+        // A guest register must reference readable guest memory, not a host TLS address.
+        if (value.tpidrro_valid &&
+            (value.guest_thread_id == 0 || (value.tpidrro_el0 & 7u) != 0 ||
+             !guest_memory_.allowed(value.tpidrro_el0, 8, Access::read))) {
+            throw std::invalid_argument("invalid emulated Darwin thread TLS base");
+        }
+        thread_id_ = value.tpidrro_valid ? value.guest_thread_id : 0;
+        tls_active_ = value.tpidrro_valid;
+        tpidrro_ = value.tpidrro_valid ? value.tpidrro_el0 : 0;
         for (unsigned i = 0; i < 31; ++i) jit_.SetRegister(i, value.x[i]);
         jit_.SetPC(value.pc);
         jit_.SetSP(value.sp);
@@ -129,10 +143,16 @@ public:
 
     CpuEvent step() override {
         const auto instruction = guest_memory_.fetch(jit_.GetPC());
-        if (instruction && ((*instruction & 0xfff00000u) == 0xd5300000u ||
-                            (*instruction & 0xfff00000u) == 0xd5100000u)) {
-            return {CpuEventKind::unsupported, 0,
-                    "Darwin ARM64 MRS/MSR TLS/system register is not emulated"};
+        if (instruction) {
+            // Only read-only TPIDRRO_EL0 is authorized for an explicitly
+            // selected guest thread. All other sysregs, including MSR, fail closed.
+            const bool tpidrro_read = (*instruction & 0xffffffe0u) == 0xd53bd060u;
+            const bool system_register = (*instruction & 0xfff00000u) == 0xd5300000u ||
+                                         (*instruction & 0xfff00000u) == 0xd5100000u;
+            if (system_register && (!tpidrro_read || !tls_active_)) {
+                return {CpuEventKind::unsupported, 0,
+                        "unconfigured or unsupported Darwin ARM64 system register"};
+            }
         }
         static_cast<void>(jit_.Step());
         if (callbacks_.failed()) {
@@ -146,6 +166,9 @@ public:
 private:
     GuestMemory& guest_memory_;
     Callbacks callbacks_;
+    std::uint64_t tpidrro_ = 0;
+    std::uint64_t thread_id_ = 0;
+    bool tls_active_ = false;
     Dynarmic::A64::UserConfig config_;
     Dynarmic::A64::Jit jit_;
 };
