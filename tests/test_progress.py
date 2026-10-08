@@ -33,7 +33,7 @@ class ProgressTests(unittest.TestCase):
         for path in ("progress.svg", "badge-apis.svg", "badge-runtime.svg"):
             root = ElementTree.fromstring(first[path])
             self.assertTrue(root.tag.endswith("svg"))
-        self.assertIn("Runtime compatibility gates", first["progress.html"])
+        self.assertIn("Runtime, frameworks and Windows compatibility gates", first["progress.html"])
         self.assertIn("Objective-C", first["progress.svg"])
         self.assertEqual(json.loads(first["progress.json"])["schema"], 2)
 
