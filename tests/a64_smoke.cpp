@@ -273,6 +273,75 @@ void verify_unsupported_tls_registers() {
     }
 }
 
+void verify_guest_thread_tpidrro() {
+    const auto rx = anyios::cpu::bits(Access::read) |
+                    anyios::cpu::bits(Access::execute);
+    const auto rw = anyios::cpu::bits(Access::read) |
+                    anyios::cpu::bits(Access::write);
+    GuestMemory memory(0x10000, 0x40000);
+    if (!memory.map_ios(0x10000, 0x4000, rx) ||
+        !memory.map_ios(0x20000, 0x4000, rw) ||
+        !memory.map_ios(0x24000, 0x4000, rw)) {
+        throw std::runtime_error("guest TLS page mapping failed");
+    }
+    // Authored instructions: mrs x0, TPIDRRO_EL0; ldr x0, [x0]; msr TPIDRRO_EL0, x0
+    constexpr std::array<std::uint32_t, 3> instructions{
+        0xd53bd060u, 0xf9400000u, 0xd51bd060u
+    };
+    std::array<std::byte, instructions.size() * 4> code{};
+    for (std::size_t i = 0; i < instructions.size(); ++i) {
+        for (unsigned b = 0; b < 4; ++b) {
+            code[i * 4 + b] = std::byte((instructions[i] >> (8 * b)) & 255);
+        }
+    }
+    if (!memory.load(0x10000, code) ||
+        !memory.write(0x20000, 0x11223344, 8) ||
+        !memory.write(0x24000, 0x55667788, 8)) {
+        throw std::runtime_error("guest TLS setup failed");
+    }
+    auto backend = anyios::cpu::make_dynarmic_backend(memory);
+    anyios::cpu::CpuState one{}, two{};
+    one.pc = two.pc = 0x10000;
+    one.guest_thread_id = 1;
+    two.guest_thread_id = 2;
+    one.tpidrro_el0 = 0x20000;
+    two.tpidrro_el0 = 0x24000;
+    one.tpidrro_valid = two.tpidrro_valid = true;
+    backend->set_state(one);
+    if (backend->step().kind != anyios::cpu::CpuEventKind::stepped) {
+        throw std::runtime_error("first guest thread TPIDRRO MRS failed");
+    }
+    one = backend->state();
+    if (one.x[0] != 0x20000) {
+        throw std::runtime_error("first guest thread TPIDRRO pointer mismatch");
+    }
+    backend->set_state(two);
+    if (backend->step().kind != anyios::cpu::CpuEventKind::stepped ||
+        backend->step().kind != anyios::cpu::CpuEventKind::stepped ||
+        backend->state().x[0] != 0x55667788) {
+        throw std::runtime_error("second guest thread TLS data read failed");
+    }
+    backend->set_state(one);
+    if (backend->step().kind != anyios::cpu::CpuEventKind::stepped ||
+        backend->state().x[0] != 0x11223344) {
+        throw std::runtime_error("first guest thread TLS data was not isolated");
+    }
+    auto invalid = one;
+    invalid.tpidrro_el0 = 0x30000;
+    try {
+        backend->set_state(invalid);
+        throw std::runtime_error("unmapped guest TLS pointer was accepted");
+    } catch (const std::invalid_argument&) { }
+    one = backend->state();
+    one.pc = 0x10008;
+    backend->set_state(one);
+    if (backend->step().kind != anyios::cpu::CpuEventKind::unsupported ||
+        backend->state().pc != 0x10008) {
+        throw std::runtime_error("guest attempted write to TPIDRRO was not refused");
+    }
+    std::cout << "Dynarmic TPIDRRO guest thread switch and native-host pointer isolation passed\\n";
+}
+
 void verify_syscall_object(const std::vector<std::byte>& code) {
     GuestMemory memory(0x10000, 0x30000);
     const auto rx = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::execute);
@@ -382,6 +451,7 @@ int main(int argc, char** argv) {
     try {
         std::vector<std::byte> code;
         verify_unsupported_tls_registers();
+        verify_guest_thread_tpidrro();
         if (argc == 3 && std::string(argv[1]) == "--hello") {
             verify_sdkfree_libsystem(read_owned_binary(argv[2]), true);
             return 0;
