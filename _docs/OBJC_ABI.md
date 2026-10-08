@@ -68,3 +68,35 @@ not run ObjC dealloc, destructors, weak cleanup, or autorelease callbacks.
 This supports the pinned Bitrise AppDelegate *diagnostic* callback with an
 allocated guest object rather than a hardcoded object pointer. It is NOT
 `objc_alloc` compatibility, a UIApplication, an app-owned UIWindow, or a GUI.
+
+## Local compiler class registration checkpoint (PR #11)
+
+`GuestObjcClassRegistry` indexes only owned, validated local Clang ObjC2
+`__objc_classlist` class records by their original guest addresses and
+`class_ro_t` names, rejects duplicate/malformed registrations, checks bounded
+guest C-string lookup, and resolves superclasses only when locally registered
+(or explicitly null). External UIKit/Foundation superclass references must
+remain unresolved rather than converted into a fake local root. This is a
+narrow prerequisite for `_objc_getClass`, not a complete libobjc dispatcher,
+metaclass registry, initializer runner, or true Foundation object.
+
+Both compiler-emitted `__TEXT,__objc_classname` and ordinary `__cstring`
+class name section layouts are accepted by the bounded class reader. Other
+unrecognized metadata forms remain unsupported until tested.
+
+
+## Original Bitrise local-class registry correction
+
+The pinned MIT Bitrise binary can expose compiler class records whose
+`class_ro_t` class-name or instance-size metadata is not supported by this
+narrowly validated parser. A previous strict constructor rejected the entire
+app on the first such record and prevented the already-proven AppDelegate
+ARM64 callback. The registry now **rejects individual unrecognized records**,
+counts them in `unresolved_count()`, and publishes only classes with a readable
+superclass, validated local name, and bounded instance size. Unknown records
+cannot be used for dispatch, allocation, superclass inference or class lookup.
+Duplicate **valid** names remain an error. This is not full class registration.
+
+The Windows x64 pinned original-app test must report both resolved and
+unresolved counts, execute the real AppDelegate callback, and explicitly stop
+at the unimplemented `UIApplicationMain`.

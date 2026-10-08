@@ -301,7 +301,9 @@
         },
         {
           "name": "Class registry, metaclasses and inheritance",
-          "status": "pending"
+          "status": "partial",
+          "evidence": "tests/objc_registry_tests.cpp; https://github.com/uknes/AnyiOS/actions/runs/37850732319",
+          "scope": "Only compiler-emitted local classes and bounded guest name lookup; imported UIKit/Foundation superclasses, metaclasses, runtime registration and initialization remain unsupported."
         },
         {
           "name": "General objc_msgSend instance/class/super dispatch",

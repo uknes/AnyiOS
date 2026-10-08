@@ -769,18 +769,18 @@ Textures, buffers, heaps and resources</title>
 <rect x="686.61" y="112.69" width="71.07" height="78.69" fill="none" stroke="#0d1117" stroke-width="2"/>
 <text x="690.61" y="127.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Metal gra</text>
 </g>
-<g><title>Objective-C runtime — 0 verified, 1 partial, 8 pending (9 tracked)
+<g><title>Objective-C runtime — 0 verified, 2 partial, 7 pending (9 tracked)
+Class registry, metaclasses and inheritance
 Classlist/selector metadata inspection
 Autorelease pool push/pop with actual objects
 Categories, protocols and dynamic method lookup
-Class registry, metaclasses and inheritance
 Exceptions and Objective-C synchronized blocks
 General objc_msgSend instance/class/super dispatch
 KVO, blocks and associated objects
 Runtime-generated class and method interop
 alloc/init/retain/release/weak references</title>
 <rect x="505.80" y="192.18" width="22.33" height="23.88" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
-<rect x="528.13" y="192.18" width="22.33" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="528.13" y="192.18" width="22.33" height="23.88" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="550.47" y="192.18" width="22.33" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="572.80" y="192.18" width="22.33" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="595.14" y="192.18" width="22.33" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>

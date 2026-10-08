@@ -28,7 +28,8 @@ ObjcIdentityProbe::ObjcIdentityProbe(
         if (section.name != "__objc_classlist" &&
             section.name != "__objc_methname" &&
             section.name != "__objc_const" &&
-            section.name != "__cstring") {
+            section.name != "__cstring" &&
+            section.name != "__objc_classname") {
             continue;
         }
         if (!section.size || section.size > 65536) {
@@ -44,7 +45,7 @@ ObjcIdentityProbe::ObjcIdentityProbe(
             method_ranges_.emplace_back(start, start + section.size);
             continue;
         }
-        if (section.name == "__cstring") {
+        if (section.name == "__cstring" || section.name == "__objc_classname") {
             class_name_ranges_.emplace_back(start, start + section.size);
             continue;
         }
@@ -159,6 +160,10 @@ std::optional<GuestObjcMethod> ObjcIdentityProbe::local_instance_method(
         return GuestObjcMethod{*selector, *imp};
     }
     return std::nullopt;
+}
+
+std::vector<std::uint64_t> ObjcIdentityProbe::local_classes() const {
+    return {owned_classes_.begin(), owned_classes_.end()};
 }
 
 bool ObjcIdentityProbe::is_local_class(std::uint64_t receiver) const {

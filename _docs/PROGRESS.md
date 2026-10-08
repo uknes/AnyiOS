@@ -72,3 +72,9 @@ Run `python3 tools/unchanged_ipa_probe.py --target sneaky-sasquatch` to get an e
 A real successful port would require unchanged original game logic, assets and executable, original guest instructions, original game-created pixels and functional input. An AnyiOS demo game or fake window is **not** a port.
 
 Sources: [AnyPS5 code-generation reference](https://github.com/boykopovar/AnyPS5/blob/main/tools/progress.py) ([counting rules](https://github.com/boykopovar/AnyPS5/blob/main/docs/dev/PROGRESS.md)); [Apple's August 2026 Sneaky Sasquatch announcement](https://www.apple.com/newsroom/2026/08/exciting-updates-for-sneaky-sasquatch-come-to-apple-arcade/).
+
+## 2026-10-08 — Objective-C local class metadata registry
+
+Source PR [#11](https://github.com/uknes/AnyiOS/pull/11) introduces a strict lookup table backed by actual ARM64 Clang Objective-C local `__objc_classlist` and `class_ro_t` records, validates class names and local superclass pointers, and rejects unknown imported framework superclass references rather than inventing them. Portable Windows x64 class-registry CTest and native Windows ARM64 class-registry CTest are green on [run 37850732319](https://github.com/uknes/AnyiOS/actions/runs/37850732319); the pinned original MIT Bitrise Mach-O Dynarmic launch-boundary job must also pass before PR merge. This is **partial** progress for the single gate `Class registry, metaclasses and inheritance`; neither metaclasses nor general Objective-C class registration are implemented. `_objc_getClass` is only recognized for registered local names and is not counted as a complete API export.
+
+The library API implemented count remains 3, partial 1 of 269. Runtime verified remains 6 of 239; partial rises from 10 to 11. The README badges count **verified** only, so they do not imply increased full compatibility.
