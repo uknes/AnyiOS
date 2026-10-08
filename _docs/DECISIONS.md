@@ -14,7 +14,7 @@ Accepted 2026-10-08. Only parser exists; future modules cannot claim support fro
 
 ## ADR-004 — Clean-room and lawful input
 
-Accepted 2026-10-08. Public format descriptions and owned fixtures are allowed. Proprietary binaries, firmware, cryptographic keys and DRM circumvention are excluded. AnyPS5 is GPLv2-only: review its patterns but copy none of its source.
+Accepted 2026-10-08. Public format descriptions and owned fixtures are allowed. Proprietary binaries, firmware, cryptographic keys and DRM circumvention are excluded. GPL/LGPL/APSL implementation code must not be read or copied while writing AnyiOS; use separately written format/behavior documentation only.
 
 ## ADR-005 — Git and CI over project claims
 

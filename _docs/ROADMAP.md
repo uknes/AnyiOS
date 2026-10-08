@@ -20,6 +20,15 @@
 - [x] Narrow owned-dylib import and chained fixups staged atomically (run 37751343388)
 - [ ] Darwin x16 syscall ABI, guest stack/thread state and first libSystem subset
 
+## Scoped process and TLS milestones
+
+- [x] Execute owned SDK-free C `_malloc` → `_write` → `_exit` through Dynarmic Windows x64, verified run 37763147842
+- [ ] Execute original linked hello C process under Dynarmic with LC_MAIN, 16-byte-aligned argv/envp/apple stack and a real constructor, exact stdout `hello\\n`, exit 23 (CI under review)
+- [ ] Verify modern `__init_offsets` and legacy `__mod_init_func` initializer CTests on all desktop platforms (CI under review)
+- [ ] Verify Dynarmic and native MRS/MSR refusal tests; TLS remains unimplemented (CI under review)
+- [ ] Implement real Darwin TPIDRRO_EL0, _tlv_get_addr and guest __thread_vars tests
+- [ ] Windows ARM64 ABI hardware x18/callee-saved register test in separate isolated process
+
 ## M3 — iOS runtime / Framework HLE
 
 - [ ] Mach ports and event-loop contracts, thread-local state and dispatch

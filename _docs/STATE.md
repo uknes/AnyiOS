@@ -1,54 +1,36 @@
-# AnyiOS engineering state — evidence-based
+# AnyiOS evidence checkpoint
 
-Updated 2026-10-08. Source history and green GitHub Actions job results are authoritative.
+Updated 2026-10-08. Committed source + successful GitHub Actions job evidence is authoritative.
 
-## Verified focused milestones (CI run 37762837584)
+## Verified
 
-- Apple ARM64 stack-passed scalar varargs are marshaled from guest 8-byte stack slots (not host register varargs); 16-byte SP validation and sign/zero extension are covered by the cross-platform ABI CTest. Other argument classes (pointers, aggregates, unsafe va_list) deliberately fail.
-- Windows ARM64 trusted native fixture reserves a 64 KiB-aligned arena once, commits validated guest regions per iOS 16 KiB page, verifies an unmapped guard gap, scans each executable mapping for any SVC-shaped word (including literal-pool false positives), then applies RX permissions. Native **untrusted execution is forbidden**. Windows ARM64 linked-staging and SVC scan tests passed.
-- The Linux SDK-free LLVM linker emits project-owned iPhoneOS images that can be staged on both Windows x64 and ARM64 through the 16 KiB guest page loader. The only permitted short-VM mapping exception is the **final read-only __LINKEDIT segment**, rounded up to one or more full 16 KiB guest pages. Code/data segments with 4 KiB VM extents are rejected.
-- Original SDK-free C fixture imports `_malloc`, `_write`, `_exit` from a metadata-only libSystem.tbd; the Linux linker verifies those names. Host-side `LibSystemShim` unit tests validate guest heap allocations, captured write, exit signaling and missing-symbol rejection. This is not yet guest CPU execution of the imported functions.
+- **Windows x64 Dynarmic `_malloc` / `_write` / `_exit` guest execution** using the original SDK-free ARM64 C binary and registered SVC thunks. The captured stdout was `OK` and guest exit code was zero. Run **37763147842**, job `windows-a64-translation`: https://github.com/uknes/AnyiOS/actions/runs/37763147842.
+- The independent Apple-linked owned iPhoneOS executable and dylib execute a cross-dylib return-42 call on Windows x64 and ARM64 (the latter in trusted in-process CI only): run 37751343388.
+- Windows x64/ARM64 stage original SDK-free LLVM-linked ARM64 Mach-O; restricted 16 KiB guest pages, final read-only LINKEDIT rounding, transactional guest memory journal: run 37762837584.
+- ABI fixed-scalar/stack-variadic unit tests, guest host-to-guest callbacks, native SVC scan, bounded host libSystem contract: run 37762837584 and 37763147842.
+- Linux/macOS/Windows Mach-O parser regression/fuzzer, negative dyld fixup formats and pointer validations: prior green CI runs listed in ROADMAP.
 
-## Under CI review — do not claim compatible execution
+## Implemented — CI verification pending
 
-- The guest-to-host callback adapter verifies x18/x19–x29 logical guest register preservation, restorative failure behavior and native/translated backend callbacks. Host machine x18 preservation by a genuine native assembly ABI thunk remains unverified.
-- The Windows x64 Dynarmic test of the **original SDK-free linked LibSystemApp calling _malloc→_write→_exit** is committed at https://github.com/uknes/AnyiOS/commit/7e4ccee33fa6de0cd3684f71c345577b0200dbb1 and is **not verified** until its workflow execution step is green.
+- Original LLVM-linked **HelloProcess** C binary checks `argc/argv/envp/apple`, constructor state, calls `malloc`, writes `hello\\n` via `write`, and exits 23.
+- `prepare_owned_process_stack` constructs a 16-byte-aligned bounded guest stack with null-terminated argv/envp/apple vectors and maps it using 16 KiB iOS guest pages.
+- `find_owned_module_initializers` accepts legacy `__mod_init_func` pointer tables and modern linker-generated `__TEXT,__init_offsets` tables; target pointers must be executable and inside mapped guest memory. A focused CTest covers both.
+- Windows x64 Dynarmic `--hello` CI step runs initializer before LC_MAIN, then verifies exact captured output and exit.
+- Darwin guest **TLS still unavailable**; both MRS/MSR instruction classes now reject via Dynarmic CPU step/native backend and native executable mapping scanner, with original negative tests. This must pass CI before being called verified.
+- Latest CI for initializer support: https://github.com/uknes/AnyiOS/actions/runs/37766283476
 
-## Verified milestones
+## Not implemented
 
-- **Genuine iPhoneOS linked MH_EXECUTE → MH_DYLIB call** executed and returned 42 on **both Windows x86-64 (Dynarmic)** and **Windows ARM64 (trusted native CI fixture)**: https://github.com/uknes/AnyiOS/actions/runs/37751343388.
-- Independent Apple iPhoneOS toolchain compiles the owned fixture pair; its exact bytes are transferred to both Windows architectures for Mach-O parsing, dylib import binding, staged fixes and CPU execution. CI: https://github.com/uknes/AnyiOS/actions/runs/37751343388.
-- Guest Darwin SVC #0x80 write fixture and rejected unknown calls on Windows x64 via Dynarmic: https://github.com/uknes/AnyiOS/actions/runs/37751343388.
-- **Dynarmic moved out of tests** into `src/dynarmic_backend.cpp`; `src/native_backend.cpp` shares the typed CPU register/event contract. The native path is still restricted to an owned two-instruction fixture. CI: https://github.com/uknes/AnyiOS/actions/runs/37752367548.
-- 16 KiB iOS guest-page API with private 4 KiB backing granules and alignment tests: https://github.com/uknes/AnyiOS/actions/runs/37752529646.
-- Restricted chained pointer formats 2/6 and import format 1, symbol/export trie lookup, fixup staging and imported-call guest memory tests: https://github.com/uknes/AnyiOS/actions/runs/37751343388.
+- A safe, isolated Windows ARM64 guest process capable of arbitrary Darwin SVC, system register or thread-local operations.
+- General dyld graph, C runtime initialization, TLV/TPIDRRO state, Mach IPC, ObjC/Swift, Foundation/UIKit, app window, graphics, commercial IPAs.
+- Real hardware x18 and callee-saved register preservation across a native Apple↔Windows ABI thunk.
 
-## Recently verified hardening
+## Decision
 
-- A page-level `GuestMemory::MappingJournal` replaces `auto draft = memory` and supports whole-library-pair rollback. Its memory, synthetic loader, staged-image, native and x64 integration tests passed the complete 11-job run: https://github.com/uknes/AnyiOS/actions/runs/37753473659.
-- Signed chained import **format 2 (32-bit addend)** and **format 3 (64-bit addend)**, with bounds checking and signed overflow/underflow negative tests, passed the same complete run.
-- The Windows ARM64 native backend rejected guest Darwin SVC before attempting host execution, verified by successful native ARM64 job: https://github.com/uknes/AnyiOS/actions/runs/37753783845.
+ADR-012 recommends **host-side libSystem shims with explicit ABI contracts first**; guest-side musl (MIT) or FreeBSD libc (file-specific BSD and other terms) is deferred. The actual license files at pinned commits and rationale are recorded in `_docs/DECISIONS.md`. TLS plan: `_docs/TLS_DESIGN.md`.
 
-## Additional verified contracts
+## Next
 
-- Bounded `CpuBackend::run_until_event` and import64 reserved-bit validation passed the full CI matrix: https://github.com/uknes/AnyiOS/actions/runs/37754360212.
-- **Fixed integer-only ABI thunk** converts signed/unsigned 8/16/32/64-bit guest register arguments into explicitly registered host callbacks; tests verify signed extension, x18/context preservation, and fail-closed variadic, pointer, aggregate and missing-host-function cases. The Windows MSVC, Linux GCC/Clang and macOS compiler jobs passed: https://github.com/uknes/AnyiOS/actions/runs/37759173521. This is not an arbitrary libSystem call bridge.
-- **SDK-free iPhoneOS linker fixture** passed the dedicated Ubuntu 24.04 job: LLVM clang-19/ld64.lld-19 generated the original ARM64 MH_EXECUTE/MH_DYLIB using a metadata-only authored libSystem.tbd. The produced images passed the AnyiOS inspector. Same evidence: https://github.com/uknes/AnyiOS/actions/runs/37759173521. Linking proves no runtime API implementations.
-- Open-source license survey for 23 candidates, actual license-file paths, commit SHAs and verdicts: [_docs/OSS_SURVEY.md](OSS_SURVEY.md).
-
-## Critical missing features
-
-- Fully general dyld dependency and dynamic module initialization; legacy fixups, ARM64e PAC, shared cache, weak/reexport behavior.
-- Safe execution of arbitrary native guest code: process sandbox, Darwin SVC interception, exception/guard-page handling and ABI thunks.
-- Apple-compatible libSystem, Mach IPC, threading, Objective-C/Swift runtime, Foundation/CoreFoundation/UIKit, graphics/audio/input and a proper `.app` lifecycle.
-- Modern Metal/AIR graphics translation, application entitlement compatibility and protected IPA handling.
-
-## Next engineering actions
-
-1. Preserve the now-verified journal, signed import formats and bounded run-until-event regression suites across new loader changes.
-2. Extend the verified fixed-scalar ABI marshaler with a separately isolated native ARM64 guest process and a real Apple-compiled caller fixture; variadics and guest pointers remain forbidden.
-3. Stage two-module tests that call an owned libSystem-compatible symbol; no dummy successful stubs.
-4. Compare the verified SDK-free iOS ARM64 LLVM link products to the Apple-linked oracle and then test SDK-free linking on Windows.
-5. Only then work on Objective-C runtime and a first actual owned app lifecycle.
-
-Research / decision docs: [OSS survey](OSS_SURVEY.md), [ABI risks](ABI_BRIDGE.md), [architecture decisions](DECISIONS.md), [linked execution proofs](EXECUTION_PROOFS.md).
+1. Finish green Windows x64 `--hello` process step; fix actual CI errors before checking its ROADMAP milestone.
+2. Verify MRS/MSR negative tests on Dynarmic and Windows/Linux ARM64 native, and add first owned Clang TLV fixture.
+3. Investigate isolated Windows ARM64 native host ABI thunk (x18/stack/callee-saved) only after 1–2.
