@@ -4,6 +4,14 @@ Research into a clean-room compatibility layer for legally accessible, unprotect
 
 **Current status:** AnyiOS can inspect ARM64 Mach-O metadata and execute a project-owned compiled ARM64 Mach-O function on Windows x86-64 through Dynarmic. A restricted synthetic executable loader, experimental Darwin syscall bridge, and limited dyld dependency planner exist. **It cannot currently launch a complete iOS `.app`.**
 
+## Implementation progress
+
+[![AnyiOS tracked guest API progress](docs/progress.svg)](docs/progress.json)
+
+**3 of 9 tracked guest ABI symbols implemented (33%); 1 partial; 5 not implemented.** This measures only the explicitly inventoried functions in [the API manifest](tools/api_manifest.json), **not** all iOS APIs, frameworks, or app compatibility. The denominator grows as additional APIs are tracked.
+
+The card is generated from the manifest, not hand-maintained. Update with `python3 tools/progress.py` and verify with `python3 tools/progress.py --check`. For real-app blockers, see [_docs/APP_COMPATIBILITY.md](_docs/APP_COMPATIBILITY.md).
+
 ## Build and test
 
 Requires CMake 3.20+ and a C++20 compiler (Linux GCC/Clang, Windows MSVC, and macOS Clang are tested).
