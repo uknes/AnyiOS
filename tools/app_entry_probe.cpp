@@ -2,6 +2,7 @@
 #include <anyios/guest_memory.hpp>
 #include <anyios/linked_image.hpp>
 #include <anyios/macho.hpp>
+#include <anyios/objc_identity.hpp>
 #include <anyios/process_bootstrap.hpp>
 
 #include <array>
@@ -87,6 +88,7 @@ int main(int argc, char** argv) {
         const std::array<std::string_view, 1> apple{
             "executable_path=/Applications/BitriseSimpleObjC.app/BitriseSimpleObjC"
         };
+        const anyios::darwin::ObjcIdentityProbe objc(image, memory, loaded.guest_base);
         const auto process = anyios::loader::prepare_owned_process_stack(
             memory, 0x320000, 0x10000, arguments, environment, apple);
         auto cpu = anyios::cpu::make_dynarmic_backend(memory);
@@ -142,6 +144,23 @@ int main(int argc, char** argv) {
                 std::cout << "SUPPORTED_NARROW_IMPORT=_objc_autoreleasePoolPush"
                           << "\nPOOL_SCOPE=empty-only\n";
                 continue;
+            }
+            if (symbol == "_objc_msgSend") {
+                const auto selector = objc.selector_name(state.x[1]);
+                const auto identity = objc.invoke_class_identity(
+                    state.x[0], state.x[1]);
+                if (identity) {
+                    state.x[0] = *identity;
+                    cpu->set_state(state);
+                    std::cout << "SUPPORTED_NARROW_IMPORT=_objc_msgSend"
+                              << "\nMETHOD=+class-local-identity\n";
+                    continue;
+                }
+                std::cout << "FIRST_RUNTIME_BLOCKER=_objc_msgSend"
+                          << "\nUNSUPPORTED_SELECTOR="
+                          << selector.value_or("(unresolved-selector)")
+                          << "\nEXECUTION=stopped-at-unimplemented-import\n";
+                return 0;
             }
             if (symbol == "_objc_autoreleasePoolPop") {
                 if (empty_pools.empty() || empty_pools.back() != state.x[0]) {
