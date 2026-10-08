@@ -68,8 +68,17 @@ jobs:
           if (-not ($trace -match "SUPPORTED_NARROW_IMPORT=_objc_msgSend")) {
             throw "Original external app did not dispatch verified +class identity"
           }
-          if (-not ($trace -match "FIRST_RUNTIME_BLOCKER=")) {
-            throw "Missing next unsupported guest runtime boundary"
+          if (-not ($trace -match "DIAGNOSTIC_BRIDGE=_NSStringFromClass") -or
+              -not ($trace -match "CLASS_NAME=AppDelegate")) {
+            throw "Original app class-to-name bridge not reached"
+          }
+          if (-not ($trace -match "APP_DELEGATE_GUEST_IMP=executed") -or
+              -not ($trace -match "APP_DELEGATE_CALLBACK_RESULT=1")) {
+            throw "Original ARM64 AppDelegate callback was not executed successfully"
+          }
+          if (-not ($trace -match "FIRST_RUNTIME_BLOCKER=_UIApplicationMain") -or
+              -not ($trace -match "WINDOW=not-created")) {
+            throw "Probe must fail closed at UIKit instead of claiming GUI launch"
           }
       - name: Publish real external ARM64 execution trace
         uses: actions/upload-artifact@v4
