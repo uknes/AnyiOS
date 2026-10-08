@@ -24,6 +24,7 @@ def main():
     parser.add_argument("--clang", default="clang-19")
     parser.add_argument("--linker", default="ld64.lld-19")
     parser.add_argument("--inspector", required=True)
+    parser.add_argument("--output-dir", default=None)
     args = parser.parse_args()
 
     repository = pathlib.Path(__file__).resolve().parents[1]
@@ -75,6 +76,12 @@ def main():
         for expected, output in checks:
             if expected not in output:
                 raise AssertionError(f"Missing {expected} from inspector output:\n{output}")
+        if args.output_dir:
+            import shutil
+            output = pathlib.Path(args.output_dir).resolve()
+            output.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(app, output / "RuntimeApp")
+            shutil.copyfile(dylib, output / "libRuntimeWidget.dylib")
         print("SDK-free LLVM linked project-owned iPhoneOS executable and dylib")
         print("Metadata-only libSystem stub does not provide executable OS services")
 

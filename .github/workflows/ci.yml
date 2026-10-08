@@ -246,4 +246,45 @@ jobs:
       - name: Build inspector
         run: cmake --build build-sdkfree --target anyios-inspect --parallel 2
       - name: Link genuine iOS ARM64 Mach-O without Apple SDK
-        run: python3 tests/sdkfree_link.py --clang clang-19 --linker ld64.lld-19 --inspector build-sdkfree/anyios-inspect
+        run: python3 tests/sdkfree_link.py --clang clang-19 --linker ld64.lld-19 --inspector build-sdkfree/anyios-inspect --output-dir build-sdkfree/owned-linked
+      - name: Publish SDK-free LLVM iOS fixture pair
+        uses: actions/upload-artifact@v4
+        with:
+          name: anyios-sdkfree-ios-owned
+          path: build-sdkfree/owned-linked/
+          if-no-files-found: error
+          retention-days: 3
+
+  windows-sdkfree-linked-stage:
+    needs: sdk-free-ios-link
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            arch: x64
+          - runner: windows-11-vs2026-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download original Linux-linked iOS images
+        uses: actions/download-artifact@v4
+        with:
+          name: anyios-sdkfree-ios-owned
+          path: sdkfree-images
+      - name: Configure Windows linked-image probe
+        shell: pwsh
+        run: |
+          $arguments = @("-S",".","-B","build-sdklinked","-DBUILD_TESTING=OFF")
+          if ("${{ matrix.arch }}" -eq "arm64") { $arguments += @("-A","ARM64") }
+          & cmake @arguments
+          if ($LASTEXITCODE -ne 0) { throw "Failed configuring SDK-free linked-image probe" }
+      - name: Build Windows linked-image probe
+        run: cmake --build build-sdklinked --config Release --target anyios-link-probe --parallel 2
+      - name: Stage Linux-produced iPhoneOS dylib dependency on Windows
+        shell: pwsh
+        run: |
+          & ./build-sdklinked/Release/anyios-link-probe.exe sdkfree-images/RuntimeApp sdkfree-images/libRuntimeWidget.dylib
+          if ($LASTEXITCODE -ne 0) { throw "SDK-free LLVM-linked iOS executable/dylib staging failed" }
