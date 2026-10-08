@@ -1,29 +1,29 @@
 # Darwin ARM64 thread-local storage plan
 
-Status: **TLS remains unimplemented**. MRS/MSR refusal negative tests were verified on 2026-10-08 by Windows x64 Dynarmic, Windows/Linux ARM64 native jobs, and portable SVC scan CTests: https://github.com/uknes/AnyiOS/actions/runs/37766283476.
+Status: **Narrow owned-fixture TLV implemented and CI verified on Windows x64 Dynarmic** (run 37770789789, `Execute owned Clang iOS TLV process in two guest threads`: https://github.com/uknes/AnyiOS/actions/runs/37770789789). Two sequentially switched **emulated guest threads** preserve independently initialized guest TLS. **Not supported:** real concurrent guest pthread scheduling, TLS destructors/teardown, general Darwin TLS, native ARM64 TLS. Previous native MRS/MSR refusal evidence: run 37766283476.
 
 ## Architecture: two host backends, one guest TLS model
 
-The guest's TLS state is per emulated **Darwin thread**, never per arbitrary Windows/Linux host thread. It will own: an architecturally visible TPIDRRO_EL0 guest value; a distinct writable TPIDR_EL0 register where appropriate; a bounded per-thread storage area in guest memory, 16 KiB guest page mappings; per-module TLV keys and initialization templates; and a destructor registry executed at guest-thread termination.
+The guest's TLS state is per emulated **Darwin thread**, never per arbitrary Windows/Linux host thread. Implemented so far: validated per-thread TPIDRRO_EL0 values, bounded 16 KiB guest TLS pages, own Mach-O `__thread_vars` descriptor validation, module initialization templates/zero-fill and stable guest pointers. Pending: distinct writable TPIDR_EL0 where appropriate, actual guest-thread scheduler, and destructor execution; thread teardown **throws** rather than silently succeeding.
 
-On **Dynarmic/windows-x64**, its permissively licensed UserConfig exposes TPIDRRO_EL0 as a pointer to a host-owned 64-bit guest register. The current AnyiOS configuration leaves this pointer **null**, and does not initialize a valid Darwin TLS base. Accordingly AnyiOS now explicitly refuses all guest ARM64 MRS/MSR instructions at its CPU step boundary rather than allowing an unset TLS value (e.g., 0) to appear successful. A later implementation will supply stable pointers to each guest thread's TLS registers and switch them with saved CPU context; TPIDRRO_EL0 must never resolve to a host TEB/TLS pointer.
+On **Dynarmic/windows-x64**, the permissively licensed `UserConfig.tpidrro_el0` points to an AnyiOS-owned 64-bit register holding a **validated guest virtual address**. `CpuState` carries `guest_thread_id`, `tpidrro_el0`, and `tpidrro_valid`; switching explicitly saved `CpuState` swaps the emulated guest TLS context. `MRS TPIDRRO_EL0` works only with valid context and readable guest memory; all other MRS/MSR remain unsupported. Guest TPIDRRO_EL0 never resolves to host OS TEB/TLS.
 
-For Darwin Clang's thread-local variable ABI, inspect Mach-O `__thread_vars` descriptor sections, TLV init templates and zero-fill regions, then implement the guest `_tlv_get_addr` call convention. It should accept a **validated guest descriptor pointer**, resolve module+offset+thread identity, lazily create storage from the original template, and return a **guest virtual address**. No raw host pointer crosses the bridge. Expose diagnostics for unknown keys, relocations, reentrancy, allocation overflow, missing thread context, or destructor requirements.
+For owned Darwin Clang `__thread` programs, `GuestTls` checks S_THREAD_LOCAL_REGULAR, S_THREAD_LOCAL_ZEROFILL and S_THREAD_LOCAL_VARIABLES types, validates descriptors and treats the third descriptor word as a **byte offset into its module's TLV template**. The original Clang-generated `__tlv_bootstrap` import enters an AnyiOS-controlled SVC host resolver: guest descriptor in x0, returned **guest virtual address** in x0. The allocator lazily initializes each module's template separately for each **emulated guest thread**. Unknown keys, invalid mapping, missing thread context and budget exhaustion throw; teardown/destructors are refused, not stubbed. No raw host pointer crosses the bridge.
 
 On **native Windows ARM64**, the host owns its platform register x18, and guest TPIDRRO_EL0 values cannot be assumed interchangeable with host OS TLS. The existing native linked-execution fixture is in-process; it has no secure trap/exception boundary. Until native guest code is in an isolated process with a validated fault/sysregister intercept or a restricted verified rewrite strategy, AnyiOS must not execute real guest MRS/MSR or TLV instructions natively.
 
-## Current fail-closed behavior (no TLS functionality)
+## Current fail-closed boundary (narrow Dynarmic TLV only)
 
-- Dynarmic's `CpuBackend::step` examines the actual guest instruction fetched through permission-checked GuestMemory; it returns `CpuEventKind::unsupported` for MRS or MSR before asking Dynarmic to execute it.
+- Dynarmic's `CpuBackend::step` examines the actual guest instruction fetched through permission-checked GuestMemory; it permits only `MRS TPIDRRO_EL0` when configured for a validated emulated thread, and refuses other MRS/MSR with `CpuEventKind::unsupported` before guest execution.
 - The restricted native fixture CPU backend already accepts only an owned MOVZ/RET pair and additionally labels MRS/MSR as unsupported.
 - The trusted Windows ARM64 linked fixture preflight scans all new RX executable image segments and denies any MRS/MSR-shaped 32-bit word, including a *literal-pool false positive*, before host execution. The original SVC scan rules (immutable RX, rescan every new executable mapping, no security guarantees for runtime modification) remain in force.
-- Tests: `native-svc-preflight` rejects both MRS and MSR bytes; `arm64-on-x64` independently injects each opcode and checks unsupported with PC unchanged. No successful TLS accesses or test-stubs are claimed.
+- Tests: `native-svc-preflight` refuses native MRS/MSR. `arm64-on-x64` checks unconfigured MRS/MSR refusal, configured TPIDRRO guest reads, two switched guest contexts, original Clang TLV fixture execution with per-thread values (12, 12, 17), malformed descriptors, and teardown refusal. Run 37770789789.
 
-## Acceptance for initial TLS implementation
+## Follow-up acceptance beyond the verified owned TLV slice
 
-1. Compiler-produced, project-owned iOS ARM64 `_tlv_get_addr` fixture and real Mach-O `__thread_vars` metadata parser with negative fixtures.
-2. Dynarmic per-thread register context (TPIDRRO_EL0) and module descriptor state with thread-switch tests; real guest reads and writes use GuestMemory only.
-3. Guest _tlv_get_addr returns stable per-thread guest addresses; two threads get independent values, initializer templates are copied, and destructors run or explicitly fail.
-4. Native ARM64 work remains blocked by process isolation + explicit MRS/MSR interception; no native TLS "working" claims from matching ISA alone.
+1. Extend ABI coverage and strictly bounded descriptors before treating unknown Clang/TLV layouts as supported.
+2. Demonstrate a real guest-thread scheduler and deterministic interleaving/concurrency (today: **sequential context switching only**).
+3. Add correct TLV teardown/destructors and module unload or preserve explicit fail-closed refusal.
+4. Native ARM64 TLS remains blocked by process isolation and explicit system-register interception; matching ISA alone never proves TLS.
 
 Reference (behavior/documentation only): permissively licensed Dynarmic A64 UserConfig API and published Apple ARM64 ABI/TLV descriptions. No GPL/LGPL/APSL source has been copied.

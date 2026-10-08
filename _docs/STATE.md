@@ -10,24 +10,29 @@ Updated 2026-10-08. Committed source + successful GitHub Actions job evidence is
 - ABI fixed-scalar/stack-variadic unit tests, guest host-to-guest callbacks, native SVC scan, bounded host libSystem contract: run 37762837584 and 37763147842.
 - Linux/macOS/Windows Mach-O parser regression/fuzzer, negative dyld fixup formats and pointer validations: prior green CI runs listed in ROADMAP.
 
-## Newly CI verified (run 37766283476)
+## Newly CI verified (run 37770789789)
+
+- **Windows x64 Dynarmic controlled Darwin TLV fixture:** project-owned Clang `arm64-apple-ios` `TlvProcess` linked without Apple SDK, generated real `__thread_vars`/`__thread_data`/`__thread_bss`, and executed the original `__tlv_bootstrap` import through an AnyiOS host ABI gate. Two **sequentially switched emulated Darwin thread contexts** preserved independent initialized counters (12, 12, 17). Dynarmic reads a validated per-guest-thread `TPIDRRO_EL0` pointer from guest memory; arbitrary MRS/MSR still fail closed. Run **37770789789**, job `windows-a64-translation`, exact step `Execute owned Clang iOS TLV process in two guest threads`: https://github.com/uknes/AnyiOS/actions/runs/37770789789. Portable `guest-darwin-tlv-contract` passed Linux GCC/Clang, Windows MSVC, macOS Clang in the same run.
+- **Narrow scope:** this is original owned-fixture guest TLV support, *not* full Darwin TLS or actual concurrent pthread execution. Guest thread teardown/destructors explicitly throw, and native Windows ARM64 remains MRS/MSR fail-closed. No host pointer is returned to the guest.
+
+## Previously CI verified (run 37766283476)
 
 - **Complete project-owned `HelloProcess` LC_MAIN execution under Dynarmic on Windows x64:** SDK-free arm64-apple-ios C fixture was linked with authored libSystem metadata; one real `__TEXT,__init_offsets` constructor executed before main, followed by argc/argv/envp/apple vector validation, guest `_malloc`, `_write` output `hello\\n`, and `_exit(23)`. The exact `Boot owned iOS hello-world process` step passed. https://github.com/uknes/AnyiOS/actions/runs/37766283476.
 - **Initializer format tests** for modern `__init_offsets` and legacy `__mod_init_func`, strict 16 KiB guest stack, zero-terminated vectors and malformed stack refusal all passed on Linux GCC/Clang, Windows MSVC and macOS Clang.
-- **Current TLS fail-closed policy** is verified, not TLS functionality: the Windows x64 Dynarmic smoke test denies guest MRS/MSR, Windows ARM64/Linux ARM64 native fixture tests reject guest MRS/MSR, and the cross-platform `native-svc-preflight` CTest rejects instruction/data lookalikes. No TPIDRRO_EL0 or _tlv_get_addr implementation exists.
+- **Original TLS fail-closed tests** verified native Windows ARM64/Linux ARM64 MRS/MSR rejection and `native-svc-preflight` detection; with run 37770789789 Dynarmic now permits only configured guest `MRS TPIDRRO_EL0` and rejects other unsupported system registers. Native remains unchanged.
 
-## Implemented — CI verification pending
+## Implemented and previously verified (scope limited to owned fixtures)
 
 - Original LLVM-linked **HelloProcess** C binary checks `argc/argv/envp/apple`, constructor state, calls `malloc`, writes `hello\\n` via `write`, and exits 23.
 - `prepare_owned_process_stack` constructs a 16-byte-aligned bounded guest stack with null-terminated argv/envp/apple vectors and maps it using 16 KiB iOS guest pages.
 - `find_owned_module_initializers` accepts legacy `__mod_init_func` pointer tables and modern linker-generated `__TEXT,__init_offsets` tables; target pointers must be executable and inside mapped guest memory. A focused CTest covers both.
 - The production-style Darwin ABI, threads and process isolation are still absent; this is an **owned deterministic process fixture**, not general IPA launch.
-- Future CI work on multi-module initializer ordering, _tlv_get_addr and ObjC runtime remains pending.
+- Future CI work on multi-module initializer ordering, full native/concurrent thread TLS and ObjC runtime remains pending.
 
 ## Not implemented
 
 - A safe, isolated Windows ARM64 guest process capable of arbitrary Darwin SVC, system register or thread-local operations.
-- General dyld graph, C runtime initialization, TLV/TPIDRRO state, Mach IPC, ObjC/Swift, Foundation/UIKit, app window, graphics, commercial IPAs.
+- General dyld graph, complete C runtime, real concurrent pthreads, guest TLV destructors/thread teardown, native ARM64 TLV, writable TPIDR_EL0 emulation, Mach IPC, ObjC/Swift, Foundation/UIKit, app window, graphics, commercial IPAs.
 - Real hardware x18 and callee-saved register preservation across a native Apple↔Windows ABI thunk.
 
 ## Decision
@@ -36,6 +41,8 @@ ADR-012 recommends **host-side libSystem shims with explicit ABI contracts first
 
 ## Next
 
-1. Preserve green owned Windows x64 LC_MAIN hello-world process execution and expand initializer ordering only with dedicated regression tests.
-2. Verify MRS/MSR negative tests on Dynarmic and Windows/Linux ARM64 native, and add first owned Clang TLV fixture.
-3. Investigate isolated Windows ARM64 native host ABI thunk (x18/stack/callee-saved) only after 1–2.
+1. Expand host-side **libSystem** narrowly using owned ABI fixtures: `memcpy`, `memset`, `strlen`, `strcmp`, `errno`, `abort`, write-backed stdio and single-thread `pthread_once`/mutex; test narrow-int extension and variadic boundaries.
+2. Dedicated multi-module initializer ordering regression with dependency order and malformed fixtures.
+3. Owned Clang Objective-C section metadata parsing tests and Apple ObjC ABI-vs-libobjc2 ADR (no runtime implementation).
+4. ADR performance decision gate on guest-side hot paths versus SVC host shims; revisit ADR-012, **do not implement yet**.
+5. Only afterward, isolated Windows ARM64 x18/callee-saved thunk proof.

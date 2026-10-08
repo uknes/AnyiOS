@@ -25,8 +25,9 @@
 - [x] Execute owned SDK-free C `_malloc` → `_write` → `_exit` through Dynarmic Windows x64, verified run 37763147842
 - [x] Execute owned linked hello C process under Dynarmic with LC_MAIN, argv/envp/apple, constructor, exact stdout `hello\\n` and exit 23 (run 37766283476)
 - [x] Verify modern `__init_offsets` and legacy `__mod_init_func` initializer CTests on Linux GCC/Clang, macOS Clang and Windows MSVC (run 37766283476)
-- [x] Verify Dynarmic and native MRS/MSR refusal tests on Windows x64/ARM64 and Linux ARM64; **TLS itself is not implemented** (run 37766283476)
-- [ ] Implement real Darwin TPIDRRO_EL0, _tlv_get_addr and guest __thread_vars tests
+- [x] Verify initial unconfigured MRS/MSR refusal tests on Dynarmic/native (run 37766283476); native refusal remains enforced (run 37770789789)
+- [x] Run **owned Clang Darwin TLV** with TPIDRRO_EL0 and __thread_vars host resolver across **two sequentially switched emulated guest threads** under Dynarmic; run 37770789789, step `Execute owned Clang iOS TLV process in two guest threads`
+- [ ] Full Darwin TLS: concurrent guest pthread scheduling, destructors/teardown, native ARM64 register isolation, broad ABI validation
 - [ ] Windows ARM64 ABI hardware x18/callee-saved register test in separate isolated process
 
 ## M3 — iOS runtime / Framework HLE
@@ -63,7 +64,7 @@ Commercial games, protected App Store IPAs, arm64e and modern Metal support are 
 - [x] Scan each trusted native executable mapping for SVC opcodes before RX, rejecting literal-pool false positives (CI 37762837584)
 - [x] SECURITY.md restricts in-process native guest execution to trusted owned fixtures
 - [x] SDK-free authored libSystem.tbd with exact _malloc/_write/_exit imports and host-only bounded implementation (link/Ctests in run 37762837584)
-- [ ] Execute all three imported libSystem operations from the original linked guest C program via Dynarmic on Windows x64 (run 37763018410 pending)
+- [x] Execute all three imported libSystem operations from original owned linked guest C program via Dynarmic on Windows x64 (run 37763147842)
 - [ ] Demonstrate real hardware Windows ARM64 x18 preservation across an Apple/Windows ABI thunk in a separate process
 
 ## Memory, dyld and native ABI hardening
