@@ -44,7 +44,7 @@ def main():
             "current-version: 1.0\n"
             "exports:\n"
             "  - targets: [ arm64-ios ]\n"
-            "    symbols: [ '_malloc', '_write', '_exit', '__tlv_bootstrap' ]\n"
+            "    symbols: [ '_malloc', '_write', '_exit', '__tlv_bootstrap', '_memcpy', '_memset', '_strlen', '_strcmp' ]\n"
             "...\n", encoding="utf-8"
         )
         clang_flags = [
@@ -92,6 +92,17 @@ def main():
             "-execute", str(hello_obj), "-e", "_main", "-L", str(work),
             "-lSystem", "-o", str(hello_app)
         ])
+        strings_obj = work / "MemoryStringApp.o"
+        strings_app = work / "MemoryStringApp"
+        run(clang_flags + ["-fno-stack-protector",
+                           str(fixtures / "arm64_memory_string_app.c"),
+                           "-o", str(strings_obj)])
+        run(link + ["-execute", str(strings_obj), "-e", "_main",
+                    "-L", str(work), "-lSystem", "-o", str(strings_app)])
+        strings_info = run([str(inspector), str(strings_app)])
+        for expected in ("_memcpy", "_memset", "_strlen", "_strcmp"):
+            if f"Import: {expected}" not in strings_info:
+                raise AssertionError("Clang owned C ABI fixture lacks " + expected + ":\\n" + strings_info)
         tlv_obj = work / "TlvProcess.o"
         tlv_app = work / "TlvProcess"
         run(clang_flags + ["-O1", str(fixtures / "arm64_tlv_process.c"), "-o", str(tlv_obj)])
@@ -139,6 +150,7 @@ def main():
             shutil.copyfile(libsystem_app, output / "LibSystemApp")
             shutil.copyfile(hello_app, output / "HelloProcess")
             shutil.copyfile(tlv_app, output / "TlvProcess")
+            shutil.copyfile(strings_app, output / "MemoryStringApp")
             shutil.copyfile(dylib, output / "libRuntimeWidget.dylib")
         print("SDK-free LLVM linked project-owned iPhoneOS executable and dylib")
         print("Metadata-only libSystem stub does not provide executable OS services")
