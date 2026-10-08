@@ -48,7 +48,7 @@ jobs:
       - name: Configure guest runtime test
         run: cmake -S . -B build-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
       - name: Build guest runtime and portable ObjC identity contract
-        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests anyios-objc-objects-tests anyios-objc-registry-tests --parallel 2
+        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests anyios-objc-objects-tests anyios-objc-registry-tests anyios-objc-selector-tests --parallel 2
       - name: Validate local guest ObjC class identity contract
         shell: pwsh
         run: |
@@ -64,6 +64,11 @@ jobs:
         run: |
           & ./build-guest/Release/anyios-objc-registry-tests.exe
           if ($LASTEXITCODE -ne 0) { throw "Guest ObjC class registry contract failed" }
+      - name: Validate bounded original guest selector identity
+        shell: pwsh
+        run: |
+          & ./build-guest/Release/anyios-objc-selector-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Guest ObjC compiled selector identity contract failed" }
       - name: Execute pinned third-party iOS app until next genuine blocker
         shell: pwsh
         run: |
@@ -75,8 +80,9 @@ jobs:
           if (-not ($trace -match "SUPPORTED_NARROW_IMPORT=_objc_autoreleasePoolPush")) {
             throw "Original external app did not execute verified empty-pool push"
           }
-          if (-not ($trace -match "SUPPORTED_NARROW_IMPORT=_objc_msgSend")) {
-            throw "Original external app did not dispatch verified +class identity"
+          if (-not ($trace -match "SUPPORTED_NARROW_IMPORT=_objc_msgSend") -or
+              -not ($trace -match "SELECTOR_IDENTITY=validated-guest-methname")) {
+            throw "Original external app did not dispatch with validated guest selector identity"
           }
           if (-not ($trace -match "DIAGNOSTIC_BRIDGE=_NSStringFromClass") -or
               -not ($trace -match "CLASS_NAME=AppDelegate")) {

@@ -6,6 +6,7 @@
 #include <anyios/objc_identity.hpp>
 #include <anyios/objc_objects.hpp>
 #include <anyios/objc_registry.hpp>
+#include <anyios/objc_selectors.hpp>
 #include <anyios/process_bootstrap.hpp>
 
 #include <array>
@@ -93,6 +94,7 @@ int main(int argc, char** argv) {
         };
         const anyios::darwin::ObjcIdentityProbe objc(image, memory, loaded.guest_base);
         const anyios::darwin::GuestObjcClassRegistry registry(objc, memory);
+        anyios::darwin::GuestObjcSelectorRegistry selectors(objc);
         std::cout << "OBJC_LOCAL_CLASSES_REGISTERED=" << registry.size() << "\n"
                   << "OBJC_UNRESOLVED_CLASS_RECORDS=" << registry.unresolved_count() << "\n";
         const auto process = anyios::loader::prepare_owned_process_stack(
@@ -157,13 +159,16 @@ int main(int argc, char** argv) {
             }
             if (symbol == "_objc_msgSend") {
                 const auto selector = objc.selector_name(state.x[1]);
-                const auto identity = objc.invoke_class_identity(
-                    state.x[0], state.x[1]);
+                const auto canonical = selectors.intern_compiled_selector(state.x[1]);
+                const auto identity = canonical
+                    ? objc.invoke_class_identity(state.x[0], *canonical)
+                    : std::nullopt;
                 if (identity) {
                     state.x[0] = *identity;
                     cpu->set_state(state);
                     std::cout << "SUPPORTED_NARROW_IMPORT=_objc_msgSend"
-                              << "\nMETHOD=+class-local-identity\n";
+                              << "\nMETHOD=+class-local-identity\n"
+                              << "SELECTOR_IDENTITY=validated-guest-methname\n";
                     continue;
                 }
                 std::cout << "FIRST_RUNTIME_BLOCKER=_objc_msgSend"
