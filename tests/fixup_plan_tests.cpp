@@ -169,8 +169,8 @@ void run() {
     auto signed64 = anyios::dyld::plan_chained_fixups(
         b, anyios::macho::inspect(b), targets);
     check(signed64[1].value == 0x3fffe, "signed 64-bit import addend incorrect");
-    put64(b, 256 + 72, UINT64_MAX / 2);
-    rejects(b, targets, "chained signed bind addend overflow");
+    put64(b, 256 + 72, INT64_MAX);
+    rejects(b, {UINT64_MAX - 0x10}, "chained signed bind addend overflow");
     put64(b, 256 + 72, 0x8000000000000000ULL);
     rejects(b, targets, "chained signed bind addend underflow");
 
