@@ -52,6 +52,9 @@ int main(int argc, char** argv) {
                       << "+" << segment.file_size << " vm=" << segment.vm_address
                       << "+" << segment.vm_size << " sections=" << segment.sections << "\n";
         }
+        for (const auto& section : result.sections) std::cout << "Section: " << section.segment_name << "/" << section.name << " size=" << section.size << " relocations=" << section.relocation_count << "\n";
+        for (const auto& symbol : result.symbols) std::cout << "Symbol: " << symbol.name << "\n";
+        if (result.indirect_symbol_count) std::cout << "Indirect symbols: " << result.indirect_symbol_count << "\n";
         if (result.has_chained_fixups) std::cout << "Chained imports: " << result.chained_imports.size() << "\n";
         if (result.has_export_trie) std::cout << "Exported symbols: " << result.exported_symbols.size() << "\n";
         for (const auto& symbol : result.chained_imports) std::cout << "Import: " << symbol << "\n";

@@ -29,6 +29,8 @@ def main():
         result = run([args.inspector, str(arm)])
         assert "File type: 1" in result, result
         assert "Platform 2: min 13.0.0" in result, result
+        assert "Symbol: _anyios_answer" in result, result
+        assert "Section: __TEXT/__text" in result, result
         assert "Container: universal" not in result, result
 
         witness = next((shutil.which(candidate) for candidate in

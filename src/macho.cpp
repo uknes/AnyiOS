@@ -24,6 +24,8 @@ constexpr std::uint32_t lc_version_min_iphoneos = 0x25;
 constexpr std::uint32_t lc_encryption_info_64 = 0x2c;
 constexpr std::uint32_t lc_exports_trie = 0x80000033;
 constexpr std::uint32_t lc_chained_fixups = 0x80000034;
+constexpr std::uint32_t lc_symtab = 0x2;
+constexpr std::uint32_t lc_dysymtab = 0xb;
 
 class Reader {
 public:
@@ -100,6 +102,9 @@ Image inspect_thin(std::span<const std::byte> bytes) {
         throw FormatError("load command count exceeds region capacity");
     }
 
+    struct SymbolTable { std::uint32_t symbols_offset, count, strings_offset, strings_size; };
+    std::optional<SymbolTable> symtab;
+    std::optional<std::pair<std::uint32_t, std::uint32_t>> indirect;
     std::optional<LinkeditRange> chained;
     std::optional<LinkeditRange> exports;
     std::size_t cursor = 32;
@@ -130,7 +135,35 @@ Image inspect_thin(std::span<const std::byte> bytes) {
                 segment.vm_address > std::numeric_limits<std::uint64_t>::max() - segment.vm_size) {
                 throw FormatError("invalid segment virtual memory range");
             }
+            for (std::uint32_t j = 0; j < segment.sections; ++j) {
+                const auto at = cursor + 72 + std::size_t(j) * 80;
+                const auto flags = reader.u32(at + 64, "section flags");
+                const auto type = flags & 0xff;
+                const bool zero_fill = type == 1 || type == 0xc || type == 0x12;
+                Section section{reader.fixed_name(at, 16), reader.fixed_name(at + 16, 16),
+                                reader.u64(at + 32, "section address"),
+                                reader.u64(at + 40, "section size"),
+                                reader.u32(at + 48, "section offset"),
+                                reader.u32(at + 60, "section relocation count"), zero_fill};
+                if (!zero_fill) reader.require(section.file_offset, static_cast<std::size_t>(section.size), "section contents");
+                reader.require(reader.u32(at + 56, "section relocation offset"),
+                               std::size_t(section.relocation_count) * 8, "section relocations");
+                image.sections.push_back(std::move(section));
+            }
             image.segments.push_back(std::move(segment));
+        } else if (command == lc_symtab) {
+            if (size < 24) throw FormatError("truncated LC_SYMTAB");
+            if (symtab) throw FormatError("duplicate LC_SYMTAB");
+            symtab = SymbolTable{reader.u32(cursor + 8, "symbols offset"),
+                                 reader.u32(cursor + 12, "symbol count"),
+                                 reader.u32(cursor + 16, "strings offset"),
+                                 reader.u32(cursor + 20, "strings size")};
+        } else if (command == lc_dysymtab) {
+            if (size < 80) throw FormatError("truncated LC_DYSYMTAB");
+            if (indirect) throw FormatError("duplicate LC_DYSYMTAB");
+            indirect = std::pair<std::uint32_t, std::uint32_t>{
+                reader.u32(cursor + 56, "indirect symbol offset"),
+                reader.u32(cursor + 60, "indirect symbol count")};
         } else if (is_library_command(command)) {
             if (size < 24) throw FormatError("truncated dylib command");
             image.libraries.push_back(reader.command_string(cursor, size,
@@ -174,6 +207,16 @@ Image inspect_thin(std::span<const std::byte> bytes) {
         cursor += size;
     }
     if (cursor != commands_end) throw FormatError("load command count does not consume declared region");
+    if (indirect && !symtab) throw FormatError("LC_DYSYMTAB requires LC_SYMTAB");
+    if (indirect) {
+        if (indirect->second > 1000000) throw FormatError("indirect symbol count exceeds safety limit");
+        reader.require(indirect->first, std::size_t(indirect->second) * 4, "indirect symbol table");
+        image.indirect_symbol_count = indirect->second;
+    }
+    if (symtab) {
+        image.symbols = parse_symbols(bytes, symtab->symbols_offset, symtab->count,
+                                      symtab->strings_offset, symtab->strings_size);
+    }
     if (chained) {
         image.has_chained_fixups = true;
         image.chained_imports = parse_chained_imports(bytes, chained->file_offset, chained->file_size);
