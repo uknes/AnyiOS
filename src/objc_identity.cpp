@@ -161,6 +161,10 @@ std::optional<GuestObjcMethod> ObjcIdentityProbe::local_instance_method(
     return std::nullopt;
 }
 
+std::vector<std::uint64_t> ObjcIdentityProbe::local_classes() const {
+    return {owned_classes_.begin(), owned_classes_.end()};
+}
+
 bool ObjcIdentityProbe::is_local_class(std::uint64_t receiver) const {
     return owned_classes_.contains(receiver);
 }

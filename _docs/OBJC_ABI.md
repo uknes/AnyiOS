@@ -68,3 +68,14 @@ not run ObjC dealloc, destructors, weak cleanup, or autorelease callbacks.
 This supports the pinned Bitrise AppDelegate *diagnostic* callback with an
 allocated guest object rather than a hardcoded object pointer. It is NOT
 `objc_alloc` compatibility, a UIApplication, an app-owned UIWindow, or a GUI.
+
+## Local compiler class registration checkpoint (PR #11)
+
+`GuestObjcClassRegistry` indexes only owned, validated local Clang ObjC2
+`__objc_classlist` class records by their original guest addresses and
+`class_ro_t` names, rejects duplicate/malformed registrations, checks bounded
+guest C-string lookup, and resolves superclasses only when locally registered
+(or explicitly null). External UIKit/Foundation superclass references must
+remain unresolved rather than converted into a fake local root. This is a
+narrow prerequisite for `_objc_getClass`, not a complete libobjc dispatcher,
+metaclass registry, initializer runner, or true Foundation object.

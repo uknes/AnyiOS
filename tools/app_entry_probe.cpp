@@ -5,6 +5,7 @@
 #include <anyios/macho.hpp>
 #include <anyios/objc_identity.hpp>
 #include <anyios/objc_objects.hpp>
+#include <anyios/objc_registry.hpp>
 #include <anyios/process_bootstrap.hpp>
 
 #include <array>
@@ -91,6 +92,8 @@ int main(int argc, char** argv) {
             "executable_path=/Applications/BitriseSimpleObjC.app/BitriseSimpleObjC"
         };
         const anyios::darwin::ObjcIdentityProbe objc(image, memory, loaded.guest_base);
+        const anyios::darwin::GuestObjcClassRegistry registry(objc, memory);
+        std::cout << "OBJC_LOCAL_CLASSES_REGISTERED=" << registry.size() << "\n";
         const auto process = anyios::loader::prepare_owned_process_stack(
             memory, 0x320000, 0x10000, arguments, environment, apple);
         auto cpu = anyios::cpu::make_dynarmic_backend(memory);
@@ -168,9 +171,23 @@ int main(int argc, char** argv) {
                           << "\nEXECUTION=stopped-at-unimplemented-import\n";
                 return 0;
             }
+            if (symbol == "_objc_getClass") {
+                const auto cls = registry.find_guest_name(state.x[0]);
+                if (!cls) {
+                    std::cout << "FIRST_RUNTIME_BLOCKER=_objc_getClass"
+                              << "\nREASON=class-not-registered-locally"
+                              << "\nEXECUTION=stopped-at-unimplemented-import\n";
+                    return 0;
+                }
+                state.x[0] = *cls;
+                cpu->set_state(state);
+                std::cout << "SUPPORTED_NARROW_IMPORT=_objc_getClass"
+                          << "\nCLASS_SCOPE=local-compiler-metadata-only\n";
+                continue;
+            }
             if (symbol == "_NSStringFromClass") {
                 const auto name = objc.local_class_name(state.x[0]);
-                if (!name || name->size() > 127) {
+                if (!name || registry.find(*name) != state.x[0] || name->size() > 127) {
                     std::cout << "FIRST_RUNTIME_BLOCKER=_NSStringFromClass"
                               << "\nREASON=unresolvable-class-metadata"
                               << "\nEXECUTION=stopped-at-unimplemented-import\n";

@@ -27,6 +27,7 @@ public:
 
     std::optional<std::string> selector_name(std::uint64_t selector) const;
     bool is_local_class(std::uint64_t receiver) const;
+    std::vector<std::uint64_t> local_classes() const;
     std::optional<std::string> local_class_name(std::uint64_t receiver) const;
     // Bounded, validated class_ro_t instance size for locally compiled classes.
     std::optional<std::uint32_t> local_instance_size(std::uint64_t receiver) const;
