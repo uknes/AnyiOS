@@ -53,6 +53,7 @@ int main() {
         initialized.segment_name = "__DATA";
         initialized.address = 0x11000;
         initialized.size = 4;
+        initialized.flags = 0x11;
         image.sections.push_back(initialized);
         macho::Section bss{};
         bss.name = "__thread_bss";
@@ -60,12 +61,14 @@ int main() {
         bss.address = 0x11004;
         bss.size = 4;
         bss.zero_fill = true;
+        bss.flags = 0x12;
         image.sections.push_back(bss);
         macho::Section descriptors{};
         descriptors.name = "__thread_vars";
         descriptors.segment_name = "__DATA";
         descriptors.address = 0x11100;
         descriptors.size = 48;
+        descriptors.flags = 0x13;
         image.sections.push_back(descriptors);
 
         darwin::GuestTls tls(memory, 0x40000, 0x20000);
@@ -93,6 +96,12 @@ int main() {
         refuses([&] {
             darwin::GuestTls test(memory, 0x60000, 0x4000);
             test.register_module(invalid, 0x10000);
+        });
+        auto wrong_type = image;
+        wrong_type.sections.back().flags = 0x11;
+        refuses([&] {
+            darwin::GuestTls test(memory, 0x60000, 0x4000);
+            test.register_module(wrong_type, 0x10000);
         });
         std::cout << "Guest-only TLV descriptor, template, per-thread isolation and refusal tests passed\\n";
         return 0;

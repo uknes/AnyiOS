@@ -59,7 +59,12 @@ void GuestTls::register_module(const macho::Image& image,
     for (const auto& section : image.sections) {
         if (section.name != "__thread_data" && section.name != "__thread_bss")
             continue;
-        if (section.address < text->vm_address || section.size == 0 ||
+        const auto kind = section.flags & 0xffu;
+        if ((section.name == "__thread_data" &&
+             (kind != 0x11u || section.zero_fill)) ||
+            (section.name == "__thread_bss" &&
+             (kind != 0x12u || !section.zero_fill)) ||
+            section.address < text->vm_address || section.size == 0 ||
             section.size > page || module.initial.size() > page - section.size ||
             section.segment_name.rfind("__DATA", 0) != 0) {
             throw macho::FormatError("unsupported TLV initialization section");
@@ -74,7 +79,8 @@ void GuestTls::register_module(const macho::Image& image,
     }
     for (const auto& section : image.sections) {
         if (section.name != "__thread_vars") continue;
-        if (section.segment_name.rfind("__DATA", 0) != 0 ||
+        if ((section.flags & 0xffu) != 0x13u ||
+            section.segment_name.rfind("__DATA", 0) != 0 ||
             section.address < text->vm_address || section.size == 0 ||
             section.size > 24 * 64 || section.size % 24 != 0 ||
             regions.empty()) {

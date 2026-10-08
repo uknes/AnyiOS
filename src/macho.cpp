@@ -145,7 +145,7 @@ Image inspect_thin(std::span<const std::byte> bytes) {
                                 reader.u64(at + 32, "section address"),
                                 reader.u64(at + 40, "section size"),
                                 reader.u32(at + 48, "section offset"),
-                                reader.u32(at + 60, "section relocation count"), zero_fill};
+                                reader.u32(at + 60, "section relocation count"), zero_fill, flags};
                 if (!zero_fill) reader.require(section.file_offset, static_cast<std::size_t>(section.size), "section contents");
                 reader.require(reader.u32(at + 56, "section relocation offset"),
                                std::size_t(section.relocation_count) * 8, "section relocations");
