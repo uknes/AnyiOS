@@ -1,46 +1,37 @@
-# Project state — Windows x86-64 target
+# AnyiOS engineering state
 
-Updated: 2026-10-08. Source and CI are authoritative. An accepted binary is not necessarily a runnable iOS application.
+Updated: 2026-10-08. Source commits and successful GitHub Actions jobs are authoritative.
 
-## Fully verified before this update
+## Current target hosts
 
-- Portable ARM64 Mach-O inspector, universal slices, sections, symbol tables and metadata diagnostics.
-- Bounded guest memory with read/write/execute protections, negative fixtures and sanitizer fuzzing.
-- Windows x86-64 translation of project-owned, independently compiled ARM64 iOS Mach-O MH_OBJECT function through Dynarmic; return value 42.
-- Restricted synthetic MH_EXECUTE mapping and Windows ARM64 execution smoke using page-protected guest memory.
-- CI evidence for the compiled object: https://github.com/uknes/AnyiOS/actions/runs/37710397827
-- CI evidence for hardened static loader: https://github.com/uknes/AnyiOS/actions/runs/37713669019
+- Windows x86-64: Dynarmic ARM64-to-x64 JIT executes original owned Mach-O MH_OBJECT functions and bounded Darwin SVC fixtures. See successful runs in the project's CI history.
+- Windows ARM64: optional native executable-page fixture runs project-owned, Clang-compiled ARM64 Mach-O MH_OBJECT function without instruction translation. Verified in https://github.com/uknes/AnyiOS/actions/runs/37748791787.
+- Linux ARM64: same native fixture, with mmap/mprotect/cache synchronization and own iOS-target Mach-O function. Verified in https://github.com/uknes/AnyiOS/actions/runs/37748791787.
+- Linux/macOS/Windows base: portable Mach-O parser, dependency planner, restricted linker/memory modules and regression suite.
 
-## Newly implemented, awaiting full CI verification
+## Implemented analysis and staging
 
-- Darwin SVC #0x80 guest trap boundary: limited write(4) to captured stdout/stderr, exit(1) signaling, guest address validation, unsupported-call diagnostics.
-- Compiler-produced iOS ARM64 Mach-O assembly fixture exercises guest SVC on a real Windows x64 Dynarmic runner.
-- Dependency manifest planner with owned/bundle-relative module registry, @loader_path, @executable_path and @rpath resolution, strong/weak dependency diagnostics and cycle checks.
-- Mach-O LC_ID_DYLIB and typed library dependency metadata (weak, reexport, upward).
-- CI run for syscall bridge commit: https://github.com/uknes/AnyiOS/actions/runs/37714205260
-- The latest dependency-planner commit's CI must pass before those features are recorded as verified.
+- Thin and universal ARM64 Mach-O inspection, segments, sections, dyld dependencies, symbols and export trie metadata.
+- Limited generic-64 chained fixup planning and exact two-level import resolution from explicitly supplied dylib metadata.
+- Bounded guest memory permissions, a restricted synthetic MH_EXECUTE loader and a staged linked-image mapper with rollback tests.
+- Genuine iPhoneOS MH_EXECUTE and MH_DYLIB are linked on macOS CI, shipped as owned workflow artifacts and inspected on Windows; ordinary linked binaries require libSystem.
+- Native ARM64 execution has an exact two-instruction whitelist: it is a safe ABI/CPU proof, NOT arbitrary iOS Mach-O loading.
 
-## Missing before an actual iOS .app can run
+## Not implemented
 
-- Real linked ARM64 MH_EXECUTE / MH_DYLIB loading, ASLR, dyld chained fixup application, imports, inter-module relocations and module initialization.
-- Guest Darwin libSystem API surface, process/thread emulation, complete syscall semantics, Mach ports and IPC.
-- Objective-C and Swift runtime ABI support, Foundation/CoreFoundation, UIKit/CoreAnimation, graphics/audio/input and app lifecycle.
-- IPA/app bundle installation, Info.plist processing, dynamic system framework substitution and compatibility matrix.
-- Reliable arm64e PAC and Metal handling; neither is implemented.
+- Real multi-module executable execution of the linked iPhoneOS fixture (including libSystem import binding and actual dyld initializers).
+- Process isolation, thread semantics, guest stack/exception context, full Darwin syscall ABI/Mach IPC, ObjC/Swift, Foundation/UIKit, graphics/audio/input.
+- arm64e authenticated pointers, broader chained pointer variants, Apple dyld shared cache, retail/protected app support.
+- An ordinary iOS .app GUI or commercial iOS application on any non-Apple host.
 
-## Next execution milestone
+## Next engineering goals
 
-1. Stabilize both the Windows syscall CI and cross-platform dyld planner CI.
-2. Build and link a project-owned no-framework MH_EXECUTE and MH_DYLIB fixture, not a hand-synthesized executable.
-3. Implement strict dyld fixup and symbol resolution for one owned guest module, with negative tests.
-4. Demonstrate owned guest code calling a validated libSystem-like shim through a loaded Mach-O import.
-5. Only then pursue Objective-C runtime bootstrap and a minimal unprotected own-app window.
+1. Make the staged linked-image mapper accept realistic independently linked iOS library layouts and validate actual fixup metadata.
+2. Implement a unified guest CPU runtime interface with distinct Dynarmic/x64 and native ARM64 execution backends; keep guest OS calls isolated.
+3. Demonstrate a real cross-dylib call from the project-owned linked iOS executable on Windows x64 and Windows ARM64.
+4. Expand explicit libSystem/Darwin contracts with reproducible error behavior.
+5. Start ObjC and app window research only after multi-module linking passes.
 
-Every claim must cite a test run and commit; no retail iOS application currently runs.
-## Dyld chained fixup milestone (implementation committed; verification pending)
+References: [Windows x64 design](WINDOWS_X64.md), [ARM64 host design](ARM64_HOSTS.md), [dyld subset](DYLD_FIXUPS.md), [research](RESEARCH.md).
 
-- Pure patch planner decodes only generic 64-bit chained rebases/binds (pointer formats 2 and 6; import descriptor format 1), validates segments and page chains, and atomically stages patches in a copyable host buffer.
-- A separate restricted two-level resolver matches explicit dylib install names and visible nlist_64 symbols to imported names/positive library ordinals.
-- New regression suites cover valid and malformed pointers, ordinals, resource bounds, symbol visibility and missing exports.
-- This does not yet map a real linked app's dependencies or execute a linked dylib call. CI status must be checked before claiming the new suites pass.
-- Details: [_docs/DYLD_FIXUPS.md](DYLD_FIXUPS.md).
+No statement about iOS app usability is justified by these CPU smoke tests.

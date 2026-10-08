@@ -1,4 +1,4 @@
-# Roadmap — evidence-based acceptance
+# Roadmap — parallel Windows x64 and ARM64 host tracks
 
 ## M0/M1 — Binary format and security foundations
 
@@ -34,3 +34,13 @@
 - [ ] Per-app compatibility matrix and explicit unsupported API reports
 
 Commercial games, protected App Store IPAs, arm64e and modern Metal support are **not promised**. Do not label a JIT or Mach-O parser test an app launch.
+## Parallel host backend development
+
+- [x] Windows x64 executes owned iOS ARM64 MH_OBJECT via Dynarmic
+- [x] Windows ARM64 executes an owned ARM64 MH_OBJECT function directly (host memory RX)
+- [x] Linux ARM64 executes the same owned ARM64 function directly
+- [ ] Unified CPU execution interface, guest registers/stack and exception handling
+- [ ] Real linked iPhoneOS executable/dylib inter-module call on Windows x64
+- [ ] Repeat the identical linked dependency execution on Windows ARM64
+- [ ] Host-specific Darwin SVC interception with no guest syscall escaping to host kernel
+- [ ] First graphical owned .app launches on both Windows variants

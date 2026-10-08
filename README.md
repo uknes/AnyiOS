@@ -47,6 +47,10 @@ The tests execute embedded instructions and compiler-generated ARM64 Mach-O MH_O
 
 The experimental dyld modules can plan generic 64-bit chained rebases/binds and resolve a narrow subset of imported symbols against pre-registered, project-owned dylibs. They stage patches atomically; they do **not** run dependent iOS apps or implement Apple frameworks. See [_docs/DYLD_FIXUPS.md](_docs/DYLD_FIXUPS.md).
 
+## Parallel ARM64 host development
+
+Native ARM64 proof-of-execution is tested on **Windows ARM64** and **Linux ARM64**, alongside Dynarmic translation on Windows x86-64. The native test executes only a project-owned, two-instruction ARM64 function from a compiler-built iOS Mach-O object. It is not arbitrary application execution. See [_docs/ARM64_HOSTS.md](_docs/ARM64_HOSTS.md).
+
 ## Project documentation
 
 - [_docs/STATE.md](_docs/STATE.md) — verified state and next milestone
