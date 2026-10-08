@@ -5,6 +5,12 @@ on:
     # Best effort. GitHub may delay scheduled jobs.
     - cron: '*/15 * * * *'
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/progress-watch.yml'
+      - 'tools/progress_watch.py'
+      - 'tests/test_progress_watch.py'
+      - '_docs/PROGRESS_WATCH.md'
 
 permissions:
   contents: read
