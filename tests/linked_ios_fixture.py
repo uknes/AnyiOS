@@ -42,6 +42,12 @@ def main():
         assert "Platform 2:" in app_text, app_text
         assert "File type: 6" in lib_text, lib_text
         assert "Install name: @rpath/libWidget.dylib" in lib_text, lib_text
+        if len(sys.argv) >= 3:
+            destination = pathlib.Path(sys.argv[2]).resolve()
+            destination.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(executable, destination / "SampleApp")
+            shutil.copyfile(dylib, destination / "libWidget.dylib")
+            print(f"Saved independently linked project-owned iOS binaries to {destination}")
         print("Linked iOS MH_EXECUTE + MH_DYLIB and dyld install-name metadata verified")
         print("Inspection only: dependent executable still requires dyld and libSystem emulation")
 

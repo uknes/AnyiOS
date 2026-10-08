@@ -101,3 +101,52 @@ jobs:
         run: |
           & ./build-jit/Release/anyios-a64-smoke.exe build-jit/owned-arm64.o
           if ($LASTEXITCODE -ne 0) { throw 'Owned Mach-O function execution failed' }
+
+
+  linked-ios-artifact:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure inspector
+        run: cmake -S . -B build-fixture -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
+      - name: Build inspector
+        run: cmake --build build-fixture --target anyios-inspect --parallel 2
+      - name: Independently link project-owned iPhoneOS images
+        run: python3 tests/linked_ios_fixture.py build-fixture/anyios-inspect build-fixture/owned-linked
+      - name: Publish only project-owned Mach-O fixtures
+        uses: actions/upload-artifact@v4
+        with:
+          name: anyios-linked-ios-owned
+          path: build-fixture/owned-linked/
+          if-no-files-found: error
+          retention-days: 3
+
+  windows-linked-inspection:
+    needs: linked-ios-artifact
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download identical iPhoneOS linker outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: anyios-linked-ios-owned
+          path: linked-images
+      - name: Configure Windows inspector
+        run: cmake -S . -B build-linked -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
+      - name: Build Windows inspector
+        run: cmake --build build-linked --config Release --target anyios-inspect --parallel 2
+      - name: Validate the linked iOS executable and dylib on Windows
+        shell: pwsh
+        run: |
+          $inspector = "./build-linked/Release/anyios-inspect.exe"
+          $app = & $inspector linked-images/SampleApp
+          if ($LASTEXITCODE -ne 0) { throw "Could not inspect genuine iOS executable on Windows" }
+          $library = & $inspector linked-images/libWidget.dylib
+          if ($LASTEXITCODE -ne 0) { throw "Could not inspect genuine iOS dylib on Windows" }
+          if (-not (($app -match "File type: 2") -and ($app -match "Dylib: @rpath/libWidget.dylib") -and
+                    ($library -match "File type: 6") -and ($library -match "Install name: @rpath/libWidget.dylib"))) {
+              throw "Incorrect genuine iPhoneOS dependency metadata on Windows"
+          }
+          Write-Output "Windows x86-64 successfully inspected the exact original iPhoneOS linked binaries"
