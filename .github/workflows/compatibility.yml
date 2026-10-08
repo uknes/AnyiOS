@@ -104,3 +104,45 @@ jobs:
           path: compat-output/
           if-no-files-found: error
           retention-days: 7
+
+  ios-entry-windows-x64:
+    needs: [ios-gap-linux, ios-gap-windows-x64]
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: anyios-compatibility-probe
+          path: compat-output
+      - name: Install vetted Dynarmic build prerequisites
+        shell: pwsh
+        run: |
+          nuget install boost -Version 1.87.0 -OutputDirectory "$env:RUNNER_TEMP\anyios-deps" -ExcludeVersion -NonInteractive
+          $found = Get-ChildItem -Path "$env:RUNNER_TEMP\anyios-deps\boost" -Filter version.hpp -Recurse | Where-Object { $_.Directory.Name -eq 'boost' } | Select-Object -First 1
+          if (-not $found) { throw 'NuGet Boost package did not contain boost/version.hpp' }
+          $include = Split-Path -Parent $found.Directory.FullName
+          "BOOST_INCLUDEDIR=$include" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Configure bounded Dynarmic guest entry diagnostic
+        run: cmake -S . -B build-compat-jit -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
+      - name: Build external iOS app Dynarmic entry probe
+        run: cmake --build build-compat-jit --config Release --target anyios-app-entry-probe --parallel 2
+      - name: Execute real app entry until first missing iOS runtime import (fail closed)
+        shell: pwsh
+        run: |
+          $status = Get-Content compat-output/external/bitrise-build-status.json -Raw | ConvertFrom-Json
+          if ($status.status -ne 'linked-with-unimplemented-imports') { throw "Cannot execute missing external app binary" }
+          $trace = & ./build-compat-jit/Release/anyios-app-entry-probe.exe compat-output/external/BitriseSimpleObjC 2>&1
+          $exit = $LASTEXITCODE
+          $trace | Out-File compat-output/external/windows-entry-dynarmic.txt
+          $trace | ForEach-Object { Write-Output $_ }
+          if ($exit -ne 0 -or -not ($trace -match "FIRST_RUNTIME_BLOCKER=")) {
+            throw "Pinned upstream app failed to reach a recognized missing import in bounded guest execution; exit=$exit"
+          }
+      - name: Publish first runtime barrier evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: anyios-app-entry-guest-trace
+          path: compat-output/external/windows-entry-dynarmic.txt
+          if-no-files-found: error
+          retention-days: 7
