@@ -175,7 +175,7 @@ void run() {
     rejects(b, targets, "chained signed bind addend underflow");
 
     b = image(); put32(b, 256 + 20, 4);
-    rejects(b, targets, "unsupported chained import addend format");
+    rejects(b, targets, "unsupported chained imports format");
     b = image();
     rejects(b, {0}, "unresolved chained bind ordinal");
 
