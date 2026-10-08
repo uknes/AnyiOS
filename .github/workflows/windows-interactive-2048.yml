@@ -78,8 +78,27 @@ jobs:
         run: |
           cmake -S . -B build-win-gui -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=OFF -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
           if ($LASTEXITCODE -ne 0) { throw "Dynarmic build configuration failed" }
-          cmake --build build-win-gui --config Release --target anyios-win-2048 --parallel 2
+          cmake --build build-win-gui --config Release --target anyios-win-2048 anyios-app-entry-probe --parallel 2
           if ($LASTEXITCODE -ne 0) { throw "Native Windows interactive GUI build failed" }
+      - name: Execute actual third-party MIT 2048 ARM64 entry to first unsupported iOS API
+        shell: pwsh
+        run: |
+          $status = Get-Content gui-output/external-2048/danqing-2048-status.json -Raw | ConvertFrom-Json
+          if ($status.status -ne "original-objc-entry-linked-only") {
+            throw "No linked original MIT 2048 entry; only owned game available"
+          }
+          $binary = "gui-output/external-2048/Danqing2048Entry"
+          $trace = & ./build-win-gui/Release/anyios-app-entry-probe.exe $binary 2>&1
+          $exit = $LASTEXITCODE
+          $trace | ForEach-Object { Write-Output $_ }
+          $trace | Out-File gui-output/external-2048/windows-guest-2048-entry.txt
+          if ($exit -ne 0 -or -not ($trace -match "SUPPORTED_NARROW_IMPORT=_objc_autoreleasePoolPush") -or
+              -not ($trace -match "SUPPORTED_NARROW_IMPORT=_objc_msgSend") -or
+              -not ($trace -match "FIRST_RUNTIME_BLOCKER=_NSStringFromClass")) {
+            throw "Original 2048 entry did not execute real ARM64 instructions to recognized ObjC blocker"
+          }
+          Write-Output "Original 2048 APP ENTRY executed, SpriteKit storyboard NOT launched"
+
       - name: Exercise genuine Windows keyboard, swipe and button events against guest ARM64 functions
         shell: pwsh
         run: |
@@ -112,6 +131,9 @@ jobs:
           Copy-Item anyios-ui-preview.png gui-output/windows/
           Copy-Item gui-output/guest/guest-receipt.json gui-output/windows/
           Copy-Item tests/verify_windows_gui.ps1 gui-output/windows/
+          Copy-Item gui-output/external-2048/Danqing2048Entry gui-output/windows/
+          Copy-Item gui-output/external-2048/windows-guest-2048-entry.txt gui-output/windows/
+          Copy-Item gui-output/external-2048/danqing-2048-gap.json gui-output/windows/
           @'
           AnyiOS interactive GUI compatibility proof (Windows x64)
           ========================================================
