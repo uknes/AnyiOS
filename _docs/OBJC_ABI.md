@@ -100,3 +100,18 @@ Duplicate **valid** names remain an error. This is not full class registration.
 The Windows x64 pinned original-app test must report both resolved and
 unresolved counts, execute the real AppDelegate callback, and explicitly stop
 at the unimplemented `UIApplicationMain`.
+
+## Narrow local Objective-C instance-method lookup (PR #13 candidate)
+
+The class registry can resolve an instance method from a validated local
+Clang ObjC2 absolute method list, searching local superclass records only.
+It returns the original ARM64 guest IMP and selector address: execution
+still requires the existing guarded guest callback ABI path. Subclass
+implementations take precedence. Missing selectors, unknown external
+superclasses, unregistered classes and cyclic local inheritance fail closed.
+Only 24-byte absolute method-list entries are recognized by the underlying
+ObjcIdentityProbe; relative method lists and method-list variations are not
+reinterpreted or silently fabricated. This does not implement arbitrary
+objc_msgSend, forwarding, dynamic method resolution, metaclasses, categories,
+class initialization, or UIKit. The unchanged Bitrise AppDelegate callback
+continues to be a diagnostic guest execution only.

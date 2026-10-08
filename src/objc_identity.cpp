@@ -136,6 +136,28 @@ std::optional<std::uint32_t> ObjcIdentityProbe::local_instance_size(
     return static_cast<std::uint32_t>(*size);
 }
 
+bool ObjcIdentityProbe::local_instance_method_table_valid(
+    std::uint64_t receiver) const {
+    const auto ro = local_ro(receiver);
+    if (!ro) return false;
+    const auto methods = memory_.read(*ro + 32, 8);
+    if (!methods) return false;
+    if (*methods == 0) return true; // Explicitly absent method list.
+    if (!within_constants(*methods, 8)) return false;
+    const auto entsize = memory_.read(*methods, 4);
+    const auto count = memory_.read(*methods + 4, 4);
+    if (!entsize || !count || *entsize != 24 || *count > 64 ||
+        !within_constants(*methods, 8 + (*count * 24))) return false;
+    for (std::uint64_t i = 0; i < *count; ++i) {
+        const auto entry = *methods + 8 + (i * 24);
+        const auto selector = memory_.read(entry, 8);
+        const auto imp = memory_.read(entry + 16, 8);
+        if (!selector || !imp || !selector_name(*selector) ||
+            (*imp & 3) != 0 || !memory_.fetch(*imp)) return false;
+    }
+    return true;
+}
+
 std::optional<GuestObjcMethod> ObjcIdentityProbe::local_instance_method(
     std::uint64_t receiver, std::string_view method_name) const {
     const auto ro = local_ro(receiver);
