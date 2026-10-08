@@ -93,7 +93,8 @@ void test() {
     rejects(b, "only iOS");
     b = valid(); w32(b, 12, 1);
     rejects(b, "expected MH_EXECUTE");
-    b = valid(); w32(b, 104, 0x2a);
+    b = valid(); w32(b, 16, 4); w32(b, 20, 128);
+    w32(b, 152, 0x2a); w32(b, 156, 8);
     rejects(b, "unsupported executable load command");
     b = valid(); w32(b, 148, 1);
     rejects(b, "tools exceed command size");
