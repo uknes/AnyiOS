@@ -124,6 +124,9 @@ std::uint64_t invoke_guest_callback(
         if (event.kind != cpu::CpuEventKind::returned) {
             throw std::runtime_error("guest callback stopped without returning: " + event.diagnostic);
         }
+        if (result.x[18] != saved.x[18]) {
+            throw std::runtime_error("guest callback clobbered platform register x18");
+        }
         for (unsigned i = 19; i <= 29; ++i) {
             if (result.x[i] != saved.x[i]) {
                 throw std::runtime_error("guest callback clobbered callee-saved x19-x29");
