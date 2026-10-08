@@ -15,6 +15,10 @@ struct CpuState {
     std::uint64_t pc = 0;
     std::uint64_t sp = 0;
     std::uint32_t pstate = 0;
+    // Explicitly selected emulated Darwin thread; never a host TLS pointer.
+    std::uint64_t guest_thread_id = 0;
+    std::uint64_t tpidrro_el0 = 0;
+    bool tpidrro_valid = false;
 };
 
 enum class CpuEventKind {
