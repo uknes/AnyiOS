@@ -1,9 +1,11 @@
 #include <anyios/guest_memory.hpp>
 #include <anyios/object_code.hpp>
+#include <anyios/executable.hpp>
 
 #include <dynarmic/interface/A64/a64.h>
 #include <dynarmic/interface/A64/config.h>
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -92,6 +94,73 @@ private:
     bool fault_ = false;
 };
 
+void execute_guest(GuestMemory& memory, std::uint64_t entry, std::uint64_t return_address) {
+    Callbacks callbacks(memory);
+    Dynarmic::A64::UserConfig config{};
+    config.callbacks = &callbacks;
+    config.enable_cycle_counting = false;
+    Dynarmic::A64::Jit jit(config);
+    jit.SetPC(entry);
+    jit.SetRegister(30, return_address);
+    bool returned = false;
+    for (unsigned i = 0; i < 128; ++i) {
+        static_cast<void>(jit.Step());
+        if (callbacks.failed()) throw std::runtime_error("guest execution raised a fault");
+        if (jit.GetPC() == return_address) {
+            returned = true;
+            break;
+        }
+    }
+    if (!returned || jit.GetRegister(0) != 42) {
+        throw std::runtime_error("ARM64 code returned an incorrect result");
+    }
+}
+
+void write32(std::vector<std::byte>& buffer, std::size_t at, std::uint32_t value) {
+    for (unsigned i = 0; i < 4; ++i) buffer.at(at + i) = std::byte((value >> (8 * i)) & 255);
+}
+void write64(std::vector<std::byte>& buffer, std::size_t at, std::uint64_t value) {
+    write32(buffer, at, static_cast<std::uint32_t>(value));
+    write32(buffer, at + 4, static_cast<std::uint32_t>(value >> 32));
+}
+
+void verify_synthetic_executable(const std::vector<std::byte>& code) {
+    if (code.empty() || code.size() > 4096 - 0x100) {
+        throw std::runtime_error("synthetic executable function is too large");
+    }
+    std::vector<std::byte> image(4096);
+    write32(image, 0, 0xfeedfacf);
+    write32(image, 4, 0x0100000c);
+    write32(image, 12, 2);
+    write32(image, 16, 3);
+    write32(image, 20, 120);
+    write32(image, 32, 0x19);
+    write32(image, 36, 72);
+    constexpr char text_name[] = "__TEXT";
+    for (std::size_t i = 0; i < sizeof(text_name) - 1; ++i) {
+        image[40 + i] = std::byte(text_name[i]);
+    }
+    write64(image, 32 + 24, 0x10000);
+    write64(image, 32 + 32, 4096);
+    write64(image, 32 + 48, 4096);
+    write32(image, 32 + 56, 5);
+    write32(image, 32 + 60, 5);
+    write32(image, 104, 0x80000028);
+    write32(image, 108, 24);
+    write64(image, 112, 0x100);
+    write32(image, 128, 0x32);
+    write32(image, 132, 24);
+    write32(image, 136, 2);
+    std::copy(code.begin(), code.end(), image.begin() + 0x100);
+
+    GuestMemory memory(0x10000, 0x30000);
+    const auto mapped = anyios::loader::load_static_executable(image, memory);
+    if (mapped.entry_address != 0x10100 || mapped.mapped_segments != 1) {
+        throw std::runtime_error("synthetic executable entry is incorrect");
+    }
+    execute_guest(memory, mapped.entry_address, mapped.entry_address + code.size());
+}
+
 void verify(const std::vector<std::byte>& code) {
     GuestMemory memory(0x10000, 0x30000);
     const auto rx = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::execute);
@@ -105,26 +174,7 @@ void verify(const std::vector<std::byte>& code) {
     }
     if (!memory.load(0x10000, code)) throw std::runtime_error("guest code loading failed");
 
-    Callbacks callbacks(memory);
-    Dynarmic::A64::UserConfig config{};
-    config.callbacks = &callbacks;
-    config.enable_cycle_counting = false;
-    Dynarmic::A64::Jit jit(config);
-    jit.SetPC(0x10000);
-    const std::uint64_t guest_return_address = 0x10000 + code.size();
-    jit.SetRegister(30, guest_return_address);
-    bool returned = false;
-    for (unsigned i = 0; i < 128; ++i) {
-        static_cast<void>(jit.Step());
-        if (callbacks.failed()) throw std::runtime_error("guest execution raised a fault");
-        if (jit.GetPC() == guest_return_address) {
-            returned = true;
-            break;
-        }
-    }
-    if (!returned || jit.GetRegister(0) != 42) {
-        throw std::runtime_error("ARM64 code returned an incorrect result");
-    }
+    execute_guest(memory, 0x10000, 0x10000 + code.size());
     if (memory.fetch(0x11000)) {
         throw std::runtime_error("unmapped guard page permitted code fetch");
     }
@@ -155,6 +205,7 @@ int main(int argc, char** argv) {
             throw std::runtime_error("usage: anyios-a64-smoke [owned-mach-o-object]");
         }
         verify(code);
+        verify_synthetic_executable(code);
         std::cout << "Executed owned ARM64 guest instructions through Dynarmic: x0=42\n";
         return 0;
     } catch (const std::exception& error) {
