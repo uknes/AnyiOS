@@ -44,6 +44,7 @@ struct Section {
     std::uint32_t file_offset;
     std::uint32_t relocation_count;
     bool zero_fill;
+    std::uint32_t flags = 0;
 };
 
 struct Symbol {

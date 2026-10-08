@@ -1,4 +1,5 @@
 #include <anyios/guest_memory.hpp>
+#include <anyios/guest_tls.hpp>
 #include <anyios/cpu_backend.hpp>
 #include <anyios/abi_thunk.hpp>
 #include <anyios/object_code.hpp>
@@ -273,6 +274,139 @@ void verify_unsupported_tls_registers() {
     }
 }
 
+void verify_guest_thread_tpidrro() {
+    const auto rx = anyios::cpu::bits(Access::read) |
+                    anyios::cpu::bits(Access::execute);
+    const auto rw = anyios::cpu::bits(Access::read) |
+                    anyios::cpu::bits(Access::write);
+    GuestMemory memory(0x10000, 0x40000);
+    if (!memory.map_ios(0x10000, 0x4000, rx) ||
+        !memory.map_ios(0x20000, 0x4000, rw) ||
+        !memory.map_ios(0x24000, 0x4000, rw)) {
+        throw std::runtime_error("guest TLS page mapping failed");
+    }
+    // Authored instructions: mrs x0, TPIDRRO_EL0; ldr x0, [x0]; msr TPIDRRO_EL0, x0
+    constexpr std::array<std::uint32_t, 3> instructions{
+        0xd53bd060u, 0xf9400000u, 0xd51bd060u
+    };
+    std::array<std::byte, instructions.size() * 4> code{};
+    for (std::size_t i = 0; i < instructions.size(); ++i) {
+        for (unsigned b = 0; b < 4; ++b) {
+            code[i * 4 + b] = std::byte((instructions[i] >> (8 * b)) & 255);
+        }
+    }
+    if (!memory.load(0x10000, code) ||
+        !memory.write(0x20000, 0x11223344, 8) ||
+        !memory.write(0x24000, 0x55667788, 8)) {
+        throw std::runtime_error("guest TLS setup failed");
+    }
+    auto backend = anyios::cpu::make_dynarmic_backend(memory);
+    anyios::cpu::CpuState one{}, two{};
+    one.pc = two.pc = 0x10000;
+    one.guest_thread_id = 1;
+    two.guest_thread_id = 2;
+    one.tpidrro_el0 = 0x20000;
+    two.tpidrro_el0 = 0x24000;
+    one.tpidrro_valid = two.tpidrro_valid = true;
+    backend->set_state(one);
+    if (backend->step().kind != anyios::cpu::CpuEventKind::stepped) {
+        throw std::runtime_error("first guest thread TPIDRRO MRS failed");
+    }
+    one = backend->state();
+    if (one.x[0] != 0x20000) {
+        throw std::runtime_error("first guest thread TPIDRRO pointer mismatch");
+    }
+    backend->set_state(two);
+    if (backend->step().kind != anyios::cpu::CpuEventKind::stepped ||
+        backend->step().kind != anyios::cpu::CpuEventKind::stepped ||
+        backend->state().x[0] != 0x55667788) {
+        throw std::runtime_error("second guest thread TLS data read failed");
+    }
+    backend->set_state(one);
+    if (backend->step().kind != anyios::cpu::CpuEventKind::stepped ||
+        backend->state().x[0] != 0x11223344) {
+        throw std::runtime_error("first guest thread TLS data was not isolated");
+    }
+    auto invalid = one;
+    invalid.tpidrro_el0 = 0x30000;
+    try {
+        backend->set_state(invalid);
+        throw std::runtime_error("unmapped guest TLS pointer was accepted");
+    } catch (const std::invalid_argument&) { }
+    one = backend->state();
+    one.pc = 0x10008;
+    backend->set_state(one);
+    if (backend->step().kind != anyios::cpu::CpuEventKind::unsupported ||
+        backend->state().pc != 0x10008) {
+        throw std::runtime_error("guest attempted write to TPIDRRO was not refused");
+    }
+    std::cout << "Dynarmic TPIDRRO guest thread switch and native-host pointer isolation passed\\n";
+}
+
+void verify_clang_tlv_process(const std::vector<std::byte>& file) {
+    constexpr std::uint64_t stub_base = 0x80000;
+    constexpr std::uint64_t sentinel = 0x400000;
+    const auto image = anyios::macho::inspect(file);
+    if (image.file_type != 2 || image.chained_imports.size() != 1 ||
+        image.chained_imports[0] != "__tlv_bootstrap") {
+        throw std::runtime_error("owned Clang TLV fixture has unexpected dyld imports");
+    }
+    GuestMemory memory(0x10000, 4 * 1024 * 1024);
+    const std::array<std::uint64_t, 1> imports{stub_base};
+    const auto loaded = anyios::loader::stage_linked_image(
+        file, memory, 0x10000, imports,
+        anyios::loader::LinkedImageOptions{true, nullptr});
+    const auto rx = anyios::cpu::bits(Access::read) |
+                    anyios::cpu::bits(Access::execute);
+    const auto rw = anyios::cpu::bits(Access::read) |
+                    anyios::cpu::bits(Access::write);
+    if (!memory.map_ios(stub_base, 0x4000, rx) ||
+        !memory.map_ios(0x300000, 0x10000, rw)) {
+        throw std::runtime_error("owned TLV guest stub/stack pages failed");
+    }
+    // Original project stub: mov x16,#0x2000; svc #0x80; ret.
+    constexpr std::array<std::uint32_t, 3> thunk{
+        0xd2840010u, 0xd4001001u, 0xd65f03c0u
+    };
+    std::array<std::byte, 12> instructions{};
+    for (std::size_t i = 0; i < thunk.size(); ++i)
+        for (unsigned b = 0; b < 4; ++b)
+            instructions[i * 4 + b] = std::byte((thunk[i] >> (8 * b)) & 255);
+    if (!memory.load(stub_base, instructions))
+        throw std::runtime_error("owned TLV SVC thunk not loaded");
+    anyios::darwin::GuestTls tls(memory, 0x200000, 0x40000);
+    tls.register_module(image, loaded.guest_base);
+    auto backend = anyios::cpu::make_dynarmic_backend(memory);
+    auto invoke = [&](std::uint64_t thread_id) -> std::uint64_t {
+        anyios::cpu::CpuState state{};
+        state.pc = loaded.guest_entry;
+        state.sp = 0x310000;
+        state.x[30] = sentinel;
+        state.guest_thread_id = thread_id;
+        state.tpidrro_el0 = tls.thread_register(thread_id);
+        state.tpidrro_valid = true;
+        backend->set_state(state);
+        for (unsigned i = 0; i < 32; ++i) {
+            const auto event = backend->run_until_event(20000, sentinel);
+            state = backend->state();
+            if (event.kind == anyios::cpu::CpuEventKind::returned) return state.x[0];
+            if (event.kind != anyios::cpu::CpuEventKind::svc ||
+                event.svc_immediate != 0x80 ||
+                state.pc != stub_base + 8 || state.x[16] != 0x2000) {
+                throw std::runtime_error("Clang TLV process reached unknown runtime boundary: " +
+                                         event.diagnostic);
+            }
+            state.x[0] = tls.get_address(thread_id, state.x[0]);
+            backend->set_state(state);
+        }
+        throw std::runtime_error("Clang TLV process exhausted SVC event budget");
+    };
+    if (invoke(1) != 12 || invoke(2) != 12 || invoke(1) != 17) {
+        throw std::runtime_error("compiler-linked __thread state is not isolated/persistent");
+    }
+    std::cout << "Owned Clang iOS __thread_vars TLV fixture executed on Dynarmic in two guest threads\\n";
+}
+
 void verify_syscall_object(const std::vector<std::byte>& code) {
     GuestMemory memory(0x10000, 0x30000);
     const auto rx = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::execute);
@@ -382,6 +516,11 @@ int main(int argc, char** argv) {
     try {
         std::vector<std::byte> code;
         verify_unsupported_tls_registers();
+        verify_guest_thread_tpidrro();
+        if (argc == 3 && std::string(argv[1]) == "--tlv") {
+            verify_clang_tlv_process(read_owned_binary(argv[2]));
+            return 0;
+        }
         if (argc == 3 && std::string(argv[1]) == "--hello") {
             verify_sdkfree_libsystem(read_owned_binary(argv[2]), true);
             return 0;
