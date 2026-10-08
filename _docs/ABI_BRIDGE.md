@@ -38,3 +38,11 @@ References (documentation only, no Apple implementation copied):
 - https://developer.apple.com/documentation/xcode/writing-arm64-code-for-apple-platforms
 - https://learn.microsoft.com/en-us/cpp/build/arm64-windows-abi-conventions
 - https://developer.apple.com/library/archive/documentation/Performance/Conceptual/ManagingMemory/Articles/AboutMemory.html
+
+## Verified fixed-scalar host callback contract
+
+`src/abi_thunk.cpp` and `include/anyios/abi_thunk.hpp` implement a narrowly bounded host callback ABI. Calls accept a **declared non-variadic signature of at most eight integer-register arguments**. The bridge extracts low 8/16/32-bit signed and unsigned values, marshals them to host 64-bit scalar values, and invokes only an explicitly registered callback. Pointer values, aggregates, variadics, ninth arguments and missing callbacks throw `std::invalid_argument` instead of entering the host ABI. The caller's `CpuState` (including x18, PC and SP) remains unchanged.
+
+Evidence: Windows MSVC, Linux GCC/Clang and macOS jobs in [run 37759173521](https://github.com/uknes/AnyiOS/actions/runs/37759173521).
+
+**Limitations:** This helper is **not** a Windows machine-code Apple↔Windows ABI assembly thunk. It cannot pass host pointers, implement Apple varargs/va_list, handle arm64e PAC, or guarantee native guest x18 preservation across a foreign call. All those capabilities remain blocked until dedicated call-gate and isolation tests exist.

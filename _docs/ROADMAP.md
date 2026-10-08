@@ -40,9 +40,9 @@ Commercial games, protected App Store IPAs, arm64e and modern Metal support are 
 - [x] Windows ARM64 executes an owned ARM64 MH_OBJECT function directly (host memory RX)
 - [x] Linux ARM64 executes the same owned ARM64 function directly
 - [x] Shared CPU register/event interface with separated Dynarmic and restricted native backend (run 37752367548)
-- [ ] Cross-platform bounded run-until-event execution tests on latest commit
-- [ ] Real linked iPhoneOS executable/dylib inter-module call on Windows x64
-- [ ] Repeat the identical linked dependency execution on Windows ARM64
+- [x] Cross-platform bounded run-until-event execution tests (full CI run 37754360212)
+- [x] Real linked iPhoneOS executable/dylib inter-module call on Windows x64 (run 37751343388)
+- [x] Repeat the identical linked dependency execution on Windows ARM64 (run 37751343388)
 - [ ] Host-specific Darwin SVC interception with no guest syscall escaping to host kernel
 - [ ] First graphical owned .app launches on both Windows variants
 
@@ -54,4 +54,7 @@ Commercial games, protected App Store IPAs, arm64e and modern Metal support are 
 - [x] Explicit guest SVC refusal in native Windows ARM64 CI job (run 37753783845)
 - [ ] Test Apple ABI ↔ Windows ARM64 typed thunk for x18, narrow arguments and variadics
 - [ ] Enforce a separately isolated native guest process (the current owned linked CI test runs in-process)
-- [ ] Link owned iPhoneOS fixtures on Linux/Windows with original libSystem .tbd metadata
+- [x] Link original iPhoneOS fixtures on Ubuntu Linux with project-authored libSystem .tbd metadata (job sdk-free-ios-link, run 37759173521)
+- [ ] Confirm SDK-free LLVM linker fixture on Windows without an Apple SDK
+- [x] Fixed-scalar typed guest ABI callback tests (Windows MSVC, Linux and macOS, run 37759173521)
+- [ ] Apple ARM64 caller ↔ Windows ARM64 host ABI thunk conformance tests (varargs, aggregates and x18)

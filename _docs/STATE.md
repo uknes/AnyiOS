@@ -17,10 +17,12 @@ Updated 2026-10-08. Source history and green GitHub Actions job results are auth
 - Signed chained import **format 2 (32-bit addend)** and **format 3 (64-bit addend)**, with bounds checking and signed overflow/underflow negative tests, passed the same complete run.
 - The Windows ARM64 native backend rejected guest Darwin SVC before attempting host execution, verified by successful native ARM64 job: https://github.com/uknes/AnyiOS/actions/runs/37753783845.
 
-## Still under CI review
+## Additional verified contracts
 
-- Bounded `CpuBackend::run_until_event` and an additional import64 reserved-bit validation regression are committed, but their newest full run must finish before they are marked as verified.
-- Open-source license survey for 23 candidates, with license-path links, commit SHAs and verdicts: [_docs/OSS_SURVEY.md](OSS_SURVEY.md).
+- Bounded `CpuBackend::run_until_event` and import64 reserved-bit validation passed the full CI matrix: https://github.com/uknes/AnyiOS/actions/runs/37754360212.
+- **Fixed integer-only ABI thunk** converts signed/unsigned 8/16/32/64-bit guest register arguments into explicitly registered host callbacks; tests verify signed extension, x18/context preservation, and fail-closed variadic, pointer, aggregate and missing-host-function cases. The Windows MSVC, Linux GCC/Clang and macOS compiler jobs passed: https://github.com/uknes/AnyiOS/actions/runs/37759173521. This is not an arbitrary libSystem call bridge.
+- **SDK-free iPhoneOS linker fixture** passed the dedicated Ubuntu 24.04 job: LLVM clang-19/ld64.lld-19 generated the original ARM64 MH_EXECUTE/MH_DYLIB using a metadata-only authored libSystem.tbd. The produced images passed the AnyiOS inspector. Same evidence: https://github.com/uknes/AnyiOS/actions/runs/37759173521. Linking proves no runtime API implementations.
+- Open-source license survey for 23 candidates, actual license-file paths, commit SHAs and verdicts: [_docs/OSS_SURVEY.md](OSS_SURVEY.md).
 
 ## Critical missing features
 
@@ -31,10 +33,10 @@ Updated 2026-10-08. Source history and green GitHub Actions job results are auth
 
 ## Next engineering actions
 
-1. Confirm green CI for journal, signed import formats and run-until-event; update roadmap only when jobs pass.
-2. Add ABI contract fixtures (Apple↔Windows ARM64 varargs, narrow argument extension, x18 preservation, native SVC fail-closed) and process isolation.
+1. Preserve the now-verified journal, signed import formats and bounded run-until-event regression suites across new loader changes.
+2. Extend the verified fixed-scalar ABI marshaler with a separately isolated native ARM64 guest process and a real Apple-compiled caller fixture; variadics and guest pointers remain forbidden.
 3. Stage two-module tests that call an owned libSystem-compatible symbol; no dummy successful stubs.
-4. Prototype cross-platform iOS ARM64 linking using LLVM ld64.lld and an original stub-only `libSystem.tbd`, with actual CI evidence.
+4. Compare the verified SDK-free iOS ARM64 LLVM link products to the Apple-linked oracle and then test SDK-free linking on Windows.
 5. Only then work on Objective-C runtime and a first actual owned app lifecycle.
 
 Research / decision docs: [OSS survey](OSS_SURVEY.md), [ABI risks](ABI_BRIDGE.md), [architecture decisions](DECISIONS.md), [linked execution proofs](EXECUTION_PROOFS.md).

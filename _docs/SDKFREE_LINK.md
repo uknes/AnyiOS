@@ -1,6 +1,6 @@
 # SDK-free Mach-O linker experiment
 
-Status: experimental, not yet CI-verified. Date: 2026-10-08.
+Status: **verified on Ubuntu 24.04 Linux** (the Windows SDK-free linker path is not yet tested). Date: 2026-10-08.
 
 ## Purpose
 
@@ -13,7 +13,7 @@ Prove that LLVM Clang + ld64.lld can produce original ARM64 iOS Mach-O MH_EXECUT
 - `anyios-inspect` for strict load-command checks
 - Linux GitHub Actions job `sdk-free-ios-link`
 
-Failure is actionable: a linker that rejects iOS, the TAPI stub, or emitted Mach-O is recorded as unsupported for that toolchain. No test is skipped or converted to a false success.
+The Ubuntu LLVM-19 test has passed in [run 37759173521](https://github.com/uknes/AnyiOS/actions/runs/37759173521), job `sdk-free-ios-link`: it links original project-owned code and verifies real Mach-O dependency metadata with the inspector. The file is a linker-only metadata stub; its existence cannot satisfy libSystem functions at runtime. Any future linker failure is actionable and must not be skipped.
 
 ## Notes
 
