@@ -109,16 +109,32 @@ LinkedImage stage_linked_image(
     for (const auto& segment : image.segments) {
         if (segment.name == "__PAGEZERO" && segment.file_size == 0 &&
             segment.init_protection == 0) continue;
-        if (options.require_ios_pages &&
-            (segment.vm_address % cpu::GuestMemory::ios_page_size != 0 ||
-             segment.vm_size % cpu::GuestMemory::ios_page_size != 0)) {
-            throw macho::FormatError("linked iOS segment " + segment.name +
-                                     " violates 16 KiB guest page alignment");
+        std::uint64_t mapping_size = segment.vm_size;
+        if (options.require_ios_pages) {
+            if (segment.vm_address % cpu::GuestMemory::ios_page_size != 0) {
+                throw macho::FormatError("linked iOS segment " + segment.name +
+                                         " violates 16 KiB guest page alignment");
+            }
+            if (segment.vm_size % cpu::GuestMemory::ios_page_size != 0) {
+                const auto safe_tail = segment.name == "__LINKEDIT" &&
+                                       segment.init_protection == 1 &&
+                                       segment.file_size <= segment.vm_size &&
+                                       segment.vm_size > 0;
+                if (!safe_tail ||
+                    segment.vm_size > UINT64_MAX -
+                        (cpu::GuestMemory::ios_page_size - 1)) {
+                    throw macho::FormatError("linked iOS segment " + segment.name +
+                                             " violates 16 KiB guest page alignment");
+                }
+                mapping_size = (segment.vm_size +
+                    cpu::GuestMemory::ios_page_size - 1) &
+                    ~std::uint64_t(cpu::GuestMemory::ios_page_size - 1);
+            }
         }
-        if (segment.vm_size == 0 || segment.vm_size % page != 0 ||
+        if (segment.vm_size == 0 || mapping_size % page != 0 ||
             segment.vm_address < original_base ||
             (segment.vm_address - original_base) % page != 0 ||
-            segment.vm_size > 64 * 1024 * 1024) {
+            mapping_size > 64 * 1024 * 1024) {
             throw macho::FormatError("invalid linked segment layout: " + segment.name);
         }
         const auto perms = segment.init_protection;
@@ -130,7 +146,7 @@ LinkedImage stage_linked_image(
         const auto address = sum(guest_base, segment.vm_address - original_base,
                                  "linked segment address overflow");
 
-        if (!journal.map(address, static_cast<std::size_t>(segment.vm_size),
+        if (!journal.map(address, static_cast<std::size_t>(mapping_size),
                          perms, options.require_ios_pages)) {
             throw macho::FormatError("linked guest mapping failed");
         }
