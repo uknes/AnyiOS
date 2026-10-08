@@ -38,10 +38,10 @@ int main() {
         require(memory.write(0x20000, 7, 4) &&
                 memory.write(0x20100, 0x10000, 8) &&
                 memory.write(0x20108, 0, 8) &&
-                memory.write(0x20110, 0x20000, 8) &&
+                memory.write(0x20110, 0, 8) &&
                 memory.write(0x20118, 0x10000, 8) &&
                 memory.write(0x20120, 0, 8) &&
-                memory.write(0x20128, 0x20004, 8),
+                memory.write(0x20128, 4, 8),
                 "TLV fixture descriptors failed");
         macho::Image image{};
         macho::Segment text{};
@@ -97,6 +97,14 @@ int main() {
             darwin::GuestTls test(memory, 0x60000, 0x4000);
             test.register_module(invalid, 0x10000);
         });
+        require(memory.write(0x20110, 0x100000, 8),
+                "corrupt TLV descriptor could not be injected");
+        refuses([&] {
+            darwin::GuestTls test(memory, 0x60000, 0x4000);
+            test.register_module(image, 0x10000);
+        });
+        require(memory.write(0x20110, 0, 8),
+                "corrupt TLV descriptor not restored");
         auto wrong_type = image;
         wrong_type.sections.back().flags = 0x11;
         refuses([&] {

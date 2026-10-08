@@ -49,33 +49,45 @@ void GuestTls::register_module(const macho::Image& image,
         [](const macho::Segment& item) { return item.name == "__TEXT"; });
     if (text == image.segments.end())
         throw macho::FormatError("TLV module lacks __TEXT base");
-    struct Region {
-        std::uint64_t address;
-        std::uint64_t size;
-        std::uint64_t offset;
-    };
-    std::vector<Region> regions;
-    Module module;
+    // The linked descriptor's third word is a byte offset into the module's
+    // contiguous TLV initialization image, not an ASLR-slid guest pointer.
+    // Build that image in guest virtual-address order, preserving bounded gaps.
+    std::vector<const macho::Section*> templates;
     for (const auto& section : image.sections) {
-        if (section.name != "__thread_data" && section.name != "__thread_bss")
-            continue;
-        const auto kind = section.flags & 0xffu;
-        if ((section.name == "__thread_data" &&
-             (kind != 0x11u || section.zero_fill)) ||
-            (section.name == "__thread_bss" &&
-             (kind != 0x12u || !section.zero_fill)) ||
-            section.address < text->vm_address || section.size == 0 ||
-            section.size > page || module.initial.size() > page - section.size ||
-            section.segment_name.rfind("__DATA", 0) != 0) {
+        if (section.name == "__thread_data" || section.name == "__thread_bss")
+            templates.push_back(&section);
+    }
+    if (templates.empty() || templates.size() > 32)
+        throw macho::FormatError("missing or excessive TLV template sections");
+    std::sort(templates.begin(), templates.end(),
+        [](const macho::Section* a, const macho::Section* b) {
+            return a->address < b->address;
+        });
+    const auto origin = templates.front()->address;
+    Module module;
+    std::uint64_t end = origin;
+    for (const auto* section : templates) {
+        const auto kind = section->flags & 0xffu;
+        if ((section->name == "__thread_data" &&
+             (kind != 0x11u || section->zero_fill)) ||
+            (section->name == "__thread_bss" &&
+             (kind != 0x12u || !section->zero_fill)) ||
+            section->address < text->vm_address || section->size == 0 ||
+            section->size > page || section->address < end ||
+            section->segment_name.rfind("__DATA", 0) != 0) {
             throw macho::FormatError("unsupported TLV initialization section");
         }
-        const auto guest = checked_add(guest_base, section.address - text->vm_address);
-        std::vector<std::byte> bytes(static_cast<std::size_t>(section.size));
+        end = checked_add(section->address, section->size);
+        if (end - origin > page)
+            throw macho::FormatError("TLV template exceeds guest page");
+        module.initial.resize(static_cast<std::size_t>(end - origin));
+        const auto guest = checked_add(guest_base, section->address - text->vm_address);
+        std::vector<std::byte> bytes(static_cast<std::size_t>(section->size));
         if (!memory_.copy_from(guest, bytes))
             throw macho::FormatError("unreadable TLV init section");
-        const auto offset = module.initial.size();
-        module.initial.insert(module.initial.end(), bytes.begin(), bytes.end());
-        regions.push_back({guest, section.size, offset});
+        std::copy(bytes.begin(), bytes.end(),
+                  module.initial.begin() +
+                  static_cast<std::ptrdiff_t>(section->address - origin));
     }
     for (const auto& section : image.sections) {
         if (section.name != "__thread_vars") continue;
@@ -96,14 +108,9 @@ void GuestTls::register_module(const macho::Image& image,
                 *reserved != 0 || !memory_.fetch(*resolver)) {
                 throw macho::FormatError("invalid/unbound TLV descriptor");
             }
-            const auto it = std::find_if(regions.begin(), regions.end(),
-                [&](const Region& r) {
-                    return *original >= r.address && *original - r.address < r.size;
-                });
-            if (it == regions.end())
-                throw macho::FormatError("TLV variable initializer outside module");
-            module.variables.push_back(
-                {descriptor, it->offset + *original - it->address});
+            if (*original >= module.initial.size())
+                throw macho::FormatError("TLV descriptor template offset out of range");
+            module.variables.push_back({descriptor, *original});
         }
     }
     if (module.variables.empty() || module.variables.size() > 64 ||

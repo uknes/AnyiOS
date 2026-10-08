@@ -17,7 +17,8 @@ class GuestTls final {
 public:
     GuestTls(cpu::GuestMemory& memory, std::uint64_t base, std::size_t capacity);
 
-    // Accept only already-staged/relocated Mach-O metadata. Returns no host pointers.
+    // Accept only staged/validated Mach-O metadata. Descriptor word 3 is an
+    // image-template byte offset, not a relocated pointer. Returns no host pointers.
     void register_module(const macho::Image& image, std::uint64_t guest_base);
 
     // TPIDRRO_EL0 points to a stable, read-only-by-convention guest thread header.
