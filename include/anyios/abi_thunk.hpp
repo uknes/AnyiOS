@@ -26,6 +26,20 @@ using HostFixedFunction = std::function<std::uint64_t(std::span<const std::uint6
 std::vector<std::uint64_t> decode_fixed_arguments(
     const cpu::CpuState& guest, const FixedSignature& signature);
 
+std::vector<std::uint64_t> decode_apple_variadic_arguments(
+    const cpu::CpuState& guest, const cpu::GuestMemory& memory,
+    const FixedSignature& fixed, std::span<const ScalarKind> variadic_types);
+
+std::uint64_t call_variadic_host_function(
+    const cpu::CpuState& guest, const cpu::GuestMemory& memory,
+    const FixedSignature& fixed, std::span<const ScalarKind> variadic_types,
+    const HostFixedFunction& host_function);
+
+std::uint64_t invoke_guest_callback(
+    cpu::CpuBackend& backend, std::uint64_t entry,
+    std::span<const std::uint64_t> arguments,
+    std::uint64_t return_pc, std::uint64_t instruction_budget);
+
 std::uint64_t call_fixed_host_function(
     const cpu::CpuState& guest, const FixedSignature& signature,
     const HostFixedFunction& host_function);

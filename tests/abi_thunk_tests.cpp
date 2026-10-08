@@ -1,5 +1,6 @@
 #include <anyios/abi_thunk.hpp>
 
+#include <array>
 #include <cstdint>
 #include <exception>
 #include <functional>
@@ -50,6 +51,43 @@ int main() {
         expect(guest.x[18] == 0xdeadbeef1234ULL &&
                guest.pc == 0x10000 && guest.sp == 0x20000,
                "ABI marshaler mutated platform register or guest context");
+
+        {
+            using anyios::cpu::Access;
+            using anyios::cpu::GuestMemory;
+            GuestMemory memory(0x10000, 0x5000);
+            expect(memory.map_ios(0x10000, 16384, anyios::cpu::bits(Access::read) |
+                anyios::cpu::bits(Access::write)), "guest vararg stack map");
+            guest.sp = 0x10080;
+            guest.x[0] = 7;
+            guest.x[1] = 0xabcddcba11223344ULL;
+            guest.x[2] = 0x55667788ULL;
+            expect(memory.write(guest.sp, 0xffffffffU, 8), "write signed variadic");
+            expect(memory.write(guest.sp + 8, 41, 8), "write unsigned variadic");
+            const FixedSignature variadic{{ScalarKind::signed32}, true};
+            const std::array<ScalarKind, 2> kinds{
+                ScalarKind::signed32, ScalarKind::unsigned64
+            };
+            const auto vals = decode_apple_variadic_arguments(guest, memory, variadic, kinds);
+            expect(vals.size() == 3 && vals[0] == 7 &&
+                   vals[1] == UINT64_MAX && vals[2] == 41,
+                   "Apple variadics must read stack slots, not x1/x2 registers");
+            const auto v = call_variadic_host_function(guest, memory, variadic, kinds,
+                [](std::span<const std::uint64_t> args) {
+                    return args[0] + args[2];
+                });
+            expect(v == 48, "variadic typed adapter returned wrong value");
+            const std::array<ScalarKind, 1> bad{ScalarKind::pointer};
+            denies([&] { (void)decode_apple_variadic_arguments(guest, memory, variadic, bad); },
+                "unsafe pointer variadic accepted");
+            guest.sp += 8;
+            denies([&] { (void)decode_apple_variadic_arguments(guest, memory, variadic, kinds); },
+                "misaligned Apple variadic stack accepted");
+            guest.sp = 0x10080;
+            const auto original = guest;
+            expect(guest.x[18] == original.x[18], "variadic adapter changed guest x18");
+            guest.sp = 0x20000;
+        }
 
         denies([&] { (void)decode_fixed_arguments(guest, {{ScalarKind::pointer}}); },
                "raw guest pointer accepted");

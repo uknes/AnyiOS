@@ -1,5 +1,6 @@
 #include <anyios/guest_memory.hpp>
 #include <anyios/cpu_backend.hpp>
+#include <anyios/abi_thunk.hpp>
 #include <anyios/object_code.hpp>
 #include <anyios/executable.hpp>
 #include <anyios/linked_pair.hpp>
@@ -195,6 +196,23 @@ void verify(const std::vector<std::byte>& code) {
     if (!memory.load(0x10000, code)) throw std::runtime_error("guest code loading failed");
 
     execute_guest(memory, 0x10000, 0x10000 + code.size());
+    {
+        auto backend = anyios::cpu::make_dynarmic_backend(memory);
+        anyios::cpu::CpuState state{};
+        state.pc = 0x10000;
+        state.sp = 0x20000;
+        state.x[18] = 0x77889900ULL;
+        for (unsigned i = 19; i <= 29; ++i) state.x[i] = 0x91000 + i;
+        backend->set_state(state);
+        const std::array<std::uint64_t, 1> args{99};
+        if (anyios::abi::invoke_guest_callback(
+                *backend, 0x10000, args, 0x13000, 16) != 42 ||
+            backend->state().x[18] != state.x[18] ||
+            backend->state().x[19] != state.x[19] ||
+            backend->state().sp != state.sp) {
+            throw std::runtime_error("translated guest callback ABI state check failed");
+        }
+    }
     if (memory.fetch(0x11000)) {
         throw std::runtime_error("unmapped guard page permitted code fetch");
     }

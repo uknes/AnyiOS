@@ -1,5 +1,6 @@
 #include <anyios/native_a64.hpp>
 #include <anyios/cpu_backend.hpp>
+#include <anyios/abi_thunk.hpp>
 #include <anyios/guest_memory.hpp>
 #include <anyios/object_code.hpp>
 
@@ -49,6 +50,21 @@ int main(int argc, char** argv) {
             check(event.kind == anyios::cpu::CpuEventKind::returned &&
                   state.x[0] == 42 && state.pc == 0x20000,
                   "native and Dynarmic CPU contracts diverged");
+            initial.pc = 0x10000;
+            initial.sp = 0x13000;
+            initial.x[18] = 0xdeadbeef0088ULL;
+            for (unsigned i = 19; i <= 29; ++i) initial.x[i] = 0x112200 + i;
+            backend->set_state(initial);
+            const std::array<std::uint64_t, 1> callback_args{6};
+            check(anyios::abi::invoke_guest_callback(
+                      *backend, 0x10000, callback_args, 0x20000, 8) == 42,
+                  "native host to guest callback result");
+            const auto restored = backend->state();
+            check(restored.x[18] == initial.x[18] &&
+                  restored.x[19] == initial.x[19] &&
+                  restored.x[29] == initial.x[29] &&
+                  restored.sp == initial.sp && restored.pc == initial.pc,
+                  "native host to guest callback clobbered saved registers");
             initial.pc = 0x11000;
             backend->set_state(initial);
             check(backend->step().kind == anyios::cpu::CpuEventKind::fault,
