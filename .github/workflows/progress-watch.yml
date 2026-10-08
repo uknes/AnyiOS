@@ -1,0 +1,37 @@
+name: AnyiOS 15-minute progress watch
+
+on:
+  schedule:
+    # Best effort. GitHub may delay scheduled jobs.
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/progress-watch.yml'
+      - 'tools/progress_watch.py'
+      - 'tests/test_progress_watch.py'
+      - '_docs/PROGRESS_WATCH.md'
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+concurrency:
+  group: anyios-read-only-compat-watch
+  cancel-in-progress: true
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check reproducible progress graph
+        run: python3 tools/progress.py docs --check
+      - name: Test progress watcher with offline fixtures
+        run: python3 -m unittest discover -s tests -p test_progress_watch.py -v
+      - name: Summarize scoped graph and real GitHub PR/CI states
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/progress_watch.py
