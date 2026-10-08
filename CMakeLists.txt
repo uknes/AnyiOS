@@ -17,6 +17,9 @@ endif()
 add_executable(anyios-link-probe tools/link_probe.cpp)
 target_link_libraries(anyios-link-probe PRIVATE anyios_owned_object)
 
+add_executable(anyios-app-stage-probe tools/app_stage_probe.cpp)
+target_link_libraries(anyios-app-stage-probe PRIVATE anyios_owned_object)
+
 add_executable(anyios-inspect tools/inspect.cpp)
 target_link_libraries(anyios-inspect PRIVATE anyios_macho)
 
