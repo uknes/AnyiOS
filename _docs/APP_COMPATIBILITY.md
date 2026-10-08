@@ -5,8 +5,8 @@ Status is **not tested** until an owned, reproducible build and gap-report artif
 | App | License verified from file | Tier | Build / report status | Blocking APIs |
 | --- | --- | --- | --- | --- |
 | Bitrise sample-apps-ios-simple-objc @ `91fef6f` | **Yes**, actual MIT LICENSE checked | T3 | Three upstream .m files SDK-free compiled/linked via metadata-only placeholder; Windows x64 staging passed in CI 37797367626; not runnable | 29 symbols unresolved, including ObjC messaging/allocation, UIKit launch, Core Data; 24 encoded selector refs unresolved |
-| Candidate B (selection pending) | No | T1 | Not tested | Unknown |
-| Candidate C (selection pending) | No | T2 | Not tested | Unknown |
+| [Sneaky Sasquatch](https://apps.apple.com/gb/app/sneaky-sasquatch/id1098342019) (RAC7, Apple Arcade) | Proprietary; original binary not supplied, no redistribution or modification permitted | T4+ | **BLOCKED**: no authorized unprotected original binary; no code executed, no window; see [target](../compatibility/targets/sneaky-sasquatch.json) and [issue #9](https://github.com/uknes/AnyiOS/issues/9) | Exact import list cannot be determined until lawful intact IPA available; UIKit, engine graphics, audio/input, entitlements unverified |
+| [Danqing 2048 iOS](https://github.com/danqing/2048) @ `6f89eab8` | **Yes**, MIT LICENSE file checked | T4 (SpriteKit) | Original upstream main.m and M2AppDelegate.m compiled as ARM64, Windows x64 entry executes until unsupported NSStringFromClass in [PR #7 CI 37823115275](https://github.com/uknes/AnyiOS/actions/runs/37823115275); complete game and storyboard not run | Full Objective-C, UIKit and SpriteKit scene/graphics |
 | Candidate D (selection pending) | No | T3 | Not tested | Unknown |
 | Candidate E (selection pending) | No | T3 | Not tested | Unknown |
 
@@ -54,3 +54,7 @@ After five license-file-checked applications produce artifacts, aggregate missin
 - `ios-gap-windows-x64`: exact Linux-produced binary inspection and sections/fixups mapped: `STAGING=passed-metadata-only`, guest entry 81920. **No guest code executed** in this step. Artifact `anyios-windows-compatibility-probe`.
 - Windows x64 Dynarmic **entry-only** execution added, verification pending; must stop on the first unsupported guest import without pretending ObjC initializer or UIKit startup occurred.
 - Evidence gates: `compiled` and `staged` verified; `launched`, `window`, `touch`, `interactive` **not implemented**.
+
+## Proprietary original-binary game gate (2026-10-08)
+
+The selected advanced iOS-only mobile game is RAC7 **Sneaky Sasquatch**. Apple's [August 2026 announcement](https://www.apple.com/newsroom/2026/08/exciting-updates-for-sneaky-sasquatch-come-to-apple-arcade/) confirms Apple Arcade distribution. No executable or rights to redistribute it have been provided. `tools/unchanged_ipa_probe.py` can read and hash a **legitimately obtained original unprotected** `.ipa`/`.app` without changing, patching, decrypting or resigning it. Its recorded status remains **blocked-no-original-app-binary / game-not-executed** until genuine input exists. Such a scan would still only be static import discovery, not a Windows port. A real port requires actual unchanged ARM64 game code, original graphics and input working on Windows x86-64 and Windows ARM64.
