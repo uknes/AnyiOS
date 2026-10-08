@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="334" viewBox="0 0 1000 334" role="img" aria-label="AnyiOS implementation progress by API family and runtime subsystem">
 <rect x="0.00" y="0.00" width="1000.00" height="334.00" fill="#0d1117" stroke="#0d1117" stroke-width="0.00"/>
-<text x="3.00" y="22.00" font-size="15" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">iOS API exports*: 1.12% (3/269)</text>
+<text x="3.00" y="22.00" font-size="15" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">iOS API exports*: 1.12% (3/269)</text>
 <g><title>Darwin file / process — 1 verified, 0 partial, 25 pending (26 tracked)
 _write
 _access
@@ -52,7 +52,7 @@ _setenv
 <rect x="50.70" y="151.42" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="75.65" y="151.42" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="0.00" y="34.00" width="101.40" height="141.55" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="4.00" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Darwin file /</text>
+<text x="4.00" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Darwin file /</text>
 </g>
 <g><title>Objective-C ABI — 0 verified, 0 partial, 21 pending (21 tracked)
 _NSStringFromClass
@@ -98,7 +98,7 @@ _sel_registerName</title>
 <rect x="128.97" y="151.42" width="26.77" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="155.73" y="151.42" width="26.77" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="101.40" y="34.00" width="81.90" height="141.55" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="105.40" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Objective-</text>
+<text x="105.40" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Objective-</text>
 </g>
 <g><title>Foundation classes — 0 verified, 0 partial, 20 pending (20 tracked)
 _OBJC_CLASS_$_NSArray
@@ -142,7 +142,7 @@ _OBJC_CLASS_$_NSUserDefaults</title>
 <rect x="209.57" y="151.42" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="235.03" y="151.42" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="183.30" y="34.00" width="78.00" height="141.55" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="187.30" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Foundation</text>
+<text x="187.30" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Foundation</text>
 </g>
 <g><title>UIKit lifecycle / views — 0 verified, 0 partial, 20 pending (20 tracked)
 _OBJC_CLASS_$_UIApplication
@@ -186,7 +186,7 @@ _UIApplicationMain</title>
 <rect x="90.32" y="229.45" width="22.38" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="112.70" y="229.45" width="22.38" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="0.00" y="175.55" width="135.88" height="81.26" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="4.00" y="190.55" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">UIKit lifecycle / </text>
+<text x="4.00" y="190.55" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">UIKit lifecycle / </text>
 </g>
 <g><title>CoreGraphics / text — 0 verified, 0 partial, 19 pending (19 tracked)
 _CGBitmapContextCreate
@@ -228,7 +228,7 @@ _CTLineCreateWithAttributedString</title>
 <rect x="90.32" y="308.00" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="112.70" y="308.00" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="0.00" y="256.81" width="135.88" height="77.19" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="4.00" y="271.81" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">CoreGraphics / tex</text>
+<text x="4.00" y="271.81" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">CoreGraphics / tex</text>
 </g>
 <g><title>Darwin memory / strings — 2 verified, 0 partial, 17 pending (19 tracked)
 _exit
@@ -270,7 +270,7 @@ _strstr</title>
 <rect x="198.59" y="237.87" width="30.96" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="229.54" y="237.87" width="30.96" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="135.88" y="175.55" width="125.42" height="83.63" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="139.88" y="190.55" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Darwin memory / s</text>
+<text x="139.88" y="190.55" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Darwin memory / s</text>
 </g>
 <g><title>OpenGL ES — 0 verified, 0 partial, 17 pending (17 tracked)
 _glBindTexture
@@ -308,7 +308,7 @@ _glViewport</title>
 <rect x="210.97" y="308.79" width="24.76" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="235.74" y="308.79" width="24.76" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="135.88" y="259.18" width="125.42" height="74.82" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="139.88" y="274.18" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">OpenGL ES</text>
+<text x="139.88" y="274.18" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">OpenGL ES</text>
 </g>
 <g><title>CoreFoundation — 0 verified, 0 partial, 15 pending (15 tracked)
 _CFArrayCreate
@@ -342,7 +342,7 @@ _CFURLCreateWithFileSystemPath</title>
 <rect x="294.62" y="96.24" width="32.51" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="327.13" y="96.24" width="32.51" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="261.30" y="34.00" width="99.14" height="83.52" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="265.30" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">CoreFoundatio</text>
+<text x="265.30" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">CoreFoundatio</text>
 </g>
 <g><title>Audio / AVFoundation — 0 verified, 0 partial, 13 pending (13 tracked)
 _AudioComponentFindNext
@@ -372,7 +372,7 @@ _OBJC_CLASS_$_AVPlayer</title>
 <rect x="310.87" y="165.51" width="24.39" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="335.26" y="165.51" width="24.39" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="261.30" y="117.52" width="99.14" height="72.38" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="265.30" y="132.52" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Audio / AVFou</text>
+<text x="265.30" y="132.52" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Audio / AVFou</text>
 </g>
 <g><title>Darwin dispatch / blocks — 0 verified, 0 partial, 13 pending (13 tracked)
 __Block_copy
@@ -402,7 +402,7 @@ _dispatch_sync</title>
 <rect x="449.88" y="60.67" width="22.16" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="472.04" y="60.67" width="22.16" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="360.45" y="34.00" width="134.55" height="53.34" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="364.45" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Darwin dispatch / </text>
+<text x="364.45" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Darwin dispatch / </text>
 </g>
 <g><title>Darwin threads / locks — 0 verified, 1 partial, 12 pending (13 tracked)
 __tlv_bootstrap
@@ -432,7 +432,7 @@ _pthread_setspecific</title>
 <rect x="384.04" y="163.86" width="22.79" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="406.82" y="163.86" width="22.79" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="360.45" y="87.34" width="69.97" height="102.57" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="364.45" y="102.34" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Darwin th</text>
+<text x="364.45" y="102.34" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Darwin th</text>
 </g>
 <g><title>Network / IPC — 0 verified, 0 partial, 12 pending (12 tracked)
 _CFHTTPMessageCreateRequest
@@ -460,7 +460,7 @@ _socket</title>
 <rect x="452.21" y="163.86" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="473.20" y="163.86" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="430.41" y="87.34" width="64.59" height="102.57" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="434.41" y="102.34" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Network </text>
+<text x="434.41" y="102.34" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Network </text>
 </g>
 <g><title>Swift ABI — 0 verified, 0 partial, 11 pending (11 tracked)
 _swift_allocObject
@@ -486,7 +486,7 @@ _swift_retain</title>
 <rect x="330.10" y="216.32" width="22.67" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="352.77" y="216.32" width="22.67" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="261.30" y="189.91" width="114.93" height="52.83" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="265.30" y="204.91" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Swift ABI</text>
+<text x="265.30" y="204.91" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Swift ABI</text>
 </g>
 <g><title>Persistence / CloudKit — 0 verified, 0 partial, 10 pending (10 tracked)
 _OBJC_CLASS_$_CKContainer
@@ -510,7 +510,7 @@ _sqlite3_step</title>
 <rect x="262.10" y="310.79" width="29.45" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="291.55" y="310.79" width="29.45" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="261.30" y="242.74" width="60.49" height="91.26" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="265.30" y="257.74" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Persist</text>
+<text x="265.30" y="257.74" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Persist</text>
 </g>
 <g><title>Security / keychain — 0 verified, 0 partial, 9 pending (9 tracked)
 _CCCrypt
@@ -532,7 +532,7 @@ _SecRandomCopyBytes</title>
 <rect x="322.59" y="310.79" width="26.42" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="349.01" y="310.79" width="26.42" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="321.79" y="242.74" width="54.44" height="91.26" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="325.79" y="257.74" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Securi</text>
+<text x="325.79" y="257.74" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Securi</text>
 </g>
 <g><title>SpriteKit — 0 verified, 0 partial, 9 pending (9 tracked)
 _OBJC_CLASS_$_SKAction
@@ -554,7 +554,7 @@ _OBJC_CLASS_$_SKView</title>
 <rect x="397.46" y="242.32" width="20.43" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="417.89" y="242.32" width="20.43" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="376.23" y="189.91" width="62.88" height="79.02" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="380.23" y="204.91" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">SpriteKi</text>
+<text x="380.23" y="204.91" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">SpriteKi</text>
 </g>
 <g><title>QuartzCore — 0 verified, 0 partial, 8 pending (8 tracked)
 _CACurrentMediaTime
@@ -574,7 +574,7 @@ _OBJC_CLASS_$_CATransaction</title>
 <rect x="439.91" y="242.32" width="27.14" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="467.06" y="242.32" width="27.14" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="439.11" y="189.91" width="55.89" height="79.02" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="443.11" y="204.91" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">QuartzC</text>
+<text x="443.11" y="204.91" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">QuartzC</text>
 </g>
 <g><title>GameKit / stores — 0 verified, 0 partial, 7 pending (7 tracked)
 _OBJC_CLASS_$_GKAchievement
@@ -592,7 +592,7 @@ _OBJC_CLASS_$_SKProductsRequest</title>
 <rect x="377.03" y="312.04" width="28.89" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="405.93" y="312.04" width="28.89" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="376.23" y="268.93" width="59.38" height="65.07" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="380.23" y="283.93" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">GameKit</text>
+<text x="380.23" y="283.93" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">GameKit</text>
 </g>
 <g><title>Metal / MetalKit — 0 verified, 0 partial, 7 pending (7 tracked)
 _MTLCreateSystemDefaultDevice
@@ -610,9 +610,9 @@ _OBJC_CLASS_$_MTLTextureDescriptor</title>
 <rect x="436.42" y="312.04" width="28.89" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="465.31" y="312.04" width="28.89" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="435.62" y="268.93" width="59.38" height="65.07" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="439.62" y="283.93" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Metal /</text>
+<text x="439.62" y="283.93" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Metal /</text>
 </g>
-<text x="508.00" y="22.00" font-size="15" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Compatibility work gates*: 2.51% (6/239)</text>
+<text x="508.00" y="22.00" font-size="15" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Compatibility work gates*: 2.51% (6/239)</text>
 <g><title>Foundation — 0 verified, 0 partial, 10 pending (10 tracked)
 JSON parsing, serialization and regex
 NSBundle resources and localization
@@ -635,7 +635,7 @@ NSUserDefaults and key-value persistence</title>
 <rect x="571.17" y="62.10" width="21.79" height="27.30" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="592.96" y="62.10" width="21.79" height="27.30" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="505.00" y="34.00" width="110.55" height="56.21" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="509.00" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Foundation</text>
+<text x="509.00" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Foundation</text>
 </g>
 <g><title>ARM64 CPU / ABI — 1 verified, 2 partial, 6 pending (9 tracked)
 Windows x86-64 Dynarmic owned ARM64 instructions
@@ -657,7 +657,7 @@ Variadic calls, structs and ABI thunks</title>
 <rect x="505.80" y="165.68" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="532.64" y="165.68" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="505.00" y="90.21" width="55.27" height="101.17" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="509.00" y="105.21" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">ARM64 </text>
+<text x="509.00" y="105.21" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">ARM64 </text>
 </g>
 <g><title>Compatibility tooling — 1 verified, 0 partial, 8 pending (9 tracked)
 Strict Mach-O inspection and import-gap report
@@ -679,7 +679,7 @@ Windows x64 CI and artifact packaging</title>
 <rect x="561.07" y="165.68" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="587.91" y="165.68" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="560.27" y="90.21" width="55.27" height="101.17" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="564.27" y="105.21" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Compat</text>
+<text x="564.27" y="105.21" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Compat</text>
 </g>
 <g><title>Darwin libSystem — 0 verified, 2 partial, 7 pending (9 tracked)
 malloc/write/exit guest C fixture ABI
@@ -701,7 +701,7 @@ stdio, snprintf/vsnprintf/formatting</title>
 <rect x="639.50" y="86.19" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="662.66" y="86.19" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="615.55" y="34.00" width="71.07" height="78.69" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="619.55" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Darwin li</text>
+<text x="619.55" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Darwin li</text>
 </g>
 <g><title>dyld and linking — 0 verified, 1 partial, 8 pending (9 tracked)
 Chained rebases and binds for owned fixtures
@@ -723,7 +723,7 @@ dyld shared cache equivalent / substitute frameworks</title>
 <rect x="710.57" y="86.19" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="733.72" y="86.19" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="686.61" y="34.00" width="71.07" height="78.69" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="690.61" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">dyld and </text>
+<text x="690.61" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">dyld and </text>
 </g>
 <g><title>Guest memory / sandbox — 1 verified, 1 partial, 7 pending (9 tracked)
 Input-binary validation and refusal of protected code
@@ -745,7 +745,7 @@ mmap, mprotect and guard pages</title>
 <rect x="639.50" y="164.88" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="662.66" y="164.88" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="615.55" y="112.69" width="71.07" height="78.69" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="619.55" y="127.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Guest mem</text>
+<text x="619.55" y="127.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Guest mem</text>
 </g>
 <g><title>Metal graphics — 0 verified, 0 partial, 9 pending (9 tracked)
 Compute dispatch and barriers
@@ -767,7 +767,7 @@ Textures, buffers, heaps and resources</title>
 <rect x="710.57" y="164.88" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="733.72" y="164.88" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="686.61" y="112.69" width="71.07" height="78.69" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="690.61" y="127.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Metal gra</text>
+<text x="690.61" y="127.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Metal gra</text>
 </g>
 <g><title>Objective-C runtime — 0 verified, 1 partial, 8 pending (9 tracked)
 Classlist/selector metadata inspection
@@ -789,7 +789,7 @@ alloc/init/retain/release/weak references</title>
 <rect x="561.63" y="216.06" width="27.92" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="589.55" y="216.06" width="27.92" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="505.00" y="191.38" width="113.27" height="49.37" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="509.00" y="206.38" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Objective-C run</text>
+<text x="509.00" y="206.38" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Objective-C run</text>
 </g>
 <g><title>UIKit views and controls — 0 verified, 0 partial, 9 pending (9 tracked)
 Animation, coordinate and hit-testing semantics
@@ -811,7 +811,7 @@ UIView hierarchy, transforms and layers</title>
 <rect x="505.80" y="310.29" width="29.18" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="534.98" y="310.29" width="29.18" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="505.00" y="240.75" width="59.97" height="93.25" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="509.00" y="255.75" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">UIKit v</text>
+<text x="509.00" y="255.75" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">UIKit v</text>
 </g>
 <g><title>App capabilities — 0 verified, 0 partial, 8 pending (8 tracked)
 Background tasks and scheduling
@@ -831,7 +831,7 @@ WidgetKit and app extensions</title>
 <rect x="565.77" y="310.29" width="25.85" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="591.62" y="310.29" width="25.85" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="564.97" y="240.75" width="53.30" height="93.25" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="568.97" y="255.75" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">App ca</text>
+<text x="568.97" y="255.75" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">App ca</text>
 </g>
 <g><title>Audio / media — 0 verified, 0 partial, 8 pending (8 tracked)
 AVAudioEngine and playback APIs
@@ -851,7 +851,7 @@ WAV/MP3/AAC/ALAC decoding</title>
 <rect x="619.07" y="238.65" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="653.12" y="238.65" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="618.27" y="191.38" width="69.70" height="71.31" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="622.27" y="206.38" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Audio / m</text>
+<text x="622.27" y="206.38" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Audio / m</text>
 </g>
 <g><title>Mach-O formats — 2 verified, 0 partial, 6 pending (8 tracked)
 Fat/FAT64 universal slice selection
@@ -871,7 +871,7 @@ arm64e pointer authentication compatibility</title>
 <rect x="688.77" y="238.65" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="722.83" y="238.65" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="687.97" y="191.38" width="69.70" height="71.31" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="691.97" y="206.38" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Mach-O fo</text>
+<text x="691.97" y="206.38" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Mach-O fo</text>
 </g>
 <g><title>Networking / services — 0 verified, 0 partial, 8 pending (8 tracked)
 Bonjour/mDNS discovery and LAN permission
@@ -891,7 +891,7 @@ WebSockets, background transfers and proxies</title>
 <rect x="619.07" y="309.96" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="653.12" y="309.96" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="618.27" y="262.69" width="69.70" height="71.31" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="622.27" y="277.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Networkin</text>
+<text x="622.27" y="277.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Networkin</text>
 </g>
 <g><title>Pthreads and dispatch — 0 verified, 1 partial, 7 pending (8 tracked)
 Owned Darwin guest TLV sequential threads
@@ -911,7 +911,7 @@ pthread creation, mutex, condvar and once</title>
 <rect x="688.77" y="309.96" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="722.83" y="309.96" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="687.97" y="262.69" width="69.70" height="71.31" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="691.97" y="277.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Pthreads </text>
+<text x="691.97" y="277.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Pthreads </text>
 </g>
 <g><title>SpriteKit / SceneKit — 0 verified, 0 partial, 8 pending (8 tracked)
 SCNScene node graph and asset import
@@ -931,7 +931,7 @@ SceneKit lighting, geometry and rendering</title>
 <rect x="758.48" y="85.87" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="789.46" y="85.87" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="757.68" y="34.00" width="63.56" height="78.21" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="761.68" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">SpriteKi</text>
+<text x="761.68" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">SpriteKi</text>
 </g>
 <g><title>Swift runtime — 0 verified, 0 partial, 8 pending (8 tracked)
 Generics, existential containers and bridging
@@ -951,7 +951,7 @@ Value witness and protocol witness tables</title>
 <rect x="822.04" y="85.87" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="853.02" y="85.87" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="821.24" y="34.00" width="63.56" height="78.21" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="825.24" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Swift ru</text>
+<text x="825.24" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Swift ru</text>
 </g>
 <g><title>System interoperability — 0 verified, 1 partial, 7 pending (8 tracked)
 Process startup and exit lifecycle
@@ -971,7 +971,7 @@ XPC/Mach IPC and bootstrap services</title>
 <rect x="758.48" y="164.08" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="789.46" y="164.08" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="757.68" y="112.21" width="63.56" height="78.21" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="761.68" y="127.21" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">System i</text>
+<text x="761.68" y="127.21" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">System i</text>
 </g>
 <g><title>UIKit app lifecycle — 0 verified, 0 partial, 8 pending (8 tracked)
 App foreground/background lifecycle
@@ -991,7 +991,7 @@ UIWindow creation and visibility</title>
 <rect x="822.04" y="164.08" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="853.02" y="164.08" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="821.24" y="112.21" width="63.56" height="78.21" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="825.24" y="127.21" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">UIKit ap</text>
+<text x="825.24" y="127.21" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">UIKit ap</text>
 </g>
 <g><title>Windows ARM64 execution — 1 verified, 1 partial, 6 pending (8 tracked)
 Trusted native ARM64 owned two-instruction fixture
@@ -1011,7 +1011,7 @@ Native ARM64 renderer/app integration</title>
 <rect x="885.60" y="87.67" width="29.92" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="915.52" y="87.67" width="29.92" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="884.80" y="34.00" width="61.44" height="80.90" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="888.80" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Windows</text>
+<text x="888.80" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Windows</text>
 </g>
 <g><title>CoreFoundation — 0 verified, 0 partial, 7 pending (7 tracked)
 CFArray/CFDictionary/CFSet ownership
@@ -1029,7 +1029,7 @@ CFString and mutable strings</title>
 <rect x="947.04" y="87.67" width="26.08" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="973.12" y="87.67" width="26.08" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="946.24" y="34.00" width="53.76" height="80.90" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="950.24" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">CoreFo</text>
+<text x="950.24" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">CoreFo</text>
 </g>
 <g><title>CoreGraphics / CoreText — 0 verified, 0 partial, 7 pending (7 tracked)
 2D compositing, clipping and performance
@@ -1047,7 +1047,7 @@ Paths, clipping, transforms and strokes</title>
 <rect x="885.60" y="164.97" width="28.00" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="913.60" y="164.97" width="28.00" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="884.80" y="114.90" width="57.60" height="75.51" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="888.80" y="129.90" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">CoreGra</text>
+<text x="888.80" y="129.90" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">CoreGra</text>
 </g>
 <g><title>Distribution / platform — 0 verified, 0 partial, 7 pending (7 tracked)
 App-specific optional user supplied assets only
@@ -1065,7 +1065,7 @@ Windows ARM64 native runtime release package</title>
 <rect x="943.20" y="164.97" width="28.00" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="971.20" y="164.97" width="28.00" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="942.40" y="114.90" width="57.60" height="75.51" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="946.40" y="129.90" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Distrib</text>
+<text x="946.40" y="129.90" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Distrib</text>
 </g>
 <g><title>Input / controllers — 0 verified, 0 partial, 7 pending (7 tracked)
 Accelerometer/gyro synthetic sensors
@@ -1083,7 +1083,7 @@ Windows mouse to UITouch translation</title>
 <rect x="758.48" y="239.78" width="28.41" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="786.89" y="239.78" width="28.41" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="757.68" y="190.41" width="58.42" height="74.45" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="761.68" y="205.41" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Input /</text>
+<text x="761.68" y="205.41" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Input /</text>
 </g>
 <g><title>Security / crypto — 0 verified, 0 partial, 7 pending (7 tracked)
 Biometric LocalAuthentication mapping
@@ -1101,7 +1101,7 @@ Trust stores, certificates and entitlement policy</title>
 <rect x="816.89" y="239.78" width="28.41" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="845.30" y="239.78" width="28.41" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="816.09" y="190.41" width="58.42" height="74.45" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="820.09" y="205.41" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Securit</text>
+<text x="820.09" y="205.41" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Securit</text>
 </g>
 <g><title>Windows GUI backend — 0 verified, 0 partial, 7 pending (7 tracked)
 Actual resizable Win32 window with guest-driven pixels
@@ -1119,7 +1119,7 @@ Presentation frame timing and resize</title>
 <rect x="758.48" y="310.69" width="30.66" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="789.13" y="310.69" width="30.66" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="757.68" y="264.86" width="62.91" height="69.14" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="761.68" y="279.86" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Windows </text>
+<text x="761.68" y="279.86" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Windows </text>
 </g>
 <g><title>Data and persistence — 0 verified, 0 partial, 6 pending (6 tracked)
 App sandbox documents and caches
@@ -1135,7 +1135,7 @@ iCloud/CloudKit record and sync API</title>
 <rect x="821.39" y="310.69" width="26.16" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="847.55" y="310.69" width="26.16" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="820.59" y="264.86" width="53.92" height="69.14" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="824.59" y="279.86" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Data a</text>
+<text x="824.59" y="279.86" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Data a</text>
 </g>
 <g><title>Game engine integration — 0 verified, 0 partial, 6 pending (6 tracked)
 AssetBundles, compressed game assets and codecs
@@ -1151,7 +1151,7 @@ cocos2d and native C++ engine support</title>
 <rect x="895.69" y="220.12" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="916.07" y="220.12" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="874.51" y="190.41" width="62.74" height="59.42" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="878.51" y="205.41" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Game eng</text>
+<text x="878.51" y="205.41" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Game eng</text>
 </g>
 <g><title>GameKit / commerce — 0 verified, 0 partial, 6 pending (6 tracked)
 Apple Arcade entitlement and licensing constraints
@@ -1167,7 +1167,7 @@ Subscription and entitlement validation</title>
 <rect x="958.44" y="220.12" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="978.82" y="220.12" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="937.26" y="190.41" width="62.74" height="59.42" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="941.26" y="205.41" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">GameKit </text>
+<text x="941.26" y="205.41" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">GameKit </text>
 </g>
 <g><title>Legacy OpenGL ES — 0 verified, 0 partial, 6 pending (6 tracked)
 Buffer objects and vertex attribute streams
@@ -1183,7 +1183,7 @@ Uniforms, draws, blending and depth</title>
 <rect x="875.31" y="305.68" width="21.34" height="27.52" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="896.66" y="305.68" width="21.34" height="27.52" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="874.51" y="249.83" width="44.29" height="84.17" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="878.51" y="264.83" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Legac</text>
+<text x="878.51" y="264.83" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Legac</text>
 </g>
 <g><title>QuartzCore / animation — 0 verified, 0 partial, 6 pending (6 tracked)
 Animation transactions and timing
@@ -1199,7 +1199,7 @@ Offscreen layer rendering and filters</title>
 <rect x="946.13" y="272.78" width="26.53" height="22.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="972.67" y="272.78" width="26.53" height="22.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="918.80" y="249.83" width="81.20" height="45.91" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="922.80" y="264.83" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">QuartzCore</text>
+<text x="922.80" y="264.83" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">QuartzCore</text>
 </g>
 <g><title>Web / UI embeddings — 0 verified, 0 partial, 5 pending (5 tracked)
 HTML forms, cookies and storage
@@ -1213,6 +1213,6 @@ Web content process isolation</title>
 <rect x="919.60" y="314.87" width="39.80" height="18.33" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="959.40" y="314.87" width="39.80" height="18.33" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
 <rect x="918.80" y="295.74" width="81.20" height="38.26" fill="none" stroke="#0d1117" stroke-width="2"/>
-<text x="922.80" y="310.74" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" paint-order="stroke" stroke="#0d1117" stroke-width="2.5">Web / UI e</text>
+<text x="922.80" y="310.74" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Web / UI e</text>
 </g>
 </svg>
