@@ -35,7 +35,7 @@ if (-not (Test-Path $preview) -or (Get-Item $preview).Length -lt 100000) {
 Add-Type -AssemblyName System.Drawing
 $image = [System.Drawing.Image]::FromFile($preview)
 try {
-    if ($image.Width -ne 600 -or $image.Height -ne 760) {
+    if ($image.Width -ne 600 -or $image.Height -ne 818) {
         throw "Unexpected UI dimensions $($image.Width)x$($image.Height)."
     }
     $png = Join-Path $root "local-ui-test.png"
