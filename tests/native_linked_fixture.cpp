@@ -1,4 +1,5 @@
 #include <anyios/linked_pair.hpp>
+#include <anyios/svc_scan.hpp>
 #include <anyios/guest_memory.hpp>
 #include <anyios/macho.hpp>
 
@@ -87,6 +88,16 @@ void publish_segment(const anyios::macho::Image& image,
             throw std::runtime_error("native linked segment address overflow");
         }
         const auto address = mapped_base + offset;
+        if ((segment.init_protection & 4u) != 0) {
+            if ((segment.init_protection & 1u) == 0) {
+                throw std::runtime_error("execute-only guest segment cannot be scanned");
+            }
+            std::vector<std::byte> entire(static_cast<std::size_t>(segment.vm_size));
+            if (!staged.copy_from(address, entire)) {
+                throw std::runtime_error("cannot scan executable guest segment");
+            }
+            anyios::cpu::reject_svc_in_executable_mapping(entire);
+        }
         if (!VirtualAlloc(reinterpret_cast<void*>(static_cast<std::uintptr_t>(address)),
                           static_cast<std::size_t>(segment.vm_size),
                           MEM_COMMIT, PAGE_READWRITE)) {
