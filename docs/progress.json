@@ -601,12 +601,12 @@
         "label": "Objective-C runtime",
         "name": "Objective-C runtime",
         "partial_names": [
+          "Class registry, metaclasses and inheritance",
           "Classlist/selector metadata inspection"
         ],
         "todo_names": [
           "Autorelease pool push/pop with actual objects",
           "Categories, protocols and dynamic method lookup",
-          "Class registry, metaclasses and inheritance",
           "Exceptions and Objective-C synchronized blocks",
           "General objc_msgSend instance/class/super dispatch",
           "KVO, blocks and associated objects",
@@ -995,8 +995,8 @@
         "total": 7
       }
     ],
-    "partial": 10,
-    "pending": 223,
+    "partial": 11,
+    "pending": 222,
     "percent": 2.51,
     "source": "tools/compat_capabilities.json",
     "total": 239,

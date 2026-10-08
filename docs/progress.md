@@ -5,7 +5,7 @@ The percentages below count only explicitly inventoried candidate API exports an
 | Metric | Verified | Partial | Pending or unverified | Tracked | Coverage |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | iOS API exports | 3 | 1 | 265 | 269 | 1.12% |
-| Compatibility gates | 6 | 10 | 223 | 239 | 2.51% |
+| Compatibility gates | 6 | 11 | 222 | 239 | 2.51% |
 
 ## Candidate API exports
 
@@ -619,12 +619,12 @@ The percentages below count only explicitly inventoried candidate API exports an
 
 </details>
 
-<details><summary><b>Objective-C runtime</b> — 0 verified, 1 partial, 8 pending / 9 total</summary>
+<details><summary><b>Objective-C runtime</b> — 0 verified, 2 partial, 7 pending / 9 total</summary>
 
+- 🟨 `Class registry, metaclasses and inheritance` — Partial
 - 🟨 `Classlist/selector metadata inspection` — Partial
 - ⬜ `Autorelease pool push/pop with actual objects` — Pending / unverified
 - ⬜ `Categories, protocols and dynamic method lookup` — Pending / unverified
-- ⬜ `Class registry, metaclasses and inheritance` — Pending / unverified
 - ⬜ `Exceptions and Objective-C synchronized blocks` — Pending / unverified
 - ⬜ `General objc_msgSend instance/class/super dispatch` — Pending / unverified
 - ⬜ `KVO, blocks and associated objects` — Pending / unverified
