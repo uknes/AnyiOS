@@ -17,7 +17,7 @@ endif()
 add_executable(anyios-inspect tools/inspect.cpp)
 target_link_libraries(anyios-inspect PRIVATE anyios_macho)
 
-add_library(anyios_owned_object STATIC src/object_code.cpp)
+add_library(anyios_owned_object STATIC src/object_code.cpp src/executable.cpp)
 target_include_directories(anyios_owned_object PUBLIC include)
 target_link_libraries(anyios_owned_object PUBLIC anyios_macho)
 target_compile_features(anyios_owned_object PUBLIC cxx_std_20)
