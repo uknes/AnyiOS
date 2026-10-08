@@ -77,7 +77,11 @@ def decode_chained_imports(data, offset, length):
     version, starts, imports, symbols, count, fmt, symfmt = struct.unpack_from("<7I", blob)
     require(version == 0 and symfmt == 0 and count <= 100000,
             "unsupported chained fixups header")
-    require(starts < len(blob) and imports < len(blob) and symbols < len(blob),
+    # ld64.lld emits a zero-import chained-fixups header with the empty
+    # imports/symbols regions positioned exactly at the payload end.
+    # They are valid EMPTY ranges, not references to dereference.
+    require(starts <= len(blob) and imports <= len(blob) and symbols <= len(blob)
+            and (count == 0 or (imports < len(blob) and symbols < len(blob))),
             "chained fixups offset outside payload")
     require(fmt in (1, 2, 3), "unsupported chained import format")
     stride = {1: 4, 2: 8, 3: 16}[fmt]
