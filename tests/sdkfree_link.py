@@ -83,6 +83,24 @@ def main():
             "-execute", str(libsystem_obj), "-e", "_main",
             "-L", str(work), "-lSystem", "-o", str(libsystem_app),
         ])
+        hello_obj = work / "HelloProcess.o"
+        hello_app = work / "HelloProcess"
+        run(clang_flags + [
+            str(fixtures / "arm64_hello_process.c"), "-o", str(hello_obj)
+        ])
+        run(link + [
+            "-execute", str(hello_obj), "-e", "_main", "-L", str(work),
+            "-lSystem", "-o", str(hello_app)
+        ])
+        hello_info = run([str(inspector), str(hello_app)])
+        for symbol in ("_malloc", "_write", "_exit"):
+            if f"Import: {symbol}" not in hello_info:
+                raise AssertionError(f"hello process unresolved import {symbol}")
+        if "Section: __DATA/__mod_init_func" not in hello_info and \
+           "Section: __DATA_CONST/__mod_init_func" not in hello_info:
+            raise AssertionError("hello process is missing expected initializer section")
+        if "Entry file offset:" not in hello_info:
+            raise AssertionError("hello process has no LC_MAIN entry")
         libsystem_info = run([str(inspector), str(libsystem_app)])
         for symbol in ("_malloc", "_write", "_exit"):
             if f"Import: {symbol}" not in libsystem_info:
@@ -108,6 +126,7 @@ def main():
             output.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(app, output / "RuntimeApp")
             shutil.copyfile(libsystem_app, output / "LibSystemApp")
+            shutil.copyfile(hello_app, output / "HelloProcess")
             shutil.copyfile(dylib, output / "libRuntimeWidget.dylib")
         print("SDK-free LLVM linked project-owned iPhoneOS executable and dylib")
         print("Metadata-only libSystem stub does not provide executable OS services")
