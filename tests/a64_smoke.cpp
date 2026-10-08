@@ -102,28 +102,13 @@ void verify_real_linked_call(const std::vector<std::byte>& main_image,
     guest.sp = stack_address + stack_bytes;
     guest.x[30] = return_sentinel;
     backend->set_state(guest);
-    bool completed = false;
-    for (unsigned step = 0; step < 4096; ++step) {
-        const auto event = backend->step();
-        guest = backend->state();
-        if (event.kind == anyios::cpu::CpuEventKind::fault ||
-            event.kind == anyios::cpu::CpuEventKind::unsupported) {
-            throw std::runtime_error(event.diagnostic + " at guest PC " +
-                                     std::to_string(guest.pc));
-        }
-        if (event.kind == anyios::cpu::CpuEventKind::svc) {
-            throw std::runtime_error("linked ARM64 iOS code requested unsupported Darwin SVC");
-        }
-        if (guest.pc == return_sentinel) {
-            completed = true;
-            break;
-        }
+    const auto event = backend->run_until_event(4096, return_sentinel);
+    const auto state = backend->state();
+    if (event.kind != anyios::cpu::CpuEventKind::returned) {
+        throw std::runtime_error("linked ARM64 guest did not return: " +
+                                 event.diagnostic + " at PC " + std::to_string(state.pc));
     }
-    if (!completed) {
-        throw std::runtime_error("linked ARM64 guest exceeded execution step limit, last PC " +
-                                 std::to_string(guest.pc));
-    }
-    if (guest.x[0] != 42) {
+    if (state.x[0] != 42) {
         throw std::runtime_error("cross-dylib ARM64 guest call returned incorrect value");
     }
     std::cout << "Executed real iPhoneOS MH_EXECUTE -> MH_DYLIB call on Windows x64: 42\n";

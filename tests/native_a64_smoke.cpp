@@ -44,9 +44,9 @@ int main(int argc, char** argv) {
             initial.pc = 0x10000;
             initial.x[30] = 0x20000;
             backend->set_state(initial);
-            const auto event = backend->step();
+            const auto event = backend->run_until_event(4, 0x20000);
             const auto state = backend->state();
-            check(event.kind == anyios::cpu::CpuEventKind::stepped &&
+            check(event.kind == anyios::cpu::CpuEventKind::returned &&
                   state.x[0] == 42 && state.pc == 0x20000,
                   "native and Dynarmic CPU contracts diverged");
             initial.pc = 0x11000;

@@ -5,6 +5,7 @@
 #include <array>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 
 namespace anyios::cpu {
@@ -20,7 +21,8 @@ enum class CpuEventKind {
     stepped,
     svc,
     fault,
-    unsupported
+    unsupported,
+    returned
 };
 
 struct CpuEvent {
@@ -35,6 +37,20 @@ public:
     virtual CpuState state() const = 0;
     virtual void set_state(const CpuState& state) = 0;
     virtual CpuEvent step() = 0;
+    CpuEvent run_until_event(std::uint64_t max_steps,
+                             std::optional<std::uint64_t> return_pc = std::nullopt) {
+        if (max_steps == 0) {
+            return {CpuEventKind::unsupported, 0, "guest instruction budget exhausted"};
+        }
+        for (std::uint64_t i = 0; i < max_steps; ++i) {
+            const auto event = step();
+            if (event.kind != CpuEventKind::stepped) return event;
+            if (return_pc && state().pc == *return_pc) {
+                return {CpuEventKind::returned, 0, {}};
+            }
+        }
+        return {CpuEventKind::unsupported, 0, "guest instruction budget exhausted"};
+    }
 };
 
 std::unique_ptr<CpuBackend> make_dynarmic_backend(GuestMemory& memory);
