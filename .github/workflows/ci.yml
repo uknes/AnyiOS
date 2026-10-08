@@ -231,3 +231,19 @@ jobs:
         run: |
           & ./build-linked/Release/anyios-native-linked-owned.exe linked-images/RuntimeApp linked-images/libRuntimeWidget.dylib
           if ($LASTEXITCODE -ne 0) { throw "Native iPhoneOS app to dylib ARM64 call failed" }
+
+  sdk-free-ios-link:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install LLVM linker and ARM64 target tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-19 lld-19 llvm-19
+      - name: Configure inspector
+        run: cmake -S . -B build-sdkfree -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
+      - name: Build inspector
+        run: cmake --build build-sdkfree --target anyios-inspect --parallel 2
+      - name: Link genuine iOS ARM64 Mach-O without Apple SDK
+        run: python3 tests/sdkfree_link.py --clang clang-19 --linker ld64.lld-19 --inspector build-sdkfree/anyios-inspect
