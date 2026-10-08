@@ -19,7 +19,7 @@
 
 namespace {
 constexpr int kLogicalWidth = 600;
-constexpr int kLogicalHeight = 760;
+constexpr int kLogicalHeight = 818;
 constexpr int kBoardX = 47;
 constexpr int kBoardY = 250;
 constexpr int kBoardSize = 506;
@@ -106,7 +106,7 @@ void render(HDC dc, int width, int height,
     SetMapMode(dc, MM_ANISOTROPIC);
     SetWindowExtEx(dc, kLogicalWidth, kLogicalHeight, nullptr);
     SetViewportExtEx(dc, width, height, nullptr);
-    rounded(dc, 0, 0, 600, 760, RGB(250, 248, 239), 0);
+    rounded(dc, 0, 0, kLogicalWidth, kLogicalHeight, RGB(250, 248, 239), 0);
     label(dc, L"2048", RECT{47, 48, 260, 132}, 82, RGB(119, 110, 101),
           true, DT_LEFT);
     label(dc, L"ARM64 iOS guest  /  Windows host",
@@ -154,7 +154,7 @@ void render(HDC dc, int width, int height,
               34, RGB(255, 255, 255));
     }
     label(dc, L"Arrow keys / WASD or drag to move  \x2022  R to restart",
-          RECT{42, 714, 558, 748}, 15, RGB(151, 135, 122), false);
+          RECT{42, 772, 558, 808}, 15, RGB(151, 135, 122), false);
     RestoreDC(dc, saved);
 }
 
@@ -274,7 +274,7 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 void save_preview(const std::wstring& path,
                   const anyios::gui::Guest2048State& state) {
     constexpr int width = 600;
-    constexpr int height = 760;
+    constexpr int height = kLogicalHeight;
     BITMAPINFO info{};
     info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     info.bmiHeader.biWidth = width;
@@ -402,7 +402,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show) {
         const auto hwnd = CreateWindowExW(0, wc.lpszClassName,
             L"AnyiOS - 2048 ARM64 iOS Guest (compatibility fixture)",
             WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-            640, 835, nullptr, nullptr, instance, &app);
+            640, 905, nullptr, nullptr, instance, &app);
         if (!hwnd) throw std::runtime_error("Windows GDI host window creation failed");
         if (testing) {
             auto result = self_test(app, hwnd, screenshot.c_str());
