@@ -78,3 +78,13 @@ jobs:
         run: cmake --build build-jit --config Release --target anyios-a64-smoke --parallel 2
       - name: Execute ARM64 guest instructions on Windows x64
         run: ctest --test-dir build-jit --build-config Release -R "^arm64-on-x64$" --output-on-failure
+      - name: Compile project-owned ARM64 Mach-O object
+        shell: pwsh
+        run: |
+          & "C:\Program Files\LLVM\bin\clang.exe" --target=arm64-apple-ios13.0 -O2 -ffreestanding -c tests/fixtures/arm64_sample.c -o build-jit/owned-arm64.o
+          if ($LASTEXITCODE -ne 0) { throw 'ARM64 Mach-O compilation failed' }
+      - name: Execute compiled ARM64 Mach-O function on Windows x64
+        shell: pwsh
+        run: |
+          & ./build-jit/Release/anyios-a64-smoke.exe build-jit/owned-arm64.o
+          if ($LASTEXITCODE -ne 0) { throw 'Owned Mach-O function execution failed' }

@@ -1,4 +1,5 @@
 #include <anyios/guest_memory.hpp>
+#include <anyios/object_code.hpp>
 
 #include <dynarmic/interface/A64/a64.h>
 #include <dynarmic/interface/A64/config.h>
@@ -7,6 +8,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
 #include <optional>
 #include <stdexcept>
 
@@ -88,7 +92,7 @@ private:
     bool fault_ = false;
 };
 
-void verify() {
+void verify(const std::vector<std::byte>& code) {
     GuestMemory memory(0x10000, 0x30000);
     const auto rx = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::execute);
     const auto rw = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::write);
@@ -96,11 +100,10 @@ void verify() {
         throw std::runtime_error("guest memory mapping failed");
     }
 
-    const std::array<std::byte, 8> arm64{
-        std::byte{0x40}, std::byte{0x05}, std::byte{0x80}, std::byte{0xd2},
-        std::byte{0xc0}, std::byte{0x03}, std::byte{0x5f}, std::byte{0xd6}
-    };
-    if (!memory.load(0x10000, arm64)) throw std::runtime_error("guest code loading failed");
+    if (code.empty() || code.size() > 4096 || (code.size() % 4) != 0) {
+        throw std::runtime_error("guest test function code size is invalid");
+    }
+    if (!memory.load(0x10000, code)) throw std::runtime_error("guest code loading failed");
 
     Callbacks callbacks(memory);
     Dynarmic::A64::UserConfig config{};
@@ -108,12 +111,18 @@ void verify() {
     config.enable_cycle_counting = false;
     Dynarmic::A64::Jit jit(config);
     jit.SetPC(0x10000);
-    jit.SetRegister(30, 0x10008);
-    for (unsigned i = 0; i < 2; ++i) {
+    const std::uint64_t guest_return_address = 0x10000 + code.size();
+    jit.SetRegister(30, guest_return_address);
+    bool returned = false;
+    for (unsigned i = 0; i < 128; ++i) {
         static_cast<void>(jit.Step());
         if (callbacks.failed()) throw std::runtime_error("guest execution raised a fault");
+        if (jit.GetPC() == guest_return_address) {
+            returned = true;
+            break;
+        }
     }
-    if (jit.GetRegister(0) != 42 || jit.GetPC() != 0x10008) {
+    if (!returned || jit.GetRegister(0) != 42) {
         throw std::runtime_error("ARM64 code returned an incorrect result");
     }
     if (memory.fetch(0x11000)) {
@@ -123,10 +132,30 @@ void verify() {
 
 }
 
-int main() {
+int main(int argc, char** argv) {
     try {
-        verify();
-        std::cout << "Executed ARM64 MOVZ/RET guest code through Dynarmic: x0=42\n";
+        std::vector<std::byte> code;
+        if (argc == 1) {
+            code = {std::byte{0x40}, std::byte{0x05}, std::byte{0x80}, std::byte{0xd2},
+                    std::byte{0xc0}, std::byte{0x03}, std::byte{0x5f}, std::byte{0xd6}};
+        } else if (argc == 2) {
+            std::ifstream input(argv[1], std::ios::binary | std::ios::ate);
+            if (!input) throw std::runtime_error("cannot open owned Mach-O object");
+            const auto length = input.tellg();
+            if (length <= 0 || length > 4 * 1024 * 1024) {
+                throw std::runtime_error("owned Mach-O fixture file exceeds size limit");
+            }
+            input.seekg(0);
+            std::vector<std::byte> bytes(static_cast<std::size_t>(length));
+            if (!input.read(reinterpret_cast<char*>(bytes.data()), static_cast<std::streamsize>(bytes.size()))) {
+                throw std::runtime_error("cannot read owned Mach-O fixture");
+            }
+            code = anyios::loader::extract_object_function(bytes, "_anyios_answer").code;
+        } else {
+            throw std::runtime_error("usage: anyios-a64-smoke [owned-mach-o-object]");
+        }
+        verify(code);
+        std::cout << "Executed owned ARM64 guest instructions through Dynarmic: x0=42\n";
         return 0;
     } catch (const std::exception& error) {
         std::cerr << "ARM64 execution failed: " << error.what() << '\n';
