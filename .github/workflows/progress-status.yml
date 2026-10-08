@@ -11,7 +11,7 @@ on:
   pull_request:
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: anyios-progress-${{ github.ref }}
   cancel-in-progress: true
@@ -45,22 +45,38 @@ jobs:
             docs/progress.json
             docs/progress.svg
             docs/progress.html
+            docs/progress.md
             docs/badge-apis.svg
             docs/badge-runtime.svg
             docs/sneaky-sasquatch-intake.json
           if-no-files-found: error
           retention-days: 14
-      - name: Commit generated first-party status assets on feature branch
-        if: github.event_name == 'push' && github.ref == 'refs/heads/feature/full-compatibility-treemap-and-sasquatch-intake'
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/progress.json docs/progress.svg docs/progress.html docs/badge-apis.svg docs/badge-runtime.svg docs/sneaky-sasquatch-intake.json
-          if ! git diff --cached --quiet; then
-            git commit -m 'docs(progress): regenerate full compatibility coverage assets'
-            git push origin "HEAD:${GITHUB_REF_NAME}"
-          fi
       - name: Verify committed status is current on main
         if: github.ref == 'refs/heads/main'
         run: |
-          git diff --exit-code -- docs/progress.json docs/progress.svg docs/progress.html docs/badge-apis.svg docs/badge-runtime.svg
+          git diff --exit-code -- docs/progress.json docs/progress.svg docs/progress.html docs/progress.md docs/badge-apis.svg docs/badge-runtime.svg
+
+  publish:
+    needs: progress
+    if: github.event_name == 'push' && github.ref == 'refs/heads/feature/full-compatibility-treemap-and-sasquatch-intake'
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: anyios-comprehensive-compatibility-map
+          path: docs
+      - name: Commit generated first-party status assets once
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/progress.json docs/progress.svg docs/progress.html docs/progress.md docs/badge-apis.svg docs/badge-runtime.svg docs/sneaky-sasquatch-intake.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'docs(progress): publish exact tested coverage and unchanged-game intake'
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
