@@ -4,6 +4,9 @@
 #include <anyios/object_code.hpp>
 #include <anyios/executable.hpp>
 #include <anyios/linked_pair.hpp>
+#include <anyios/macho.hpp>
+#include <anyios/libsystem_shim.hpp>
+#include <anyios/linked_image.hpp>
 #include <anyios/darwin_syscall.hpp>
 
 
@@ -115,6 +118,100 @@ void verify_real_linked_call(const std::vector<std::byte>& main_image,
     std::cout << "Executed real iPhoneOS MH_EXECUTE -> MH_DYLIB call on Windows x64: 42\n";
 }
 
+
+void verify_sdkfree_libsystem(const std::vector<std::byte>& file) {
+    constexpr std::uint64_t stubs_base = 0x80000;
+    constexpr std::uint64_t heap_base = 0x200000;
+    constexpr std::uint64_t stack_base = 0x300000;
+    constexpr std::uint64_t sentinel = 0x400000;
+    struct Stub {
+        const char* name;
+        std::uint32_t service;
+        std::uint64_t guest_address;
+    };
+    constexpr std::array<Stub, 3> stubs{{
+        {"_malloc", 0x1000, stubs_base},
+        {"_write", 4, stubs_base + 16},
+        {"_exit", 1, stubs_base + 32}
+    }};
+    GuestMemory memory(0x10000, 4 * 1024 * 1024);
+    const auto image = anyios::macho::inspect(file);
+    if (image.file_type != 2 || image.chained_imports.size() != stubs.size()) {
+        throw std::runtime_error("SDK-free libSystem fixture has unsupported imports");
+    }
+    std::vector<std::uint64_t> resolved;
+    for (const auto& name : image.chained_imports) {
+        const auto found = std::find_if(stubs.begin(), stubs.end(),
+            [&](const Stub& stub) { return name == stub.name; });
+        if (found == stubs.end()) {
+            throw std::runtime_error("unknown guest libSystem symbol: " + name);
+        }
+        resolved.push_back(found->guest_address);
+    }
+    const auto mapped = anyios::loader::stage_linked_image(
+        file, memory, 0x10000, resolved,
+        anyios::loader::LinkedImageOptions{true, nullptr});
+    const auto rx = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::execute);
+    const auto rw = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::write);
+    if (!memory.map_ios(stubs_base, 0x4000, rx) ||
+        !memory.map_ios(stack_base, 0x10000, rw)) {
+        throw std::runtime_error("owned libSystem stub/stack guest mapping failed");
+    }
+    std::array<std::byte, 0x4000> code{};
+    for (const auto& stub : stubs) {
+        const auto at = static_cast<std::size_t>(stub.guest_address - stubs_base);
+        const auto mov = 0xd2800010U | (stub.service << 5);
+        const std::array<std::uint32_t, 3> instructions{
+            mov, 0xd4001001U, 0xd65f03c0U
+        };
+        for (std::size_t i = 0; i < instructions.size(); ++i) {
+            for (unsigned byte = 0; byte < 4; ++byte) {
+                code[at + i * 4 + byte] =
+                    std::byte((instructions[i] >> (byte * 8)) & 0xff);
+            }
+        }
+    }
+    if (!memory.load(stubs_base, code)) {
+        throw std::runtime_error("could not populate registered ARM64 thunk page");
+    }
+    anyios::darwin::LibSystemShim libsystem(memory, heap_base, 0x10000);
+    auto backend = anyios::cpu::make_dynarmic_backend(memory);
+    anyios::cpu::CpuState guest{};
+    guest.pc = mapped.guest_entry;
+    guest.sp = stack_base + 0x10000;
+    guest.x[30] = sentinel;
+    backend->set_state(guest);
+    for (unsigned event_count = 0; event_count < 24; ++event_count) {
+        const auto event = backend->run_until_event(100000, sentinel);
+        guest = backend->state();
+        if (event.kind != anyios::cpu::CpuEventKind::svc ||
+            event.svc_immediate != 0x80) {
+            throw std::runtime_error("guest libc test did not reach expected SVC: " +
+                                     event.diagnostic);
+        }
+        const auto stub = std::find_if(stubs.begin(), stubs.end(),
+            [&](const Stub& candidate) {
+                return guest.pc == candidate.guest_address + 8 &&
+                       guest.x[16] == candidate.service;
+            });
+        if (stub == stubs.end()) {
+            throw std::runtime_error("unexpected/unregistered libSystem SVC origin");
+        }
+        const auto result = libsystem.invoke(stub->name,
+            {guest.x[0], guest.x[1], guest.x[2]});
+        if (result.exited) {
+            if (result.value != 0 || libsystem.output() != "OK") {
+                throw std::runtime_error("owned libSystem application returned wrong exit/output");
+            }
+            std::cout << "Executed SDK-free iOS _malloc/_write/_exit through Dynarmic: OK\\n";
+            return;
+        }
+        guest.x[0] = result.value;
+        backend->set_state(guest);
+    }
+    throw std::runtime_error("owned libSystem fixture exhausted event budget");
+}
+
 void verify_syscall_object(const std::vector<std::byte>& code) {
     GuestMemory memory(0x10000, 0x30000);
     const auto rx = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::execute);
@@ -223,6 +320,10 @@ void verify(const std::vector<std::byte>& code) {
 int main(int argc, char** argv) {
     try {
         std::vector<std::byte> code;
+        if (argc == 3 && std::string(argv[1]) == "--libsystem") {
+            verify_sdkfree_libsystem(read_owned_binary(argv[2]));
+            return 0;
+        }
         if (argc == 4 && std::string(argv[1]) == "--linked") {
             verify_real_linked_call(read_owned_binary(argv[2]), read_owned_binary(argv[3]));
             return 0;

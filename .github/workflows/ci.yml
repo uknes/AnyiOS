@@ -63,7 +63,7 @@ jobs:
         run: ./build/anyios-fuzz build/fuzz-corpus -runs=15000 -max_len=4096 -timeout=3 -print_final_stats=1
 
   windows-a64-translation:
-    needs: linked-ios-artifact
+    needs: [linked-ios-artifact, sdk-free-ios-link]
     runs-on: windows-latest
     timeout-minutes: 45
     steps:
@@ -107,6 +107,16 @@ jobs:
         with:
           name: anyios-linked-ios-owned
           path: linked-images
+      - name: Retrieve SDK-free owned libSystem API C fixture
+        uses: actions/download-artifact@v4
+        with:
+          name: anyios-sdkfree-ios-owned
+          path: sdkfree-images
+      - name: Execute SDK-free linked libSystem API calls through Dynarmic
+        shell: pwsh
+        run: |
+          & ./build-jit/Release/anyios-a64-smoke.exe --libsystem sdkfree-images/LibSystemApp
+          if ($LASTEXITCODE -ne 0) { throw 'Owned libSystem guest ABI call test failed on Windows x64' }
       - name: Execute genuine iPhoneOS cross-dylib call through Dynarmic
         shell: pwsh
         run: |

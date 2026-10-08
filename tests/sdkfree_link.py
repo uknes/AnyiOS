@@ -107,6 +107,7 @@ def main():
             output = pathlib.Path(args.output_dir).resolve()
             output.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(app, output / "RuntimeApp")
+            shutil.copyfile(libsystem_app, output / "LibSystemApp")
             shutil.copyfile(dylib, output / "libRuntimeWidget.dylib")
         print("SDK-free LLVM linked project-owned iPhoneOS executable and dylib")
         print("Metadata-only libSystem stub does not provide executable OS services")
