@@ -112,13 +112,14 @@ LinkedImage stage_linked_image(
         if (options.require_ios_pages &&
             (segment.vm_address % cpu::GuestMemory::ios_page_size != 0 ||
              segment.vm_size % cpu::GuestMemory::ios_page_size != 0)) {
-            throw macho::FormatError("linked iOS segment violates 16 KiB guest page alignment");
+            throw macho::FormatError("linked iOS segment " + segment.name +
+                                     " violates 16 KiB guest page alignment");
         }
         if (segment.vm_size == 0 || segment.vm_size % page != 0 ||
             segment.vm_address < original_base ||
             (segment.vm_address - original_base) % page != 0 ||
             segment.vm_size > 64 * 1024 * 1024) {
-            throw macho::FormatError("invalid linked segment layout");
+            throw macho::FormatError("invalid linked segment layout: " + segment.name);
         }
         const auto perms = segment.init_protection;
         if (perms == 0 || (perms & ~7u) != 0 ||
