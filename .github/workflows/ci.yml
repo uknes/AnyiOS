@@ -215,6 +215,10 @@ jobs:
         run: cmake --build build-native --config Release --target anyios-native-a64-smoke --parallel 2
       - name: Run native ARM64 fixture tests
         run: ctest --test-dir build-native --build-config Release -R "^native-arm64-owned$" --output-on-failure
+      - name: Build guest Objective-C lifetime contract on Windows ARM64
+        run: cmake --build build-native --config Release --target anyios-objc-objects-tests --parallel 2
+      - name: Test guest Objective-C lifetime contract on Windows ARM64
+        run: ctest --test-dir build-native --build-config Release -R "^objc-guest-instance-lifetime$" --output-on-failure
       - name: Compile owned iOS-target ARM64 Mach-O
         shell: pwsh
         run: |

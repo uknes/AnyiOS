@@ -126,6 +126,15 @@ std::optional<std::string> ObjcIdentityProbe::local_class_name(
     return bounded_ascii(*name_ptr, class_name_ranges_);
 }
 
+std::optional<std::uint32_t> ObjcIdentityProbe::local_instance_size(
+    std::uint64_t receiver) const {
+    const auto ro = local_ro(receiver);
+    if (!ro) return std::nullopt;
+    const auto size = memory_.read(*ro + 8, 4);
+    if (!size || *size < 8 || *size > 4096) return std::nullopt;
+    return static_cast<std::uint32_t>(*size);
+}
+
 std::optional<GuestObjcMethod> ObjcIdentityProbe::local_instance_method(
     std::uint64_t receiver, std::string_view method_name) const {
     const auto ro = local_ro(receiver);
