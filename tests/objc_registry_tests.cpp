@@ -80,6 +80,22 @@ void check_registration_and_subclass() {
     ensure(!unresolved.local_superclass(0x20100), "unresolved framework parent accepted");
 }
 
+void check_objc_classname_section() {
+    auto memory = memory_fixture();
+    auto image = fixture_image();
+    for (auto& section : image.sections) {
+        if (section.name == "__cstring") {
+            section.name = "__objc_classname";
+        }
+    }
+    const anyios::darwin::ObjcIdentityProbe classes(image, memory, 0x10000);
+    const anyios::darwin::GuestObjcClassRegistry registry(classes, memory);
+    ensure(registry.find("AppDelegate") == 0x20000,
+           "canonical __objc_classname class metadata not resolved");
+    ensure(registry.find("ViewController") == 0x20100,
+           "canonical __objc_classname secondary class metadata not resolved");
+}
+
 void check_duplicate_name_rejected() {
     auto memory = memory_fixture(true);
     const anyios::darwin::ObjcIdentityProbe classes(fixture_image(), memory, 0x10000);
@@ -97,5 +113,6 @@ void check_duplicate_name_rejected() {
 int main() {
     check_registration_and_subclass();
     check_duplicate_name_rejected();
+    check_objc_classname_section();
     std::cout << "Local Objective-C class registry, guest lookup, inheritance and refusal passed\n";
 }

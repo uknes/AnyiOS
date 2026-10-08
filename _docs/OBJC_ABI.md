@@ -79,3 +79,7 @@ guest C-string lookup, and resolves superclasses only when locally registered
 remain unresolved rather than converted into a fake local root. This is a
 narrow prerequisite for `_objc_getClass`, not a complete libobjc dispatcher,
 metaclass registry, initializer runner, or true Foundation object.
+
+Both compiler-emitted `__TEXT,__objc_classname` and ordinary `__cstring`
+class name section layouts are accepted by the bounded class reader. Other
+unrecognized metadata forms remain unsupported until tested.
