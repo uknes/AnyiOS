@@ -218,11 +218,16 @@ jobs:
           name: anyios-linked-ios-owned
           path: linked-images
       - name: Configure ARM64 dependency stage
-        run: cmake -S . -B build-linked -A ARM64 -DBUILD_TESTING=OFF
-      - name: Build ARM64 linked-image probe
-        run: cmake --build build-linked --config Release --target anyios-link-probe --parallel 2
+        run: cmake -S . -B build-linked -A ARM64 -DBUILD_TESTING=OFF -DANYIOS_NATIVE_LINKED_TEST=ON
+      - name: Build ARM64 linked-image probe and trusted runner
+        run: cmake --build build-linked --config Release --target anyios-link-probe anyios-native-linked-owned --parallel 2
       - name: Stage original iOS executable/dylib on Windows ARM64
         shell: pwsh
         run: |
           & ./build-linked/Release/anyios-link-probe.exe linked-images/RuntimeApp linked-images/libRuntimeWidget.dylib
           if ($LASTEXITCODE -ne 0) { throw "Real iPhoneOS dependency staging failed on Windows ARM64" }
+      - name: Execute trusted original iPhoneOS app to dylib call on ARM64
+        shell: pwsh
+        run: |
+          & ./build-linked/Release/anyios-native-linked-owned.exe linked-images/RuntimeApp linked-images/libRuntimeWidget.dylib
+          if ($LASTEXITCODE -ne 0) { throw "Native iPhoneOS app to dylib ARM64 call failed" }
