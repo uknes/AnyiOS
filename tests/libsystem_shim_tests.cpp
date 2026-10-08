@@ -95,7 +95,7 @@ int main() {
                 "errno address changed during thread lifetime");
         require(lib.output() == "OK", "failed write changed guest output");
         require(lib.invoke("_puts", {0x40000, 0, 0}).value == 0 &&
-                lib.output() == "OKAB\\n", "puts must append line through bounded guest write");
+                lib.output() == "OKAB\n", "puts must append line through bounded guest write");
         try {
             static_cast<void>(lib.invoke("_abort", {0, 0, 0}));
             throw std::runtime_error("guest abort returned successfully");
