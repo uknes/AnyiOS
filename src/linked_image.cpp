@@ -28,7 +28,8 @@ LinkedImage stage_linked_image(
     std::span<const std::byte> file,
     cpu::GuestMemory& memory,
     std::uint64_t guest_base,
-    std::span<const std::uint64_t> resolved_imports) {
+    std::span<const std::uint64_t> resolved_imports,
+    LinkedImageOptions options) {
     const auto image = macho::inspect(file);
     if (image.is_fat || image.is_encrypted || (image.file_type != 2 && image.file_type != 6)) {
         throw macho::FormatError("linked mapper requires thin, unencrypted ARM64 executable/dylib");
@@ -102,7 +103,8 @@ LinkedImage stage_linked_image(
     }
     dyld::apply_chained_patches(staged_file, patches);
 
-    auto staged_memory = memory;
+    cpu::GuestMemory::MappingJournal local(memory);
+    auto& journal = options.transaction ? *options.transaction : local;
     std::size_t mapped = 0;
     for (const auto& segment : image.segments) {
         if (segment.name == "__PAGEZERO" && segment.file_size == 0 &&
@@ -121,11 +123,17 @@ LinkedImage stage_linked_image(
         }
         const auto address = sum(guest_base, segment.vm_address - original_base,
                                  "linked segment address overflow");
-        if (!staged_memory.map(address, static_cast<std::size_t>(segment.vm_size), perms)) {
+        if (options.require_ios_pages &&
+            (segment.vm_address % cpu::GuestMemory::ios_page_size != 0 ||
+             segment.vm_size % cpu::GuestMemory::ios_page_size != 0)) {
+            throw macho::FormatError("linked iOS segment violates 16 KiB guest page alignment");
+        }
+        if (!journal.map(address, static_cast<std::size_t>(segment.vm_size),
+                         perms, options.require_ios_pages)) {
             throw macho::FormatError("linked guest mapping failed");
         }
         if (segment.file_size &&
-            !staged_memory.load(address, std::span<const std::byte>(
+            !journal.load(address, std::span<const std::byte>(
                 staged_file.data() + static_cast<std::size_t>(segment.file_offset),
                 static_cast<std::size_t>(segment.file_size)))) {
             throw macho::FormatError("linked guest segment initialization failed");
@@ -141,11 +149,11 @@ LinkedImage stage_linked_image(
             throw macho::FormatError("linked entry point outside __TEXT");
         }
         entry = sum(guest_base, image.entry_offset, "linked entry point overflow");
-        if (!staged_memory.fetch(entry)) {
+        if (!memory.fetch(entry)) {
             throw macho::FormatError("linked entry point not executable");
         }
     }
-    memory = std::move(staged_memory);
+    if (!options.transaction) local.commit();
     return {guest_base, entry, mapped, patches.size()};
 }
 }

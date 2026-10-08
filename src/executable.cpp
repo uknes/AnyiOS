@@ -72,7 +72,7 @@ LoadedExecutable load_static_executable(std::span<const std::byte> file,
         }
     }
 
-    auto draft = memory;
+    cpu::GuestMemory::MappingJournal journal(memory);
     const macho::Segment* text = nullptr;
     std::size_t count = 0;
     for (const auto& segment : image.segments) {
@@ -95,11 +95,11 @@ LoadedExecutable load_static_executable(std::span<const std::byte> file,
             (segment.file_offset != 0 || segment.file_size < commands_end)) {
             throw macho::FormatError("__TEXT does not contain Mach-O header and load commands");
         }
-        if (!draft.map(segment.vm_address, static_cast<std::size_t>(segment.vm_size), permissions)) {
+        if (!journal.map(segment.vm_address, static_cast<std::size_t>(segment.vm_size), permissions)) {
             throw macho::FormatError("guest executable segment mapping failed");
         }
         if (segment.file_size &&
-            !draft.load(segment.vm_address,
+            !journal.load(segment.vm_address,
                 file.subspan(static_cast<std::size_t>(segment.file_offset),
                              static_cast<std::size_t>(segment.file_size)))) {
             throw macho::FormatError("guest executable segment initialization failed");
@@ -120,8 +120,8 @@ LoadedExecutable load_static_executable(std::span<const std::byte> file,
         throw macho::FormatError("LC_MAIN entry outside executable bytes");
     }
     const auto entry = text->vm_address + image.entry_offset;
-    if (!draft.fetch(entry)) throw macho::FormatError("LC_MAIN entry is not executable");
-    memory = std::move(draft);
+    if (!memory.fetch(entry)) throw macho::FormatError("LC_MAIN entry is not executable");
+    journal.commit();
     return {entry, count};
 }
 }

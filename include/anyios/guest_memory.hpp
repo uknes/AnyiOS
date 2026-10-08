@@ -20,6 +20,7 @@ constexpr unsigned bits(Access access) {
 
 class GuestMemory {
 public:
+    class MappingJournal;
     static constexpr std::size_t page_size = 4096;
     static constexpr std::size_t ios_page_size = 16 * 1024;
 
@@ -36,10 +37,30 @@ public:
 
 private:
     std::optional<std::size_t> offset_of(std::uint64_t address, std::size_t size) const;
+    void unmap_owned(std::uint64_t address, std::size_t size) noexcept;
 
     std::uint64_t base_;
     std::vector<std::byte> bytes_;
     std::vector<unsigned char> page_flags_;
+};
+
+class GuestMemory::MappingJournal {
+public:
+    explicit MappingJournal(GuestMemory& memory) noexcept : memory_(memory) {}
+    MappingJournal(const MappingJournal&) = delete;
+    MappingJournal& operator=(const MappingJournal&) = delete;
+    ~MappingJournal() noexcept;
+
+    bool map(std::uint64_t address, std::size_t size, unsigned permissions,
+             bool require_ios_page = false);
+    bool load(std::uint64_t address, std::span<const std::byte> data);
+    void commit() noexcept { committed_ = true; }
+
+private:
+    struct Region { std::uint64_t address; std::size_t size; };
+    GuestMemory& memory_;
+    std::vector<Region> owned_;
+    bool committed_ = false;
 };
 
 }

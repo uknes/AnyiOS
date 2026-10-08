@@ -50,6 +50,38 @@ void run() {
     require(!memory.read(UINT64_MAX, 8));
     require(!memory.load(0x10000, {}));
     require(!memory.load(0x30000, code));
+
+    {
+        GuestMemory journal_memory(0x40000, 0x10000);
+        require(journal_memory.map(0x40000, 4096, rw));
+        require(journal_memory.write(0x40000, 0x12345678, 4));
+        {
+            GuestMemory::MappingJournal journal(journal_memory);
+            require(journal.map(0x44000, 4096, rw));
+            require(journal.load(0x44000, code));
+            require(!journal.load(0x40000, code));
+            require(!journal.map(0x44000, 4096, rw));
+            require(journal_memory.read(0x44000, 8).has_value());
+        }
+        require(!journal_memory.read(0x44000, 8).has_value());
+        require(journal_memory.read(0x40000, 4) == 0x12345678);
+        {
+            GuestMemory::MappingJournal journal(journal_memory);
+            require(journal.map(0x44000, 4096, rw));
+            require(journal.load(0x44000, code));
+            journal.commit();
+            require(!journal.map(0x45000, 4096, rw));
+        }
+        require(journal_memory.read(0x44000, 8).has_value());
+        require(journal_memory.read(0x44000, 8).value() == 0xd65f03c0d2800540ULL);
+        {
+            GuestMemory::MappingJournal journal(journal_memory);
+            require(!journal.map(0x45000, 4096, rw, true));
+            require(journal.map(0x48000, 16384, rw, true));
+        }
+        require(!journal_memory.allowed(0x48000, 16384, Access::read));
+        require(journal_memory.read(0x40000, 4) == 0x12345678);
+    }
     try {
         GuestMemory bad(UINT64_MAX - 4095, 8192);
         static_cast<void>(bad);

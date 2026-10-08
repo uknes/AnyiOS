@@ -47,6 +47,52 @@ bool GuestMemory::map_ios(std::uint64_t address, std::size_t size, unsigned perm
     return map(address, size, permissions);
 }
 
+void GuestMemory::unmap_owned(std::uint64_t address, std::size_t size) noexcept {
+    const auto start = static_cast<std::size_t>(address - base_);
+    const auto first = start / page_size;
+    const auto count = size / page_size;
+    std::fill(page_flags_.begin() + static_cast<std::ptrdiff_t>(first),
+              page_flags_.begin() + static_cast<std::ptrdiff_t>(first + count), 0);
+    std::fill(bytes_.begin() + static_cast<std::ptrdiff_t>(start),
+              bytes_.begin() + static_cast<std::ptrdiff_t>(start + size), std::byte{0});
+}
+
+GuestMemory::MappingJournal::~MappingJournal() noexcept {
+    if (committed_) return;
+    for (auto it = owned_.rbegin(); it != owned_.rend(); ++it) {
+        memory_.unmap_owned(it->address, it->size);
+    }
+}
+
+bool GuestMemory::MappingJournal::map(std::uint64_t address, std::size_t size,
+                                     unsigned permissions, bool require_ios_page) {
+    if (committed_) return false;
+    const bool mapped = require_ios_page ?
+        memory_.map_ios(address, size, permissions) :
+        memory_.map(address, size, permissions);
+    if (!mapped) return false;
+    try {
+        owned_.push_back({address, size});
+    } catch (...) {
+        memory_.unmap_owned(address, size);
+        throw;
+    }
+    return true;
+}
+
+bool GuestMemory::MappingJournal::load(std::uint64_t address,
+                                      std::span<const std::byte> data) {
+    if (committed_ || data.empty()) return false;
+    for (const auto& region : owned_) {
+        if (address >= region.address &&
+            address - region.address <= region.size &&
+            data.size() <= region.size - (address - region.address)) {
+            return memory_.load(address, data);
+        }
+    }
+    return false;
+}
+
 bool GuestMemory::allowed(std::uint64_t address, std::size_t size, Access access) const {
     if (size == 0) return false;
     const auto begin = offset_of(address, size);

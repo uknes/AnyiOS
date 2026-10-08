@@ -56,15 +56,16 @@ OwnedLinkedPair stage_owned_linked_pair(
     if (resolved.size() != 1) {
         throw macho::FormatError("owned dependency did not resolve exactly one symbol");
     }
-    auto staged = memory;
-    const auto library_result = stage_linked_image(library, staged, library_base, {});
+    cpu::GuestMemory::MappingJournal journal(memory);
+    const LinkedImageOptions options{true, &journal};
+    const auto library_result = stage_linked_image(library, memory, library_base, {}, options);
     const auto executable_result = stage_linked_image(
-        executable, staged, executable_base, resolved);
+        executable, memory, executable_base, resolved, options);
     if (!executable_result.guest_entry ||
-        !staged.fetch(resolved[0]).has_value()) {
+        !memory.fetch(resolved[0]).has_value()) {
         throw macho::FormatError("owned cross-library call target is not executable");
     }
-    memory = std::move(staged);
+    journal.commit();
     return {executable_result.guest_entry, resolved[0],
             executable_result.patched_pointers, library_result.patched_pointers};
 }
