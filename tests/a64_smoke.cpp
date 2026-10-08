@@ -1,6 +1,7 @@
 #include <anyios/guest_memory.hpp>
 #include <anyios/object_code.hpp>
 #include <anyios/executable.hpp>
+#include <anyios/linked_pair.hpp>
 #include <anyios/darwin_syscall.hpp>
 
 #include <dynarmic/interface/A64/a64.h>
@@ -144,6 +145,74 @@ void execute_guest(GuestMemory& memory, std::uint64_t entry, std::uint64_t retur
     }
 }
 
+
+std::vector<std::byte> read_owned_binary(const char* path) {
+    std::ifstream stream(path, std::ios::binary | std::ios::ate);
+    if (!stream) throw std::runtime_error(std::string("missing owned iPhoneOS image: ") + path);
+    const auto length = stream.tellg();
+    if (length <= 0 || length > 32 * 1024 * 1024) {
+        throw std::runtime_error("owned linked Mach-O image exceeds size limit");
+    }
+    stream.seekg(0);
+    std::vector<std::byte> bytes(static_cast<std::size_t>(length));
+    if (!stream.read(reinterpret_cast<char*>(bytes.data()),
+                     static_cast<std::streamsize>(bytes.size()))) {
+        throw std::runtime_error("could not read owned linked Mach-O image");
+    }
+    return bytes;
+}
+
+void verify_real_linked_call(const std::vector<std::byte>& main_image,
+                             const std::vector<std::byte>& library_image) {
+    GuestMemory memory(0x10000, 4 * 1024 * 1024);
+    const auto loaded = anyios::loader::stage_owned_linked_pair(
+        main_image, library_image, memory, 0x10000, 0x80000);
+    const auto rw = anyios::cpu::bits(Access::read) |
+                    anyios::cpu::bits(Access::write);
+    constexpr std::uint64_t stack_address = 0x300000;
+    constexpr std::uint64_t stack_bytes = 0x10000;
+    constexpr std::uint64_t return_sentinel = 0x400000;
+    if (!memory.map(stack_address, stack_bytes, rw)) {
+        throw std::runtime_error("guest stack mapping failed");
+    }
+    if (!memory.fetch(loaded.imported_function) || !memory.fetch(loaded.entry)) {
+        throw std::runtime_error("linked guest function is not executable");
+    }
+    Callbacks callbacks(memory);
+    Dynarmic::A64::UserConfig config{};
+    config.callbacks = &callbacks;
+    config.enable_cycle_counting = false;
+    Dynarmic::A64::Jit jit(config);
+    jit.SetPC(loaded.entry);
+    jit.SetSP(stack_address + stack_bytes);
+    jit.SetRegister(30, return_sentinel);
+    jit.SetRegister(0, 0);
+    jit.SetRegister(1, 0);
+    bool completed = false;
+    for (unsigned step = 0; step < 4096; ++step) {
+        static_cast<void>(jit.Step());
+        if (callbacks.failed()) {
+            throw std::runtime_error("linked ARM64 iOS code raised a guest memory/CPU fault at PC " +
+                                     std::to_string(jit.GetPC()));
+        }
+        if (callbacks.take_trap()) {
+            throw std::runtime_error("linked ARM64 iOS code requested unsupported Darwin SVC");
+        }
+        if (jit.GetPC() == return_sentinel) {
+            completed = true;
+            break;
+        }
+    }
+    if (!completed) {
+        throw std::runtime_error("linked ARM64 guest exceeded execution step limit, last PC " +
+                                 std::to_string(jit.GetPC()));
+    }
+    if (jit.GetRegister(0) != 42) {
+        throw std::runtime_error("cross-dylib ARM64 guest call returned incorrect value");
+    }
+    std::cout << "Executed real iPhoneOS MH_EXECUTE -> MH_DYLIB call on Windows x64: 42\n";
+}
+
 void verify_syscall_object(const std::vector<std::byte>& code) {
     GuestMemory memory(0x10000, 0x30000);
     const auto rx = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::execute);
@@ -235,6 +304,10 @@ void verify(const std::vector<std::byte>& code) {
 int main(int argc, char** argv) {
     try {
         std::vector<std::byte> code;
+        if (argc == 4 && std::string(argv[1]) == "--linked") {
+            verify_real_linked_call(read_owned_binary(argv[2]), read_owned_binary(argv[3]));
+            return 0;
+        }
         if (argc == 1) {
             code = {std::byte{0x40}, std::byte{0x05}, std::byte{0x80}, std::byte{0xd2},
                     std::byte{0xc0}, std::byte{0x03}, std::byte{0x5f}, std::byte{0xd6}};
@@ -259,7 +332,7 @@ int main(int argc, char** argv) {
                 return 0;
             }
         } else {
-            throw std::runtime_error("usage: anyios-a64-smoke [owned-mach-o-object | --syscall owned-mach-o-object]");
+            throw std::runtime_error("usage: anyios-a64-smoke [owned-mach-o-object | --syscall owned-mach-o-object | --linked RuntimeApp libRuntimeWidget.dylib]");
         }
         verify(code);
         verify_synthetic_executable(code);

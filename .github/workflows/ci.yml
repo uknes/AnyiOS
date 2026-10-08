@@ -63,6 +63,7 @@ jobs:
         run: ./build/anyios-fuzz build/fuzz-corpus -runs=15000 -max_len=4096 -timeout=3 -print_final_stats=1
 
   windows-a64-translation:
+    needs: linked-ios-artifact
     runs-on: windows-latest
     timeout-minutes: 45
     steps:
@@ -101,6 +102,17 @@ jobs:
         run: |
           & ./build-jit/Release/anyios-a64-smoke.exe build-jit/owned-arm64.o
           if ($LASTEXITCODE -ne 0) { throw 'Owned Mach-O function execution failed' }
+      - name: Retrieve original iPhoneOS linked images
+        uses: actions/download-artifact@v4
+        with:
+          name: anyios-linked-ios-owned
+          path: linked-images
+      - name: Execute genuine iPhoneOS cross-dylib call through Dynarmic
+        shell: pwsh
+        run: |
+          & ./build-jit/Release/anyios-a64-smoke.exe --linked linked-images/RuntimeApp linked-images/libRuntimeWidget.dylib
+          if ($LASTEXITCODE -ne 0) { throw 'Linked ARM64 MH_EXECUTE to MH_DYLIB execution failed on Windows x64' }
+
 
 
   linked-ios-artifact:
