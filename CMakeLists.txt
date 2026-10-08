@@ -1,0 +1,26 @@
+cmake_minimum_required(VERSION 3.20)
+project(AnyiOS VERSION 0.1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+add_library(anyios_macho STATIC src/macho.cpp)
+target_include_directories(anyios_macho PUBLIC include)
+target_compile_features(anyios_macho PUBLIC cxx_std_20)
+if(MSVC)
+    target_compile_options(anyios_macho PRIVATE /W4)
+else()
+    target_compile_options(anyios_macho PRIVATE -Wall -Wextra -Wpedantic -Wconversion)
+endif()
+
+add_executable(anyios-inspect tools/inspect.cpp)
+target_link_libraries(anyios-inspect PRIVATE anyios_macho)
+
+include(CTest)
+if(BUILD_TESTING)
+    add_executable(anyios-tests tests/macho_tests.cpp)
+    target_link_libraries(anyios-tests PRIVATE anyios_macho)
+    add_test(NAME macho-parser COMMAND anyios-tests)
+    add_test(NAME inspector-help COMMAND anyios-inspect --help)
+endif()

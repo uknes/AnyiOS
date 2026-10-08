@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            preset: gcc
+          - os: ubuntu-latest
+            preset: clang
+          - os: windows-latest
+            preset: msvc
+          - os: macos-latest
+            preset: clang
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        shell: bash
+        run: |
+          if [ "${{ matrix.preset }}" = gcc ]; then
+            cmake -S . -B build -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON
+          elif [ "${{ matrix.preset }}" = clang ] && [ "${{ runner.os }}" = Linux ]; then
+            cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON
+          else
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON
+          fi
+      - name: Build
+        run: cmake --build build --config Debug --parallel 2
+      - name: Test
+        run: ctest --test-dir build --build-config Debug --output-on-failure

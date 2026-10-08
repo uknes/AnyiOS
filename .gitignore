@@ -1,0 +1,11 @@
+/build/
+/build-asan/
+/cmake-build-*/
+/.cache/
+*.o
+*.obj
+*.exe
+*.dSYM/
+.idea/
+.vscode/
+.DS_Store
