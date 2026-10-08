@@ -81,6 +81,18 @@ int main(int argc, char** argv) {
                   "native Darwin SVC reached the host kernel");
             check(backend->state().pc == 0x12000,
                   "native SVC failure mutated guest program counter");
+            for (const std::uint32_t instruction : {0xd53bd060U, 0xd51bd060U}) {
+                std::array<std::byte, 4> encoded{};
+                for (unsigned b = 0; b < 4; ++b) {
+                    encoded[b] = std::byte((instruction >> (8 * b)) & 255);
+                }
+                check(memory.load(0x12000, encoded), "load guest TLS system instruction");
+                backend->set_state(initial);
+                const auto tls_event = backend->step();
+                check(tls_event.kind == anyios::cpu::CpuEventKind::unsupported &&
+                      backend->state().pc == 0x12000,
+                      "native guest MRS/MSR escaped strict unsupported boundary");
+            }
         }
         auto invalid = known;
         invalid[4] = std::byte{0};
