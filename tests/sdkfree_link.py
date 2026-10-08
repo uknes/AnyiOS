@@ -44,7 +44,7 @@ def main():
             "current-version: 1.0\n"
             "exports:\n"
             "  - targets: [ arm64-ios ]\n"
-            "    symbols: [ '_malloc', '_write', '_exit', '__tlv_bootstrap' ]\n"
+            "    symbols: [ '_malloc', '_write', '_exit', '__tlv_bootstrap', '_memcpy', '_memset', '_strlen', '_strcmp' ]\n"
             "...\n", encoding="utf-8"
         )
         clang_flags = [
@@ -102,6 +102,18 @@ def main():
                          "Section: __DATA/__thread_data"):
             if expected not in tlv_info:
                 raise AssertionError("Clang TLV fixture missing " + expected + ":\\n" + tlv_info)
+        primitive_obj = work / "PrimitiveProcess.o"
+        primitive_app = work / "PrimitiveProcess"
+        run(clang_flags + [str(fixtures / "arm64_libsystem_primitives.c"),
+                           "-o", str(primitive_obj)])
+        run(link + ["-execute", str(primitive_obj), "-e", "_main",
+                    "-L", str(work), "-lSystem", "-o", str(primitive_app)])
+        primitive_info = run([str(inspector), str(primitive_app)])
+        for symbol in ("_memcpy", "_memset", "_strlen", "_strcmp"):
+            if "Import: " + symbol not in primitive_info:
+                raise AssertionError("owned C libc fixture missing import " + symbol)
+        if "Entry file offset:" not in primitive_info:
+            raise AssertionError("owned C libc primitive fixture has no LC_MAIN")
         hello_info = run([str(inspector), str(hello_app)])
         for symbol in ("_malloc", "_write", "_exit"):
             if f"Import: {symbol}" not in hello_info:
@@ -139,6 +151,7 @@ def main():
             shutil.copyfile(libsystem_app, output / "LibSystemApp")
             shutil.copyfile(hello_app, output / "HelloProcess")
             shutil.copyfile(tlv_app, output / "TlvProcess")
+            shutil.copyfile(primitive_app, output / "PrimitiveProcess")
             shutil.copyfile(dylib, output / "libRuntimeWidget.dylib")
         print("SDK-free LLVM linked project-owned iPhoneOS executable and dylib")
         print("Metadata-only libSystem stub does not provide executable OS services")
