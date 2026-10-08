@@ -150,3 +150,41 @@ jobs:
               throw "Incorrect genuine iPhoneOS dependency metadata on Windows"
           }
           Write-Output "Windows x86-64 successfully inspected the exact original iPhoneOS linked binaries"
+
+  linux-arm64-native:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure native ARM64
+        run: cmake -S . -B build-native -DANYIOS_BUILD_ARM64_NATIVE=ON -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Release
+      - name: Build native ARM64 runner
+        run: cmake --build build-native --target anyios-native-a64-smoke --parallel 2
+      - name: Run native ARM64 fixture tests
+        run: ctest --test-dir build-native -R "^native-arm64-owned$" --output-on-failure
+      - name: Compile owned iOS-target ARM64 Mach-O
+        run: clang --target=arm64-apple-ios13.0 -O2 -ffreestanding -c tests/fixtures/arm64_sample.c -o build-native/owned-arm64.o
+      - name: Execute compiled Mach-O function on ARM64 Linux
+        run: ./build-native/anyios-native-a64-smoke build-native/owned-arm64.o
+
+  windows-arm64-native:
+    runs-on: windows-11-vs2026-arm
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure ARM64 Visual Studio target
+        run: cmake -S . -B build-native -A ARM64 -DANYIOS_BUILD_ARM64_NATIVE=ON -DBUILD_TESTING=ON
+      - name: Build native ARM64 runner
+        run: cmake --build build-native --config Release --target anyios-native-a64-smoke --parallel 2
+      - name: Run native ARM64 fixture tests
+        run: ctest --test-dir build-native --build-config Release -R "^native-arm64-owned$" --output-on-failure
+      - name: Compile owned iOS-target ARM64 Mach-O
+        shell: pwsh
+        run: |
+          & "C:\Program Files\LLVM\bin\clang.exe" --target=arm64-apple-ios13.0 -O2 -ffreestanding -c tests/fixtures/arm64_sample.c -o build-native/owned-arm64.o
+          if ($LASTEXITCODE -ne 0) { throw 'iOS ARM64 fixture compile failed' }
+      - name: Execute compiled Mach-O function on Windows ARM64
+        shell: pwsh
+        run: |
+          & ./build-native/Release/anyios-native-a64-smoke.exe build-native/owned-arm64.o
+          if ($LASTEXITCODE -ne 0) { throw 'Native ARM64 Mach-O execution failed' }
