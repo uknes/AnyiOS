@@ -38,3 +38,7 @@ No empty framework stubs pretending to be supported. Use reproducible narrow ver
 - tests/fuzz_macho.cpp: standalone instrumentation (not an uninstrumented static-library wrapper).
 
 No code maps guest executable pages or calls an entry point. Important future proof obligations include decomposed CPU subtype/capabilities, fixup pointer-format correctness, ObjC metadata ABI and signed executable constraints.
+
+## Experimental Windows x64 execution pathway
+
+Separate guest memory from CPU translation and Mach-O inspection. The guest address space is a bounded memory backing with per-page read/write/execute controls, not a Windows process view. The optional Dynarmic A64 JIT has callbacks which read and write guest memory and report faults. The smoke test intentionally executes only fixed, project-owned ARM64 bytes. _docs/WINDOWS_X64.md holds the actual Windows execution plan. No dyld loader or Apple library implementation should be inferred from this test.

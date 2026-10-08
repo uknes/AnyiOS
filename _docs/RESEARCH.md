@@ -38,3 +38,11 @@ Our current binary samples are synthetic. Test using independently built legitim
 - GNUstep libobjc2: https://github.com/gnustep/libobjc2
 
 An owned iOS ARM64 MH_OBJECT generated with Clang was successfully parsed and compared with LLVM output. Compiling an object does not validate actual app binary loading. GNUstep libobjc2 is a research candidate, not a proven binary-compatible replacement for Apple's iOS Objective-C runtime. Darwin syscall, dyld, Mach IPC, app services and frameworks remain open design problems.
+
+## Windows x86-64 research (2026-10-08)
+
+- Dynarmic core is licensed 0BSD, supports ARM64 guests and Windows x86-64 hosts; pinned revision a46601580d5512d324104f985b5f0209dc980ddc. https://github.com/azahar-emu/dynarmic
+- FEX-Emu's usual direction is x86-64 guest to ARM64 host, not ARM64 iOS guest to Windows x86-64 host. https://github.com/FEX-Emu/FEX
+- Unicorn Engine's GPLv2 license makes copying into MIT AnyiOS unsuitable without relicensing review. https://github.com/unicorn-engine/unicorn
+- GNUstep libobjc2 and the Windows MSVC toolchain provide Objective-C service research targets, but their guest ABI is not automatically compatible with Apple-compiled ARM64 code. https://github.com/gnustep/libobjc2 and https://github.com/gnustep/tools-windows-msvc
+- Apple objc4 source uses APSL-2.0; review license before incorporating any code. https://github.com/apple-oss-distributions/objc4

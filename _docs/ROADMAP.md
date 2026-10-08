@@ -21,8 +21,11 @@
 - [ ] Inspect original app bundle metadata and Info.plist
 - [ ] Obtain reproducible independently linked owned MH_EXECUTE and MH_DYLIB fixtures
 
-## M2 — Controlled owned code execution (not started)
+## M2 — Windows x86-64 guest execution (in progress)
 
+- [x] Specify Windows x64 translation architecture and strict guest memory boundaries
+- [x] Implement tested bounded guest page-memory operations and W^X policy
+- [ ] Verify opt-in Dynarmic ARM64 smoke via a successful Windows x86-64 GitHub Actions run
 - [ ] Document ARM64 host/guest calling conventions, Darwin syscalls and Mach facilities
 - [ ] Define page-mapping and relocation contracts with executable security isolation
 - [ ] Prove an owned hello-world MH_EXECUTE can be correctly loaded and called
@@ -38,4 +41,4 @@
 - [ ] Owned iOS sample window/input/bootstrap with reproducible evidence
 - [ ] Versioned support matrix and negative API tests
 
-Not promised: retail decrypted content, Apple services, ARM64e/PAC support, Metal translation, arbitrary commercial applications or x86 execution.
+Not promised: retail decrypted content, Apple services, ARM64e/PAC support, Metal translation or arbitrary commercial applications. Experimental ARM64-to-x86 CPU translation is separate from iOS app execution.

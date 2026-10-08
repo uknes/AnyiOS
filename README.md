@@ -2,7 +2,7 @@
 
 Research into a clean-room compatibility layer for legally accessible, unprotected ARM64 iOS application binaries on non-Apple operating systems.
 
-**Current status: Mach-O inspection only.** This project cannot launch iOS applications. It does not implement Darwin system APIs, Apple frameworks, decryption, signing, or an iOS emulator.
+**Current status: static Mach-O inspection and an experimental, opt-in ARM64-on-x86-64 CPU smoke test.** AnyiOS cannot launch iOS applications. It does not implement Darwin system APIs, Apple frameworks, decryption, signing or a complete iOS runtime.
 
 ## Build and test
 
@@ -33,9 +33,20 @@ To build the dedicated Clang/libFuzzer test target:
 
 Neither inspection nor successful fuzzing constitutes guest-code execution.
 
+## Windows x64 CPU translation experiment
+
+The optional Dynarmic backend is pinned to revision a46601580d5512d324104f985b5f0209dc980ddc (0BSD license). It can translate ARM64 guest instructions on Windows x86-64; Boost headers and Git are needed to build the dependency.
+
+    cmake -S . -B build-jit -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON
+    cmake --build build-jit --config Release --target anyios-a64-smoke
+    ctest --test-dir build-jit --build-config Release -R arm64-on-x64 --output-on-failure
+
+The test executes original embedded ARM64 MOVZ/RET machine-code instructions and checks that x0=42 and execution returns to the expected guest PC. It does **not** execute a Mach-O file or an iOS application. CPU backend source is fetched during configuration; no third-party source is copied into the repository.
+
 ## Project documentation
 
 - [_docs/STATE.md](_docs/STATE.md) — verified state and next milestone
+- [_docs/WINDOWS_X64.md](_docs/WINDOWS_X64.md) — Windows ARM64 translation architecture and restrictions
 - [_docs/ARCHITECTURE.md](_docs/ARCHITECTURE.md) — implementation boundaries
 - [_docs/M2_FEASIBILITY.md](_docs/M2_FEASIBILITY.md) — evidence-based execution feasibility
 - [_docs/ROADMAP.md](_docs/ROADMAP.md) — acceptance-based phases

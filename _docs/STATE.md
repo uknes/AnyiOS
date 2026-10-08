@@ -14,9 +14,16 @@ Updated: 2026-10-08. Source history and GitHub Actions are the primary evidence 
 - Verified run: https://github.com/uknes/AnyiOS/actions/runs/37708104543
 - Standalone local 10,000-run fuzzing and sanitizer checks also passed. Fuzzing is bounded test evidence, not proof of memory safety.
 
+## Experimental Windows x86-64 execution track
+
+- Portable GuestMemory module now enforces per-page permissions and rejects W+X, mapping overlaps and out-of-bounds accesses.
+- Optional Dynarmic (0BSD) ARM64 -> Windows x86-64 translation test exists with pinned external dependency.
+- The initial Windows build compiled Dynarmic and the smoke executable; it ran the fixed instructions and reached the expected x0=42 and guest PC. A separate guard-page assertion was initially wrong and has been corrected. **The corrected GitHub Actions run must pass before marking the JIT milestone complete.**
+- No Mach-O guest code loading or Darwin runtime execution is implemented yet. Refer to _docs/WINDOWS_X64.md.
+
 ## Honest limitations
 
-- No loader, guest code execution, dyld link resolution or fixup application.
+- No Mach-O guest code execution, dyld link resolution, or fixup application. The only CPU execution test uses fixed project-owned ARM64 instruction bytes.
 - No Darwin ABI, Mach IPC, libSystem, Objective-C/Swift runtime, Foundation/UIKit or graphics support.
 - No iOS app installation, commercial game compatibility, decryption or signing bypass.
 - An ARM64 Mach-O object from Clang is not an MH_EXECUTE iOS application. The independent object fixture validates parser behavior, not app compatibility.

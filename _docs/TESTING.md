@@ -31,3 +31,9 @@ These are original synthetic fixtures with no Apple copyrighted assets. Mutation
     ./build-fuzz/anyios-fuzz build-fuzz/corpus -runs=10000 -max_len=4096 -timeout=3
 
 The seed generator contains no Apple or commercial binary data. The production inspector refuses encrypted code execution because it never executes code at all.
+
+## Windows CPU translation test
+
+The GuestMemory page-mapping tests run in the ordinary cross-platform CTest matrix and check mapped/unmapped ranges, write-to-code rejection, data execute rejection, overlap, byte ordering and address overflows.
+
+The optional Dynarmic A64 smoke test is enabled only with ANYIOS_WITH_DYNARMIC=ON. GitHub's dedicated Windows x86-64 job installs pinned Boost headers, fetches Dynarmic at a pinned Git revision, builds the translator and checks owned ARM64 MOVZ/RET instruction execution, x0=42 and the return PC. The guard-page test checks a fully unmapped page, not unused bytes in a mapped executable page. Passing this test does not establish Mach-O app support.

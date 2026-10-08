@@ -116,8 +116,8 @@ void verify() {
     if (jit.GetRegister(0) != 42 || jit.GetPC() != 0x10008) {
         throw std::runtime_error("ARM64 code returned an incorrect result");
     }
-    if (memory.fetch(0x10008)) {
-        throw std::runtime_error("unexpected executable memory beyond code");
+    if (memory.fetch(0x11000)) {
+        throw std::runtime_error("unmapped guard page permitted code fetch");
     }
 }
 
