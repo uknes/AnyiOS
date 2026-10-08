@@ -43,6 +43,10 @@ The optional Dynarmic backend is pinned to revision a46601580d5512d324104f985b5f
 
 The tests execute embedded instructions and compiler-generated ARM64 Mach-O MH_OBJECT functions; an additional SVC fixture exercises a bounded Darwin write bridge. A synthetic no-import MH_EXECUTE is mapped into guest memory, but **real linked iOS apps and frameworks do not execute**. Dynarmic is fetched externally, not copied into the repo.
 
+## Limited dyld binding research
+
+The experimental dyld modules can plan generic 64-bit chained rebases/binds and resolve a narrow subset of imported symbols against pre-registered, project-owned dylibs. They stage patches atomically; they do **not** run dependent iOS apps or implement Apple frameworks. See [_docs/DYLD_FIXUPS.md](_docs/DYLD_FIXUPS.md).
+
 ## Project documentation
 
 - [_docs/STATE.md](_docs/STATE.md) — verified state and next milestone

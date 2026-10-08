@@ -6,6 +6,7 @@
 - [x] Synthetic negative fixtures, compiler-generated MH_OBJECT comparisons and libFuzzer
 - [x] Mach-O `LC_ID_DYLIB` and typed weak/reexport/upward dependency metadata (implementation committed; CI verification pending)
 - [ ] Full chained-fixup pointer formats, rebases, bindings, export terminal validation
+- [ ] Verify a restricted generic-64 chained bind/rebase planner and exact two-level nlist resolver in cross-platform CI
 - [ ] App bundle Info.plist, executable path and resource manifests
 
 ## M2 — Windows x64 translation and restricted execution

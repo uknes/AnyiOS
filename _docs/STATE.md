@@ -37,3 +37,10 @@ Updated: 2026-10-08. Source and CI are authoritative. An accepted binary is not 
 5. Only then pursue Objective-C runtime bootstrap and a minimal unprotected own-app window.
 
 Every claim must cite a test run and commit; no retail iOS application currently runs.
+## Dyld chained fixup milestone (implementation committed; verification pending)
+
+- Pure patch planner decodes only generic 64-bit chained rebases/binds (pointer formats 2 and 6; import descriptor format 1), validates segments and page chains, and atomically stages patches in a copyable host buffer.
+- A separate restricted two-level resolver matches explicit dylib install names and visible nlist_64 symbols to imported names/positive library ordinals.
+- New regression suites cover valid and malformed pointers, ordinals, resource bounds, symbol visibility and missing exports.
+- This does not yet map a real linked app's dependencies or execute a linked dylib call. CI status must be checked before claiming the new suites pass.
+- Details: [_docs/DYLD_FIXUPS.md](DYLD_FIXUPS.md).
