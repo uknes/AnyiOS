@@ -25,10 +25,13 @@ ObjcIdentityProbe::ObjcIdentityProbe(
     }
     const auto original = text->vm_address;
     for (const auto& section : image.sections) {
-        if (section.name != "__objc_classlist" && section.name != "__objc_methname") {
+        if (section.name != "__objc_classlist" &&
+            section.name != "__objc_methname" &&
+            section.name != "__objc_const" &&
+            section.name != "__cstring") {
             continue;
         }
-        if (!section.size || section.size > 4096) {
+        if (!section.size || section.size > 65536) {
             throw std::invalid_argument("unsupported Objective-C metadata size");
         }
         const auto start = mapped_address(section.address, original, mapped_base);
@@ -41,7 +44,15 @@ ObjcIdentityProbe::ObjcIdentityProbe(
             method_ranges_.emplace_back(start, start + section.size);
             continue;
         }
-        if (section.size % 8 != 0) {
+        if (section.name == "__cstring") {
+            class_name_ranges_.emplace_back(start, start + section.size);
+            continue;
+        }
+        if (section.name == "__objc_const") {
+            constants_ranges_.emplace_back(start, start + section.size);
+            continue;
+        }
+        if (section.size > 4096 || section.size % 8 != 0) {
             throw std::invalid_argument("unaligned Objective-C classlist");
         }
         for (std::uint64_t offset = 0; offset < section.size; offset += 8) {
@@ -55,12 +66,12 @@ ObjcIdentityProbe::ObjcIdentityProbe(
     }
 }
 
-std::optional<std::string> ObjcIdentityProbe::selector_name(
-    std::uint64_t selector) const {
-    for (const auto& [start, end] : method_ranges_) {
-        if (selector < start || selector >= end) continue;
+std::optional<std::string> ObjcIdentityProbe::bounded_ascii(
+    std::uint64_t address, const std::vector<Range>& ranges) const {
+    for (const auto& [start, end] : ranges) {
+        if (address < start || address >= end) continue;
         std::string name;
-        for (std::uint64_t at = selector; at < end && name.size() < 128; ++at) {
+        for (auto at = address; at < end && name.size() < 128; ++at) {
             const auto ch = memory_.read(at, 1);
             if (!ch) return std::nullopt;
             if (*ch == 0) return name.empty() ? std::nullopt :
@@ -68,6 +79,75 @@ std::optional<std::string> ObjcIdentityProbe::selector_name(
             if (*ch < 32 || *ch > 126) return std::nullopt;
             name.push_back(static_cast<char>(*ch));
         }
+    }
+    return std::nullopt;
+}
+
+std::optional<std::string> ObjcIdentityProbe::selector_name(
+    std::uint64_t selector) const {
+    return bounded_ascii(selector, method_ranges_);
+}
+
+bool ObjcIdentityProbe::within_constants(
+    std::uint64_t address, std::uint64_t bytes) const {
+    for (const auto& [begin, end] : constants_ranges_) {
+        if (address >= begin && address <= end &&
+            bytes <= end - address &&
+            memory_.allowed(address, static_cast<std::size_t>(bytes),
+                            cpu::Access::read)) return true;
+    }
+    return false;
+}
+
+std::optional<std::uint64_t> ObjcIdentityProbe::local_ro(
+    std::uint64_t receiver) const {
+    if (!is_local_class(receiver) || receiver > UINT64_MAX - 32) {
+        return std::nullopt;
+    }
+    const auto value = memory_.read(receiver + 32, 8);
+    if (!value) return std::nullopt;
+    const auto ro = *value & ~std::uint64_t{7};
+    if (!within_constants(ro, 40)) return std::nullopt;
+    const auto instance_start = memory_.read(ro + 4, 4);
+    const auto instance_size = memory_.read(ro + 8, 4);
+    if (!instance_start || !instance_size ||
+        *instance_size > 4096 || *instance_start > *instance_size) {
+        return std::nullopt;
+    }
+    return ro;
+}
+
+std::optional<std::string> ObjcIdentityProbe::local_class_name(
+    std::uint64_t receiver) const {
+    const auto ro = local_ro(receiver);
+    if (!ro) return std::nullopt;
+    const auto name_ptr = memory_.read(*ro + 24, 8);
+    if (!name_ptr) return std::nullopt;
+    return bounded_ascii(*name_ptr, class_name_ranges_);
+}
+
+std::optional<GuestObjcMethod> ObjcIdentityProbe::local_instance_method(
+    std::uint64_t receiver, std::string_view method_name) const {
+    const auto ro = local_ro(receiver);
+    if (!ro || method_name.empty()) return std::nullopt;
+    const auto methods = memory_.read(*ro + 32, 8);
+    if (!methods || !within_constants(*methods, 8)) return std::nullopt;
+    const auto entsize = memory_.read(*methods, 4);
+    const auto count = memory_.read(*methods + 4, 4);
+    // Clang's non-relative non-fragile method_list_t is 24-byte entries.
+    // Relative methods and all other encodings remain unsupported.
+    if (!entsize || !count || *entsize != 24 || *count > 64 ||
+        !within_constants(*methods, 8 + (*count * 24))) return std::nullopt;
+    for (std::uint64_t i = 0; i < *count; ++i) {
+        const auto entry = *methods + 8 + (i * 24);
+        const auto selector = memory_.read(entry, 8);
+        const auto imp = memory_.read(entry + 16, 8);
+        if (!selector || !imp) return std::nullopt;
+        if (selector_name(*selector) != method_name) continue;
+        if ((*imp & 3) != 0 || !memory_.fetch(*imp)) {
+            return std::nullopt;
+        }
+        return GuestObjcMethod{*selector, *imp};
     }
     return std::nullopt;
 }
