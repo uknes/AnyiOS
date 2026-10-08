@@ -113,6 +113,29 @@ void run() {
         check(guarded.write(0x11000, 0x11223344, 4), "failed load modified guard");
     }
     {
+        GuestMemory strict(0x10000, 0x20000);
+        try {
+            (void)anyios::loader::stage_linked_image(
+                original, strict, 0x11000, imports,
+                anyios::loader::LinkedImageOptions{true, nullptr});
+            throw std::runtime_error("unaligned iOS image accepted");
+        } catch (const anyios::macho::FormatError& error) {
+            check(std::string_view(error.what()).find("invalid guest linked-image configuration")
+                      != std::string_view::npos, "guest base requires 16 KiB alignment");
+        }
+        check(!strict.fetch(0x11300), "misaligned iOS image leaked guest mapping");
+        try {
+            (void)anyios::loader::stage_linked_image(
+                original, strict, 0x10000, imports,
+                anyios::loader::LinkedImageOptions{true, nullptr});
+            throw std::runtime_error("4 KiB fixture incorrectly accepted as 16 KiB iOS image");
+        } catch (const anyios::macho::FormatError& error) {
+            check(std::string_view(error.what()).find("16 KiB") != std::string_view::npos,
+                  "strict iOS page validation did not reject 4 KiB segments");
+        }
+        check(!strict.fetch(0x10300), "rejected 4 KiB image leaked guest mapping");
+    }
+    {
         GuestMemory narrow(0x10000, 0x20000);
         throws(original, narrow, 0x2f000, imports, "linked guest mapping failed");
         check(!narrow.fetch(0x2f000), "failed load leaked partial mappings");

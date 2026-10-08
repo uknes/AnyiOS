@@ -27,8 +27,18 @@ constexpr std::size_t arena_size = 4 * 1024 * 1024;
 class HostArena {
 public:
     HostArena() {
-        address_ = VirtualAlloc(nullptr, arena_size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-        if (!address_) throw std::runtime_error("host ARM64 VM allocation failed");
+        SYSTEM_INFO info{};
+        GetSystemInfo(&info);
+        if (info.dwAllocationGranularity < 65536 ||
+            (info.dwAllocationGranularity & (info.dwAllocationGranularity - 1)) != 0) {
+            throw std::runtime_error("unsupported host allocation granularity");
+        }
+        address_ = VirtualAlloc(nullptr, arena_size, MEM_RESERVE, PAGE_NOACCESS);
+        if (!address_ || (reinterpret_cast<std::uintptr_t>(address_) & 0xffffU) != 0) {
+            if (address_) VirtualFree(address_, 0, MEM_RELEASE);
+            address_ = nullptr;
+            throw std::runtime_error("64 KiB-aligned ARM64 address-space reservation failed");
+        }
     }
     HostArena(const HostArena&) = delete;
     HostArena& operator=(const HostArena&) = delete;
@@ -68,7 +78,8 @@ void publish_segment(const anyios::macho::Image& image,
         if (segment.name == "__PAGEZERO" && segment.file_size == 0) continue;
         if (segment.vm_address < text->vm_address ||
             segment.vm_size > arena_size ||
-            segment.file_size > segment.vm_size) {
+            segment.file_size > segment.vm_size ||
+            segment.vm_size % anyios::cpu::GuestMemory::ios_page_size != 0) {
             throw std::runtime_error("invalid native linked segment range");
         }
         const auto offset = segment.vm_address - text->vm_address;
@@ -76,6 +87,11 @@ void publish_segment(const anyios::macho::Image& image,
             throw std::runtime_error("native linked segment address overflow");
         }
         const auto address = mapped_base + offset;
+        if (!VirtualAlloc(reinterpret_cast<void*>(static_cast<std::uintptr_t>(address)),
+                          static_cast<std::size_t>(segment.vm_size),
+                          MEM_COMMIT, PAGE_READWRITE)) {
+            throw std::runtime_error("ARM64 guest page commit failed");
+        }
         if (segment.file_size) {
             std::vector<std::byte> data(static_cast<std::size_t>(segment.file_size));
             if (!staged.copy_from(address, data)) {
@@ -90,11 +106,14 @@ void publish_segment(const anyios::macho::Image& image,
         else if (protection == 3) native_protect = PAGE_READWRITE;
         else if (protection == 1) native_protect = PAGE_READONLY;
         else throw std::runtime_error("unsupported native image permission");
-        DWORD previous = 0;
-        if (!VirtualProtect(reinterpret_cast<void*>(static_cast<std::uintptr_t>(address)),
-                            static_cast<std::size_t>(segment.vm_size),
-                            native_protect, &previous)) {
-            throw std::runtime_error("native linked segment permission transition failed");
+        for (std::uint64_t offset = 0; offset < segment.vm_size;
+             offset += anyios::cpu::GuestMemory::ios_page_size) {
+            DWORD previous = 0;
+            if (!VirtualProtect(
+                    reinterpret_cast<void*>(static_cast<std::uintptr_t>(address + offset)),
+                    anyios::cpu::GuestMemory::ios_page_size, native_protect, &previous)) {
+                throw std::runtime_error("per-iOS-page native ARM64 protection failed");
+            }
         }
         if (native_protect == PAGE_EXECUTE_READ &&
             !FlushInstructionCache(GetCurrentProcess(),
@@ -115,6 +134,13 @@ void verify(const std::vector<std::byte>& app, const std::vector<std::byte>& lib
         app, library, staged, app_base, lib_base);
     publish_segment(anyios::macho::inspect(library), lib_base, staged);
     publish_segment(anyios::macho::inspect(app), app_base, staged);
+    MEMORY_BASIC_INFORMATION gap{};
+    const auto gap_address = reinterpret_cast<const void*>(
+        static_cast<std::uintptr_t>(arena.base() + 0x40000));
+    if (!VirtualQuery(gap_address, &gap, sizeof(gap)) ||
+        gap.State != MEM_RESERVE) {
+        throw std::runtime_error("unmapped native guest guard gap was committed");
+    }
     if (result.entry < app_base || result.entry - app_base >= arena_size) {
         throw std::runtime_error("invalid native ARM64 linked entry");
     }

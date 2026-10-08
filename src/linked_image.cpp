@@ -34,7 +34,9 @@ LinkedImage stage_linked_image(
     if (image.is_fat || image.is_encrypted || (image.file_type != 2 && image.file_type != 6)) {
         throw macho::FormatError("linked mapper requires thin, unencrypted ARM64 executable/dylib");
     }
-    if (guest_base % cpu::GuestMemory::page_size != 0 || image.segments.size() > 128) {
+    const auto page = options.require_ios_pages ?
+        cpu::GuestMemory::ios_page_size : cpu::GuestMemory::page_size;
+    if (guest_base % page != 0 || image.segments.size() > 128) {
         throw macho::FormatError("invalid guest linked-image configuration");
     }
     if (image.file_type == 2 && !image.has_entry) {
@@ -47,8 +49,6 @@ LinkedImage stage_linked_image(
         throw macho::FormatError("linked image has invalid __TEXT base");
     }
     const auto original_base = text->vm_address;
-    const auto page = cpu::GuestMemory::page_size;
-
     // Linked code can use modern chained fixups only. Legacy bind opcodes and
     // arm64e pointer authentication are intentionally not executed here.
     if (file.size() < 32) throw macho::FormatError("linked header truncated");
