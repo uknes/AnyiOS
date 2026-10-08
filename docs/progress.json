@@ -1,0 +1,32 @@
+{
+  "categories": {
+    "Darwin C / process": {
+      "implemented": 3,
+      "partial": 0,
+      "tracked": 3
+    },
+    "Thread-local storage": {
+      "implemented": 0,
+      "partial": 1,
+      "tracked": 1
+    },
+    "Objective-C runtime": {
+      "implemented": 0,
+      "partial": 0,
+      "tracked": 4
+    },
+    "UIKit entry": {
+      "implemented": 0,
+      "partial": 0,
+      "tracked": 1
+    }
+  },
+  "disclaimer": "Not a percentage of iOS apps, Apple frameworks, or total Darwin APIs.",
+  "implemented": 3,
+  "not_implemented_or_unknown": 5,
+  "partial": 1,
+  "schema": 1,
+  "scope": "tracked guest ABI symbols only",
+  "source": "tools/api_manifest.json",
+  "tracked": 9
+}
