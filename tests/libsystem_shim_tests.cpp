@@ -83,14 +83,25 @@ int main() {
             (void)lib.invoke("_unknown", {0, 0, 0});
             throw std::runtime_error("missing libSystem symbol was accepted");
         } catch (const std::invalid_argument&) { }
-        try {
-            (void)lib.invoke("_write", {99, first.value, 2});
-            throw std::runtime_error("invalid host fd silently accepted");
-        } catch (const std::runtime_error& e) {
-            if (std::string_view(e.what()).find("unsupported Darwin") == std::string_view::npos)
-                throw;
-        }
+        const auto errno_one = lib.invoke("___error", {0, 0, 0}, 11).value;
+        const auto errno_two = lib.invoke("___error", {0, 0, 0}, 12).value;
+        require(errno_one && errno_two && errno_one != errno_two &&
+                memory.read(errno_one, 4) == 0 && memory.read(errno_two, 4) == 0,
+                "thread-scoped errno guest storage must be distinct and zeroed");
+        require(lib.invoke("_write", {99, first.value, 2}, 11).value == UINT64_MAX &&
+                memory.read(errno_one, 4) == 9 && memory.read(errno_two, 4) == 0,
+                "invalid descriptor must return ssize_t(-1) and set only caller errno");
+        require(lib.invoke("___error", {0, 0, 0}, 11).value == errno_one,
+                "errno address changed during thread lifetime");
         require(lib.output() == "OK", "failed write changed guest output");
+        require(lib.invoke("_puts", {0x40000, 0, 0}).value == 0 &&
+                lib.output() == "OKAB\\n", "puts must append line through bounded guest write");
+        try {
+            static_cast<void>(lib.invoke("_abort", {0, 0, 0}));
+            throw std::runtime_error("guest abort returned successfully");
+        } catch (const anyios::darwin::GuestAbort&) {}
+        require(lib.invoke("___error", {0, 0, 0}).value != 0,
+                "default guest thread errno address missing");
         std::cout << "Minimal host libSystem _malloc/_write/_exit contract passed\n";
         return 0;
     } catch (const std::exception& e) {

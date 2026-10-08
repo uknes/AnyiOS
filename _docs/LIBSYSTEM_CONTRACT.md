@@ -29,3 +29,11 @@ negative `strcmp` low `w0` result, zero-byte calls, pointers outside mapped page
 overlap refusal, over-budget length and destination integrity after a refused call.
 
 Do **not** update `_docs/STATE.md` until CI verifies the exact source commit and test step.
+
+## Additional owned error, abort and line-output subset
+
+- `___error` returns zeroed, stable errno location in guest memory for a declared emulated guest thread (maximum 16).
+- `_write` returns `(ssize_t)-1` and sets that caller's `errno` on a supported failure, rather than throwing away the errno result; unsupported syscall boundaries still throw.
+- `_puts` appends a NUL-terminated, bounded guest string plus newline using the guest write path; returns nonnegative on success. This is not a FILE/buffering runtime.
+- `_abort` raises `GuestAbort` as an explicit terminal signal to the host runner. Darwin signal delivery remains unsupported.
+- `pthread_once`, mutex, printf-style varargs, callbacks and arbitrary C runtime behavior remain unimplemented.

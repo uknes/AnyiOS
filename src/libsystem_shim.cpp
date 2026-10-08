@@ -21,7 +21,8 @@ LibSystemShim::LibSystemShim(cpu::GuestMemory& memory, std::uint64_t heap_base,
 }
 
 LibSystemCall LibSystemShim::invoke(
-    std::string_view symbol, const std::array<std::uint64_t, 3>& args) {
+    std::string_view symbol, const std::array<std::uint64_t, 3>& args,
+    std::uint64_t guest_thread_id) {
     constexpr std::uint64_t max_linear_access = 64 * 1024;
     if (symbol == "_memcpy") {
         const auto destination = args[0];
@@ -95,10 +96,37 @@ LibSystemCall LibSystemShim::invoke(
         }
         throw std::invalid_argument("guest strcmp missing bounded terminator");
     }
+    if (symbol == "___error") {
+        return {ensure_errno(guest_thread_id), false};
+    }
+    if (symbol == "_abort") {
+        throw GuestAbort{};
+    }
+    if (symbol == "_puts") {
+        const auto length = invoke("_strlen", {args[0], 0, 0}, guest_thread_id).value;
+        if (length >= 64 * 1024 || calls_.standard_output().size() >
+                                      1024 * 1024 - static_cast<std::size_t>(length) - 1) {
+            throw std::invalid_argument("guest puts output budget exceeded");
+        }
+        const auto scratch = invoke("_malloc", {16, 0, 0}, guest_thread_id).value;
+        if (!scratch || !memory_.write(scratch, '\\n', 1)) {
+            throw std::runtime_error("guest puts newline allocation failed");
+        }
+        const auto first = calls_.dispatch(0x80, 4, {1, args[0], length}, memory_);
+        const auto second = calls_.dispatch(0x80, 4, {1, scratch, 1}, memory_);
+        if (!first.supported || first.carry || !second.supported || second.carry)
+            throw std::runtime_error("guest puts failed write contract");
+        return {0, false}; // C puts promises only a nonnegative success value.
+    }
     if (symbol == "_write") {
         const auto result = calls_.dispatch(0x80, 4, args, memory_);
-        if (!result.supported || result.carry) {
-            throw std::runtime_error("unsupported Darwin _write or guest errno boundary");
+        if (!result.supported)
+            throw std::runtime_error("unsupported Darwin _write boundary");
+        if (result.carry) {
+            const auto errno_pointer = ensure_errno(guest_thread_id);
+            if (!memory_.write(errno_pointer, result.value, 4))
+                throw std::runtime_error("guest errno storage unwritable");
+            return {UINT64_MAX, false}; // C ssize_t(-1), with Darwin errno set.
         }
         return {result.value, false};
     }
@@ -135,5 +163,18 @@ LibSystemCall LibSystemShim::invoke(
         return {result, false};
     }
     throw std::invalid_argument("unimplemented libSystem symbol: " + std::string(symbol));
+}
+std::uint64_t LibSystemShim::ensure_errno(std::uint64_t thread_id) {
+    if (thread_id == 0)
+        throw std::invalid_argument("guest errno requires nonzero emulated thread id");
+    if (const auto it = thread_errno_.find(thread_id); it != thread_errno_.end())
+        return it->second;
+    if (thread_errno_.size() >= 16)
+        throw std::invalid_argument("bounded guest errno thread count exceeded");
+    const auto pointer = invoke("_malloc", {16, 0, 0}, thread_id).value;
+    if (!pointer || !memory_.write(pointer, 0, 4))
+        throw std::runtime_error("could not initialize per-guest-thread errno");
+    thread_errno_.emplace(thread_id, pointer);
+    return pointer;
 }
 }
