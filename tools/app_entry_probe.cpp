@@ -214,7 +214,7 @@ int main(int argc, char** argv) {
                               << "\nEXECUTION=stopped-at-unimplemented-import\n";
                     return 0;
                 }
-                const auto did_launch = objc.local_instance_method(
+                const auto did_launch = registry.resolve_local_instance_method(
                     *bridged_delegate_class,
                     "application:didFinishLaunchingWithOptions:");
                 if (!did_launch) {
@@ -223,6 +223,7 @@ int main(int argc, char** argv) {
                               << "\nEXECUTION=stopped-at-unimplemented-import\n";
                     return 0;
                 }
+                std::cout << "APP_DELEGATE_METHOD_RESOLUTION=validated-local-guest-IMP\n";
                 // Diagnostic callback of actual app-owned ARM64 IMP. No
                 // UIKit app object, framework scheduler or window exists.
                 // Zero UIApplication/options are valid ONLY for this

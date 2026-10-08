@@ -1,12 +1,13 @@
 #include <anyios/objc_registry.hpp>
 
+#include <set>
 #include <stdexcept>
 
 namespace anyios::darwin {
 
 GuestObjcClassRegistry::GuestObjcClassRegistry(
     const ObjcIdentityProbe& metadata, const cpu::GuestMemory& memory)
-    : memory_(memory) {
+    : metadata_(metadata), memory_(memory) {
     const auto classes = metadata.local_classes();
     if (classes.size() > 512) {
         throw std::invalid_argument("too many ObjC local classes");
@@ -71,6 +72,29 @@ std::optional<std::uint64_t> GuestObjcClassRegistry::local_superclass(
         return superclass;
     }
     // Superclass may refer to a yet-unimplemented framework class.
+    return std::nullopt;
+}
+
+std::optional<GuestObjcMethod> GuestObjcClassRegistry::resolve_local_instance_method(
+    std::uint64_t local_class, std::string_view selector) const {
+    if (selector.empty() || !by_address_.contains(local_class)) {
+        return std::nullopt;
+    }
+    std::set<std::uint64_t> visited;
+    auto current = local_class;
+    while (current != 0 && visited.size() < 64) {
+        if (!visited.insert(current).second) {
+            return std::nullopt; // Corrupt local superclass cycle.
+        }
+        if (const auto method = metadata_.local_instance_method(current, selector)) {
+            return method;
+        }
+        const auto parent = local_superclass(current);
+        if (!parent) {
+            return std::nullopt; // External or unresolved superclass.
+        }
+        current = *parent;
+    }
     return std::nullopt;
 }
 

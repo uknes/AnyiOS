@@ -1,5 +1,6 @@
 #include <anyios/objc_registry.hpp>
 
+#include <array>
 #include <cstdint>
 #include <iostream>
 #include <span>
@@ -47,6 +48,8 @@ anyios::macho::Image fixture_image() {
                               0x100011000, 0x2000, 0x11000, 0, false, 0});
     image.sections.push_back({"__cstring", "__TEXT",
                               0x100005000, 0x100, 0x5000, 0, false, 2});
+    image.sections.push_back({"__objc_methname", "__TEXT",
+                              0x100006000, 0x100, 0x6000, 0, false, 2});
     return image;
 }
 
@@ -112,6 +115,72 @@ void check_unsupported_class_record_refused_without_losing_siblings() {
            "unresolved subclass incorrectly registered");
 }
 
+
+void check_bounded_guest_instance_method_inheritance() {
+    auto memory = memory_fixture();
+    const auto rx = anyios::cpu::bits(Access::read) |
+                    anyios::cpu::bits(Access::execute);
+    ensure(memory.map(0x50000, 0x4000, rx), "cannot map original guest IMP code");
+    constexpr char selector[] = "handleEvent:";
+    const std::array<std::byte, 4> ret{
+        std::byte{0xc0}, std::byte{0x03}, std::byte{0x5f}, std::byte{0xd6}
+    };
+    ensure(memory.load(0x16000, std::span<const std::byte>(
+               reinterpret_cast<const std::byte*>(selector), sizeof(selector))) &&
+           memory.load(0x50000, ret) && memory.load(0x50004, ret) &&
+           memory.write(0x21000 + 32, 0x21200, 8) &&
+           memory.write(0x21200, 24, 4) &&
+           memory.write(0x21200 + 4, 1, 4) &&
+           memory.write(0x21200 + 8, 0x16000, 8) &&
+           memory.write(0x21200 + 16, 0x16000, 8) &&
+           memory.write(0x21200 + 24, 0x50000, 8),
+           "cannot stage original-format guest method list");
+
+    const anyios::darwin::ObjcIdentityProbe classes(fixture_image(), memory, 0x10000);
+    const anyios::darwin::GuestObjcClassRegistry registry(classes, memory);
+    const auto inherited = registry.resolve_local_instance_method(0x20100, "handleEvent:");
+    ensure(inherited && inherited->selector == 0x16000 &&
+           inherited->entry == 0x50000, "local superclass IMP was not inherited");
+    ensure(!registry.resolve_local_instance_method(0x20100, "missing:") &&
+           !registry.resolve_local_instance_method(0x24000, "handleEvent:") &&
+           !registry.resolve_local_instance_method(0x20100, ""),
+           "invalid selector or unregistered class dispatched");
+
+    ensure(memory.write(0x21100 + 32, 0x21300, 8) &&
+           memory.write(0x21300, 24, 4) &&
+           memory.write(0x21300 + 4, 1, 4) &&
+           memory.write(0x21300 + 8, 0x16000, 8) &&
+           memory.write(0x21300 + 16, 0x16000, 8) &&
+           memory.write(0x21300 + 24, 0x50004, 8),
+           "cannot stage overridden guest method");
+    const auto override_method =
+        registry.resolve_local_instance_method(0x20100, "handleEvent:");
+    ensure(override_method && override_method->entry == 0x50004,
+           "subclass override did not take precedence");
+
+    // Prevent accidental dispatch to an outside-framework superclass.
+    ensure(memory.write(0x21100 + 32, 0, 8) &&
+           memory.write(0x20100 + 8, 0x60000, 8),
+           "cannot stage unresolved external parent");
+    const anyios::darwin::GuestObjcClassRegistry external(classes, memory);
+    ensure(!external.resolve_local_instance_method(0x20100, "handleEvent:"),
+           "foreign superclass was traversed");
+
+    // Cycles never recurse or fall through to a fabricated method.
+    ensure(memory.write(0x20100 + 8, 0x20000, 8) &&
+           memory.write(0x20000 + 8, 0x20100, 8),
+           "cannot stage local inheritance cycle");
+    const anyios::darwin::GuestObjcClassRegistry cycle(classes, memory);
+    ensure(!cycle.resolve_local_instance_method(0x20100, "missing:"),
+           "cyclic local inheritance was accepted");
+
+    // An unsupported relative-method encoding cannot be guest-executed.
+    ensure(memory.write(0x21200, 0x80000018U, 4),
+           "cannot stage relative-method encoding");
+    ensure(!cycle.resolve_local_instance_method(0x20000, "handleEvent:"),
+           "unsupported relative Objective-C method metadata dispatched");
+}
+
 void check_duplicate_name_rejected() {
     auto memory = memory_fixture(true);
     const anyios::darwin::ObjcIdentityProbe classes(fixture_image(), memory, 0x10000);
@@ -129,6 +198,7 @@ void check_duplicate_name_rejected() {
 int main() {
     check_registration_and_subclass();
     check_duplicate_name_rejected();
+    check_bounded_guest_instance_method_inheritance();
     check_unsupported_class_record_refused_without_losing_siblings();
     check_objc_classname_section();
     std::cout << "Local Objective-C class registry, guest lookup, inheritance and refusal passed\n";

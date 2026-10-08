@@ -33,11 +33,20 @@ public:
     std::optional<std::uint64_t> local_superclass(
         std::uint64_t local_class) const;
 
+    // Resolve only non-relative, executable guest instance IMPs declared by a
+    // validated local class or its validated local ancestors. Unknown external
+    // superclasses and inheritance cycles stop traversal. This returns an IMP
+    // for a later guest ABI invocation, not a host-side objc_msgSend.
+    std::optional<GuestObjcMethod> resolve_local_instance_method(
+        std::uint64_t local_class, std::string_view selector) const;
+
     std::size_t size() const noexcept { return by_name_.size(); }
     // Records with unsupported metadata are never dispatch-visible.
     std::size_t unresolved_count() const noexcept { return unresolved_count_; }
 
 private:
+    // Both referenced objects must outlive this immutable registry snapshot.
+    const ObjcIdentityProbe& metadata_;
     const cpu::GuestMemory& memory_;
     std::map<std::string, std::uint64_t, std::less<>> by_name_;
     std::map<std::uint64_t, std::uint64_t> by_address_;
