@@ -1,0 +1,626 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AnyiOS compatibility coverage</title>
+<style>body{background:#0d1117;color:#e6edf3;max-width:1080px;margin:auto;font:14px system-ui;padding:18px}img{max-width:100%}table{width:100%;border-collapse:collapse}td,th{border:1px solid #30363d;padding:7px;vertical-align:top}td:not(:first-child){text-align:right}a{color:#79c0ff}details{max-height:240px;overflow:auto}code{font-size:12px}summary{cursor:pointer}li{padding:2px 0}</style></head><body>
+<h1>AnyiOS — compatibility progress</h1>
+<p><img src="badge-apis.svg" alt="Known API exports progress"> <img src="badge-runtime.svg" alt="Runtime subsystem progress"></p>
+<img src="progress.svg" alt="API and runtime capability treemap">
+<p><b>Scope:</b> only explicitly inventoried candidate API exports and compatibility gates. These are not complete Apple API inventories, and verified narrow functions do not imply app compatibility. <span style="color:#2ea043">■</span> verified, <span style="color:#d29922">■</span> partial, <span style="color:#6e7681">■</span> pending/unverified.</p>
+<h2>iOS ABI/API export candidates</h2>
+<table>
+<thead><tr><th>Family / subsystem</th><th>Verified</th><th>Partial</th><th>Pending</th><th>Total</th></tr></thead><tbody>
+<tr><td><details><summary>Audio / AVFoundation</summary><ul>
+<li>Pending: <code>_AudioComponentFindNext</code></li>
+<li>Pending: <code>_AudioComponentInstanceNew</code></li>
+<li>Pending: <code>_AudioOutputUnitStart</code></li>
+<li>Pending: <code>_AudioQueueEnqueueBuffer</code></li>
+<li>Pending: <code>_AudioQueueNewOutput</code></li>
+<li>Pending: <code>_AudioQueueStart</code></li>
+<li>Pending: <code>_AudioQueueStop</code></li>
+<li>Pending: <code>_AudioUnitInitialize</code></li>
+<li>Pending: <code>_ExtAudioFileOpenURL</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_AVAudioEngine</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_AVAudioPlayer</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_AVAudioSession</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_AVPlayer</code></li>
+</ul></details></td><td>0</td><td>0</td><td>13</td><td>13</td></tr>
+<tr><td><details><summary>CoreFoundation</summary><ul>
+<li>Pending: <code>_CFArrayCreate</code></li>
+<li>Pending: <code>_CFArrayGetCount</code></li>
+<li>Pending: <code>_CFBundleGetMainBundle</code></li>
+<li>Pending: <code>_CFDataCreate</code></li>
+<li>Pending: <code>_CFDictionaryCreate</code></li>
+<li>Pending: <code>_CFDictionaryGetValue</code></li>
+<li>Pending: <code>_CFNotificationCenterGetLocalCenter</code></li>
+<li>Pending: <code>_CFRelease</code></li>
+<li>Pending: <code>_CFRetain</code></li>
+<li>Pending: <code>_CFRunLoopGetMain</code></li>
+<li>Pending: <code>_CFRunLoopRun</code></li>
+<li>Pending: <code>_CFStringCreateWithCString</code></li>
+<li>Pending: <code>_CFStringGetCString</code></li>
+<li>Pending: <code>_CFStringGetLength</code></li>
+<li>Pending: <code>_CFURLCreateWithFileSystemPath</code></li>
+</ul></details></td><td>0</td><td>0</td><td>15</td><td>15</td></tr>
+<tr><td><details><summary>CoreGraphics / text</summary><ul>
+<li>Pending: <code>_CGBitmapContextCreate</code></li>
+<li>Pending: <code>_CGColorCreate</code></li>
+<li>Pending: <code>_CGColorRelease</code></li>
+<li>Pending: <code>_CGColorSpaceCreateDeviceRGB</code></li>
+<li>Pending: <code>_CGContextConcatCTM</code></li>
+<li>Pending: <code>_CGContextDrawImage</code></li>
+<li>Pending: <code>_CGContextFillRect</code></li>
+<li>Pending: <code>_CGContextSetFillColorWithColor</code></li>
+<li>Pending: <code>_CGContextSetLineWidth</code></li>
+<li>Pending: <code>_CGContextSetStrokeColorWithColor</code></li>
+<li>Pending: <code>_CGContextStrokePath</code></li>
+<li>Pending: <code>_CGDataProviderCreateWithData</code></li>
+<li>Pending: <code>_CGImageCreate</code></li>
+<li>Pending: <code>_CGImageRelease</code></li>
+<li>Pending: <code>_CGPathAddLineToPoint</code></li>
+<li>Pending: <code>_CGPathCreateMutable</code></li>
+<li>Pending: <code>_CGPathRelease</code></li>
+<li>Pending: <code>_CTFontCreateWithName</code></li>
+<li>Pending: <code>_CTLineCreateWithAttributedString</code></li>
+</ul></details></td><td>0</td><td>0</td><td>19</td><td>19</td></tr>
+<tr><td><details><summary>Darwin dispatch / blocks</summary><ul>
+<li>Pending: <code>__Block_copy</code></li>
+<li>Pending: <code>__Block_release</code></li>
+<li>Pending: <code>_dispatch_after</code></li>
+<li>Pending: <code>_dispatch_async</code></li>
+<li>Pending: <code>_dispatch_group_create</code></li>
+<li>Pending: <code>_dispatch_group_enter</code></li>
+<li>Pending: <code>_dispatch_group_leave</code></li>
+<li>Pending: <code>_dispatch_once_f</code></li>
+<li>Pending: <code>_dispatch_queue_create</code></li>
+<li>Pending: <code>_dispatch_semaphore_create</code></li>
+<li>Pending: <code>_dispatch_semaphore_signal</code></li>
+<li>Pending: <code>_dispatch_semaphore_wait</code></li>
+<li>Pending: <code>_dispatch_sync</code></li>
+</ul></details></td><td>0</td><td>0</td><td>13</td><td>13</td></tr>
+<tr><td><details><summary>Darwin file / process</summary><ul>
+<li>Verified: <code>_write</code></li>
+<li>Pending: <code>_access</code></li>
+<li>Pending: <code>_clock_gettime</code></li>
+<li>Pending: <code>_close</code></li>
+<li>Pending: <code>_fstat</code></li>
+<li>Pending: <code>_getcwd</code></li>
+<li>Pending: <code>_getenv</code></li>
+<li>Pending: <code>_getpid</code></li>
+<li>Pending: <code>_getppid</code></li>
+<li>Pending: <code>_gettimeofday</code></li>
+<li>Pending: <code>_lseek</code></li>
+<li>Pending: <code>_mkdir</code></li>
+<li>Pending: <code>_mmap</code></li>
+<li>Pending: <code>_mprotect</code></li>
+<li>Pending: <code>_munmap</code></li>
+<li>Pending: <code>_nanosleep</code></li>
+<li>Pending: <code>_open</code></li>
+<li>Pending: <code>_openat</code></li>
+<li>Pending: <code>_read</code></li>
+<li>Pending: <code>_rename</code></li>
+<li>Pending: <code>_rmdir</code></li>
+<li>Pending: <code>_setenv</code></li>
+<li>Pending: <code>_stat</code></li>
+<li>Pending: <code>_sysctl</code></li>
+<li>Pending: <code>_sysctlbyname</code></li>
+<li>Pending: <code>_unlink</code></li>
+</ul></details></td><td>1</td><td>0</td><td>25</td><td>26</td></tr>
+<tr><td><details><summary>Darwin memory / strings</summary><ul>
+<li>Verified: <code>_exit</code></li>
+<li>Verified: <code>_malloc</code></li>
+<li>Pending: <code>_abort</code></li>
+<li>Pending: <code>_bzero</code></li>
+<li>Pending: <code>_calloc</code></li>
+<li>Pending: <code>_free</code></li>
+<li>Pending: <code>_memcmp</code></li>
+<li>Pending: <code>_memcpy</code></li>
+<li>Pending: <code>_memmove</code></li>
+<li>Pending: <code>_memset</code></li>
+<li>Pending: <code>_realloc</code></li>
+<li>Pending: <code>_strchr</code></li>
+<li>Pending: <code>_strcmp</code></li>
+<li>Pending: <code>_strdup</code></li>
+<li>Pending: <code>_strlcat</code></li>
+<li>Pending: <code>_strlcpy</code></li>
+<li>Pending: <code>_strlen</code></li>
+<li>Pending: <code>_strncmp</code></li>
+<li>Pending: <code>_strstr</code></li>
+</ul></details></td><td>2</td><td>0</td><td>17</td><td>19</td></tr>
+<tr><td><details><summary>Darwin threads / locks</summary><ul>
+<li>Partial: <code>__tlv_bootstrap</code></li>
+<li>Pending: <code>_pthread_cond_signal</code></li>
+<li>Pending: <code>_pthread_cond_wait</code></li>
+<li>Pending: <code>_pthread_create</code></li>
+<li>Pending: <code>_pthread_getspecific</code></li>
+<li>Pending: <code>_pthread_join</code></li>
+<li>Pending: <code>_pthread_key_create</code></li>
+<li>Pending: <code>_pthread_mutex_init</code></li>
+<li>Pending: <code>_pthread_mutex_lock</code></li>
+<li>Pending: <code>_pthread_mutex_unlock</code></li>
+<li>Pending: <code>_pthread_once</code></li>
+<li>Pending: <code>_pthread_self</code></li>
+<li>Pending: <code>_pthread_setspecific</code></li>
+</ul></details></td><td>0</td><td>1</td><td>12</td><td>13</td></tr>
+<tr><td><details><summary>Foundation classes</summary><ul>
+<li>Pending: <code>_OBJC_CLASS_$_NSArray</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSBundle</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSData</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSDate</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSDictionary</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSError</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSFileManager</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSJSONSerialization</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSMutableArray</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSMutableDictionary</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSMutableString</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSNotificationCenter</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSNumber</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSObject</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSRunLoop</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSSet</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSString</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSTimer</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSURL</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSUserDefaults</code></li>
+</ul></details></td><td>0</td><td>0</td><td>20</td><td>20</td></tr>
+<tr><td><details><summary>GameKit / stores</summary><ul>
+<li>Pending: <code>_OBJC_CLASS_$_GKAchievement</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_GKLeaderboard</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_GKLocalPlayer</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_GKMatch</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_SKPaymentQueue</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_SKProduct</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_SKProductsRequest</code></li>
+</ul></details></td><td>0</td><td>0</td><td>7</td><td>7</td></tr>
+<tr><td><details><summary>Metal / MetalKit</summary><ul>
+<li>Pending: <code>_MTLCreateSystemDefaultDevice</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_CAMetalLayer</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_MTKView</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_MTLCompileOptions</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_MTLDepthStencilDescriptor</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_MTLRenderPassDescriptor</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_MTLTextureDescriptor</code></li>
+</ul></details></td><td>0</td><td>0</td><td>7</td><td>7</td></tr>
+<tr><td><details><summary>Network / IPC</summary><ul>
+<li>Pending: <code>_CFHTTPMessageCreateRequest</code></li>
+<li>Pending: <code>_CFReadStreamCreateForHTTPRequest</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSURLConnection</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSURLRequest</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSURLSession</code></li>
+<li>Pending: <code>_connect</code></li>
+<li>Pending: <code>_getaddrinfo</code></li>
+<li>Pending: <code>_poll</code></li>
+<li>Pending: <code>_recv</code></li>
+<li>Pending: <code>_select</code></li>
+<li>Pending: <code>_send</code></li>
+<li>Pending: <code>_socket</code></li>
+</ul></details></td><td>0</td><td>0</td><td>12</td><td>12</td></tr>
+<tr><td><details><summary>Objective-C ABI</summary><ul>
+<li>Pending: <code>_NSStringFromClass</code></li>
+<li>Pending: <code>_class_getInstanceMethod</code></li>
+<li>Pending: <code>_class_getSuperclass</code></li>
+<li>Pending: <code>_objc_allocateClassPair</code></li>
+<li>Pending: <code>_objc_autorelease</code></li>
+<li>Pending: <code>_objc_autoreleasePoolPop</code></li>
+<li>Pending: <code>_objc_autoreleasePoolPush</code></li>
+<li>Pending: <code>_objc_getAssociatedObject</code></li>
+<li>Pending: <code>_objc_getClass</code></li>
+<li>Pending: <code>_objc_getMetaClass</code></li>
+<li>Pending: <code>_objc_loadWeakRetained</code></li>
+<li>Pending: <code>_objc_msgSend</code></li>
+<li>Pending: <code>_objc_msgSendSuper2</code></li>
+<li>Pending: <code>_objc_registerClassPair</code></li>
+<li>Pending: <code>_objc_release</code></li>
+<li>Pending: <code>_objc_retain</code></li>
+<li>Pending: <code>_objc_setAssociatedObject</code></li>
+<li>Pending: <code>_objc_storeStrong</code></li>
+<li>Pending: <code>_objc_storeWeak</code></li>
+<li>Pending: <code>_object_getClass</code></li>
+<li>Pending: <code>_sel_registerName</code></li>
+</ul></details></td><td>0</td><td>0</td><td>21</td><td>21</td></tr>
+<tr><td><details><summary>OpenGL ES</summary><ul>
+<li>Pending: <code>_glBindTexture</code></li>
+<li>Pending: <code>_glClear</code></li>
+<li>Pending: <code>_glClearColor</code></li>
+<li>Pending: <code>_glCompileShader</code></li>
+<li>Pending: <code>_glCreateProgram</code></li>
+<li>Pending: <code>_glCreateShader</code></li>
+<li>Pending: <code>_glDrawArrays</code></li>
+<li>Pending: <code>_glDrawElements</code></li>
+<li>Pending: <code>_glEnableVertexAttribArray</code></li>
+<li>Pending: <code>_glGenTextures</code></li>
+<li>Pending: <code>_glGetError</code></li>
+<li>Pending: <code>_glGetString</code></li>
+<li>Pending: <code>_glLinkProgram</code></li>
+<li>Pending: <code>_glTexImage2D</code></li>
+<li>Pending: <code>_glUseProgram</code></li>
+<li>Pending: <code>_glVertexAttribPointer</code></li>
+<li>Pending: <code>_glViewport</code></li>
+</ul></details></td><td>0</td><td>0</td><td>17</td><td>17</td></tr>
+<tr><td><details><summary>Persistence / CloudKit</summary><ul>
+<li>Pending: <code>_OBJC_CLASS_$_CKContainer</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_CKDatabase</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSManagedObjectContext</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_NSPersistentStoreCoordinator</code></li>
+<li>Pending: <code>_sqlite3_bind_text</code></li>
+<li>Pending: <code>_sqlite3_close</code></li>
+<li>Pending: <code>_sqlite3_finalize</code></li>
+<li>Pending: <code>_sqlite3_open</code></li>
+<li>Pending: <code>_sqlite3_prepare_v2</code></li>
+<li>Pending: <code>_sqlite3_step</code></li>
+</ul></details></td><td>0</td><td>0</td><td>10</td><td>10</td></tr>
+<tr><td><details><summary>QuartzCore</summary><ul>
+<li>Pending: <code>_CACurrentMediaTime</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_CAAnimation</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_CABasicAnimation</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_CADisplayLink</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_CAKeyframeAnimation</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_CALayer</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_CAMediaTimingFunction</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_CATransaction</code></li>
+</ul></details></td><td>0</td><td>0</td><td>8</td><td>8</td></tr>
+<tr><td><details><summary>Security / keychain</summary><ul>
+<li>Pending: <code>_CCCrypt</code></li>
+<li>Pending: <code>_CC_SHA256</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_LAContext</code></li>
+<li>Pending: <code>_SecItemAdd</code></li>
+<li>Pending: <code>_SecItemCopyMatching</code></li>
+<li>Pending: <code>_SecItemDelete</code></li>
+<li>Pending: <code>_SecItemUpdate</code></li>
+<li>Pending: <code>_SecKeyCreateRandomKey</code></li>
+<li>Pending: <code>_SecRandomCopyBytes</code></li>
+</ul></details></td><td>0</td><td>0</td><td>9</td><td>9</td></tr>
+<tr><td><details><summary>SpriteKit</summary><ul>
+<li>Pending: <code>_OBJC_CLASS_$_SKAction</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_SKEmitterNode</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_SKLabelNode</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_SKNode</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_SKPhysicsBody</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_SKScene</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_SKSpriteNode</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_SKTexture</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_SKView</code></li>
+</ul></details></td><td>0</td><td>0</td><td>9</td><td>9</td></tr>
+<tr><td><details><summary>Swift ABI</summary><ul>
+<li>Pending: <code>_swift_allocObject</code></li>
+<li>Pending: <code>_swift_beginAccess</code></li>
+<li>Pending: <code>_swift_bridgeObjectRelease</code></li>
+<li>Pending: <code>_swift_bridgeObjectRetain</code></li>
+<li>Pending: <code>_swift_deallocClassInstance</code></li>
+<li>Pending: <code>_swift_endAccess</code></li>
+<li>Pending: <code>_swift_getTypeByMangledNameInContext</code></li>
+<li>Pending: <code>_swift_getWitnessTable</code></li>
+<li>Pending: <code>_swift_once</code></li>
+<li>Pending: <code>_swift_release</code></li>
+<li>Pending: <code>_swift_retain</code></li>
+</ul></details></td><td>0</td><td>0</td><td>11</td><td>11</td></tr>
+<tr><td><details><summary>UIKit lifecycle / views</summary><ul>
+<li>Pending: <code>_OBJC_CLASS_$_UIApplication</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UIApplicationDelegate</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UIButton</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UICollectionView</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UIGestureRecognizer</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UIImage</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UIImageView</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UILabel</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UINavigationController</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UIResponder</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UIScreen</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UIStackView</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UIStoryboard</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UITableView</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UITextField</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UITouch</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UIView</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UIViewController</code></li>
+<li>Pending: <code>_OBJC_CLASS_$_UIWindow</code></li>
+<li>Pending: <code>_UIApplicationMain</code></li>
+</ul></details></td><td>0</td><td>0</td><td>20</td><td>20</td></tr>
+</tbody><tfoot><tr><th>Total</th><th>3</th><th>1</th><th>265</th><th>269</th></tr></tfoot></table>
+<h2>Runtime, frameworks and Windows compatibility gates</h2>
+<table>
+<thead><tr><th>Family / subsystem</th><th>Verified</th><th>Partial</th><th>Pending</th><th>Total</th></tr></thead><tbody>
+<tr><td><details><summary>App capabilities</summary><ul>
+<li>Pending: <code>Background tasks and scheduling</code></li>
+<li>Pending: <code>Camera, photo library and media selection</code></li>
+<li>Pending: <code>Files picker and document providers</code></li>
+<li>Pending: <code>HealthKit, contacts and calendars</code></li>
+<li>Pending: <code>Location and map views</code></li>
+<li>Pending: <code>Push notifications / APNs</code></li>
+<li>Pending: <code>Universal links and URL handlers</code></li>
+<li>Pending: <code>WidgetKit and app extensions</code></li>
+</ul></details></td><td>0</td><td>0</td><td>8</td><td>8</td></tr>
+<tr><td><details><summary>ARM64 CPU / ABI</summary><ul>
+<li>Verified: <code>Windows x86-64 Dynarmic owned ARM64 instructions</code></li>
+<li>Partial: <code>Darwin SVC trap and Mach syscall handling</code></li>
+<li>Partial: <code>Host-to-guest fixed-argument ABI callbacks</code></li>
+<li>Pending: <code>Exception, unwind and stack walkers</code></li>
+<li>Pending: <code>Float/vector NEON and SIMD across callbacks</code></li>
+<li>Pending: <code>Hardware atomics and memory ordering</code></li>
+<li>Pending: <code>Instruction cache invalidation and self-modifying code</code></li>
+<li>Pending: <code>MRS/MSR platform register virtualization</code></li>
+<li>Pending: <code>Variadic calls, structs and ABI thunks</code></li>
+</ul></details></td><td>1</td><td>2</td><td>6</td><td>9</td></tr>
+<tr><td><details><summary>Audio / media</summary><ul>
+<li>Pending: <code>AVAudioEngine and playback APIs</code></li>
+<li>Pending: <code>AVPlayer video playback, synchronization</code></li>
+<li>Pending: <code>Audio session categories and route events</code></li>
+<li>Pending: <code>AudioUnits and callback/render graph</code></li>
+<li>Pending: <code>CoreAudio device abstraction and timing</code></li>
+<li>Pending: <code>Hardware volume and Bluetooth behavior</code></li>
+<li>Pending: <code>Microphone capture and permission mapping</code></li>
+<li>Pending: <code>WAV/MP3/AAC/ALAC decoding</code></li>
+</ul></details></td><td>0</td><td>0</td><td>8</td><td>8</td></tr>
+<tr><td><details><summary>Compatibility tooling</summary><ul>
+<li>Verified: <code>Strict Mach-O inspection and import-gap report</code></li>
+<li>Pending: <code>Crash trace attribution and deterministic reproduction</code></li>
+<li>Pending: <code>Function-level regression tests and stub classification</code></li>
+<li>Pending: <code>Golden screenshots and event replay</code></li>
+<li>Pending: <code>Original IPA/.app metadata-only intake</code></li>
+<li>Pending: <code>Per-framework unimplemented function catalog</code></li>
+<li>Pending: <code>Unmodified app launch+render+input evidence gates</code></li>
+<li>Pending: <code>Windows ARM64 CI and artifact packaging</code></li>
+<li>Pending: <code>Windows x64 CI and artifact packaging</code></li>
+</ul></details></td><td>1</td><td>0</td><td>8</td><td>9</td></tr>
+<tr><td><details><summary>CoreFoundation</summary><ul>
+<li>Pending: <code>CFArray/CFDictionary/CFSet ownership</code></li>
+<li>Pending: <code>CFBundle/CFURL/CFPreferences</code></li>
+<li>Pending: <code>CFData/CFNumber/CFBoolean and date</code></li>
+<li>Pending: <code>CFError and bridging with Foundation</code></li>
+<li>Pending: <code>CFNotificationCenter and observers</code></li>
+<li>Pending: <code>CFRunLoop and source/timer scheduling</code></li>
+<li>Pending: <code>CFString and mutable strings</code></li>
+</ul></details></td><td>0</td><td>0</td><td>7</td><td>7</td></tr>
+<tr><td><details><summary>CoreGraphics / CoreText</summary><ul>
+<li>Pending: <code>2D compositing, clipping and performance</code></li>
+<li>Pending: <code>Bitmap, JPEG/PNG asset decode and scaling</code></li>
+<li>Pending: <code>CGContext and image drawing</code></li>
+<li>Pending: <code>Color management and HiDPI output</code></li>
+<li>Pending: <code>Color spaces and alpha blending</code></li>
+<li>Pending: <code>Font shaping, text glyphs and CoreText</code></li>
+<li>Pending: <code>Paths, clipping, transforms and strokes</code></li>
+</ul></details></td><td>0</td><td>0</td><td>7</td><td>7</td></tr>
+<tr><td><details><summary>Darwin libSystem</summary><ul>
+<li>Partial: <code>malloc/write/exit guest C fixture ABI</code></li>
+<li>Partial: <code>process arguments/envp/apple arrays</code></li>
+<li>Pending: <code>Full memcpy/memmove/memset and string semantics</code></li>
+<li>Pending: <code>calloc/realloc/free and aligned alloc</code></li>
+<li>Pending: <code>clocks, timers, gettimeofday and sysctl</code></li>
+<li>Pending: <code>errno and libc thread state</code></li>
+<li>Pending: <code>posix files/read/write/seek/stat</code></li>
+<li>Pending: <code>sockets and POSIX DNS</code></li>
+<li>Pending: <code>stdio, snprintf/vsnprintf/formatting</code></li>
+</ul></details></td><td>0</td><td>2</td><td>7</td><td>9</td></tr>
+<tr><td><details><summary>Data and persistence</summary><ul>
+<li>Pending: <code>App sandbox documents and caches</code></li>
+<li>Pending: <code>Core Data contexts and model migration</code></li>
+<li>Pending: <code>Resource bundles and localized assets</code></li>
+<li>Pending: <code>SQLite bundled API coverage</code></li>
+<li>Pending: <code>Save state persistence and corruption recovery</code></li>
+<li>Pending: <code>iCloud/CloudKit record and sync API</code></li>
+</ul></details></td><td>0</td><td>0</td><td>6</td><td>6</td></tr>
+<tr><td><details><summary>Distribution / platform</summary><ul>
+<li>Pending: <code>App-specific optional user supplied assets only</code></li>
+<li>Pending: <code>Auto-update, error reporting and diagnostics</code></li>
+<li>Pending: <code>Bundled redistributable OSS license notices</code></li>
+<li>Pending: <code>Installation, PATH/file associations and drag-drop</code></li>
+<li>Pending: <code>Real-world GPU/CPU compatibility test matrix</code></li>
+<li>Pending: <code>Self-contained Windows x86-64 release package</code></li>
+<li>Pending: <code>Windows ARM64 native runtime release package</code></li>
+</ul></details></td><td>0</td><td>0</td><td>7</td><td>7</td></tr>
+<tr><td><details><summary>dyld and linking</summary><ul>
+<li>Partial: <code>Chained rebases and binds for owned fixtures</code></li>
+<li>Pending: <code>App/framework nested bundle resolution</code></li>
+<li>Pending: <code>C/C++ static constructors across images</code></li>
+<li>Pending: <code>Classic binds, lazy binds and weak symbols</code></li>
+<li>Pending: <code>Multi-dylib recursive load and @rpath resolution</code></li>
+<li>Pending: <code>Objective-C category/selector initialization order</code></li>
+<li>Pending: <code>Stable ASLR and image slides</code></li>
+<li>Pending: <code>Thread local variable fixups across modules</code></li>
+<li>Pending: <code>dyld shared cache equivalent / substitute frameworks</code></li>
+</ul></details></td><td>0</td><td>1</td><td>8</td><td>9</td></tr>
+<tr><td><details><summary>Foundation</summary><ul>
+<li>Pending: <code>JSON parsing, serialization and regex</code></li>
+<li>Pending: <code>NSBundle resources and localization</code></li>
+<li>Pending: <code>NSCoder, archiving, keyed storage</code></li>
+<li>Pending: <code>NSData, NSNumber, NSDate, NSURL objects</code></li>
+<li>Pending: <code>NSError, exceptions and NSNotificationCenter</code></li>
+<li>Pending: <code>NSFileManager, URLs and path semantics</code></li>
+<li>Pending: <code>NSOperationQueue and async APIs</code></li>
+<li>Pending: <code>NSRunLoop, NSTimer and observers</code></li>
+<li>Pending: <code>NSString, NSArray, NSDictionary classes</code></li>
+<li>Pending: <code>NSUserDefaults and key-value persistence</code></li>
+</ul></details></td><td>0</td><td>0</td><td>10</td><td>10</td></tr>
+<tr><td><details><summary>Game engine integration</summary><ul>
+<li>Pending: <code>AssetBundles, compressed game assets and codecs</code></li>
+<li>Pending: <code>Dynamic library and plugin sandbox</code></li>
+<li>Pending: <code>Frame pacing and shader-cache behavior</code></li>
+<li>Pending: <code>Unity IL2CPP and Mono runtime compatibility</code></li>
+<li>Pending: <code>Unreal engine iOS build architecture</code></li>
+<li>Pending: <code>cocos2d and native C++ engine support</code></li>
+</ul></details></td><td>0</td><td>0</td><td>6</td><td>6</td></tr>
+<tr><td><details><summary>GameKit / commerce</summary><ul>
+<li>Pending: <code>Apple Arcade entitlement and licensing constraints</code></li>
+<li>Pending: <code>Cloud saves and cross-device state</code></li>
+<li>Pending: <code>Game Center sign-in and achievements</code></li>
+<li>Pending: <code>In-app purchases and StoreKit receipts</code></li>
+<li>Pending: <code>Leaderboards, match and invites</code></li>
+<li>Pending: <code>Subscription and entitlement validation</code></li>
+</ul></details></td><td>0</td><td>0</td><td>6</td><td>6</td></tr>
+<tr><td><details><summary>Guest memory / sandbox</summary><ul>
+<li>Verified: <code>Input-binary validation and refusal of protected code</code></li>
+<li>Partial: <code>Bounded W^X guest memory ranges</code></li>
+<li>Pending: <code>App sandbox path translation</code></li>
+<li>Pending: <code>Crash isolation from host UI</code></li>
+<li>Pending: <code>Host resource limits and watchdogs</code></li>
+<li>Pending: <code>Large address-space sparse virtual memory</code></li>
+<li>Pending: <code>Memory allocation/free/heap fragmentation</code></li>
+<li>Pending: <code>Virtual filesystem and document directories</code></li>
+<li>Pending: <code>mmap, mprotect and guard pages</code></li>
+</ul></details></td><td>1</td><td>1</td><td>7</td><td>9</td></tr>
+<tr><td><details><summary>Input / controllers</summary><ul>
+<li>Pending: <code>Accelerometer/gyro synthetic sensors</code></li>
+<li>Pending: <code>GameController.framework profiles and analog axes</code></li>
+<li>Pending: <code>Gamepad reconnect and focus behavior</code></li>
+<li>Pending: <code>Haptics/CoreHaptics vibration mapping</code></li>
+<li>Pending: <code>Keyboard, on-screen text and IME mapping</code></li>
+<li>Pending: <code>Multi-touch gestures, drag and pinch</code></li>
+<li>Pending: <code>Windows mouse to UITouch translation</code></li>
+</ul></details></td><td>0</td><td>0</td><td>7</td><td>7</td></tr>
+<tr><td><details><summary>Legacy OpenGL ES</summary><ul>
+<li>Pending: <code>Buffer objects and vertex attribute streams</code></li>
+<li>Pending: <code>EAGLContext and framebuffer setup</code></li>
+<li>Pending: <code>Extensions and driver capability query</code></li>
+<li>Pending: <code>GLES2/GLES3 shader translator</code></li>
+<li>Pending: <code>Textures, renderbuffers and framebuffer objects</code></li>
+<li>Pending: <code>Uniforms, draws, blending and depth</code></li>
+</ul></details></td><td>0</td><td>0</td><td>6</td><td>6</td></tr>
+<tr><td><details><summary>Mach-O formats</summary><ul>
+<li>Verified: <code>Fat/FAT64 universal slice selection</code></li>
+<li>Verified: <code>Thin ARM64 MH_EXECUTE and MH_DYLIB metadata</code></li>
+<li>Pending: <code>Encrypted binary detection and explicit rejection</code></li>
+<li>Pending: <code>LC_MAIN and LC_UNIXTHREAD bootstrap</code></li>
+<li>Pending: <code>Mach-O segment protections and page zero</code></li>
+<li>Pending: <code>Symbol table and export trie lookup</code></li>
+<li>Pending: <code>Versioned iOS platform and load-command variants</code></li>
+<li>Pending: <code>arm64e pointer authentication compatibility</code></li>
+</ul></details></td><td>2</td><td>0</td><td>6</td><td>8</td></tr>
+<tr><td><details><summary>Metal graphics</summary><ul>
+<li>Pending: <code>Compute dispatch and barriers</code></li>
+<li>Pending: <code>Depth/stencil and blend states</code></li>
+<li>Pending: <code>Indirect drawing and synchronization</code></li>
+<li>Pending: <code>MTLCommandQueue and command buffers</code></li>
+<li>Pending: <code>MTLDevice and GPU feature query</code></li>
+<li>Pending: <code>Metal shader libraries and MSL compilation</code></li>
+<li>Pending: <code>Metal swapchain via CAMetalLayer</code></li>
+<li>Pending: <code>Render pass and pipeline states</code></li>
+<li>Pending: <code>Textures, buffers, heaps and resources</code></li>
+</ul></details></td><td>0</td><td>0</td><td>9</td><td>9</td></tr>
+<tr><td><details><summary>Networking / services</summary><ul>
+<li>Pending: <code>Bonjour/mDNS discovery and LAN permission</code></li>
+<li>Pending: <code>CFNetwork TCP/TLS streams</code></li>
+<li>Pending: <code>NSURLSession HTTP(S) and URL loading</code></li>
+<li>Pending: <code>Network path change callbacks</code></li>
+<li>Pending: <code>Offline/cache and network reachability</code></li>
+<li>Pending: <code>POSIX sockets and DNS resolver</code></li>
+<li>Pending: <code>TLS certificate validation and pinning</code></li>
+<li>Pending: <code>WebSockets, background transfers and proxies</code></li>
+</ul></details></td><td>0</td><td>0</td><td>8</td><td>8</td></tr>
+<tr><td><details><summary>Objective-C runtime</summary><ul>
+<li>Partial: <code>Classlist/selector metadata inspection</code></li>
+<li>Pending: <code>Autorelease pool push/pop with actual objects</code></li>
+<li>Pending: <code>Categories, protocols and dynamic method lookup</code></li>
+<li>Pending: <code>Class registry, metaclasses and inheritance</code></li>
+<li>Pending: <code>Exceptions and Objective-C synchronized blocks</code></li>
+<li>Pending: <code>General objc_msgSend instance/class/super dispatch</code></li>
+<li>Pending: <code>KVO, blocks and associated objects</code></li>
+<li>Pending: <code>Runtime-generated class and method interop</code></li>
+<li>Pending: <code>alloc/init/retain/release/weak references</code></li>
+</ul></details></td><td>0</td><td>1</td><td>8</td><td>9</td></tr>
+<tr><td><details><summary>Pthreads and dispatch</summary><ul>
+<li>Partial: <code>Owned Darwin guest TLV sequential threads</code></li>
+<li>Pending: <code>Atomic callbacks across guest and host threads</code></li>
+<li>Pending: <code>Main-thread dispatch and runloop integration</code></li>
+<li>Pending: <code>Thread cancel, join and teardown</code></li>
+<li>Pending: <code>Thread-safe autorelease pools</code></li>
+<li>Pending: <code>Work queues/QoS scheduling</code></li>
+<li>Pending: <code>dispatch queues, groups, semaphores</code></li>
+<li>Pending: <code>pthread creation, mutex, condvar and once</code></li>
+</ul></details></td><td>0</td><td>1</td><td>7</td><td>8</td></tr>
+<tr><td><details><summary>QuartzCore / animation</summary><ul>
+<li>Pending: <code>Animation transactions and timing</code></li>
+<li>Pending: <code>CADisplayLink vsync callbacks</code></li>
+<li>Pending: <code>CALayer tree and compositing</code></li>
+<li>Pending: <code>Core Animation keyframes and easing</code></li>
+<li>Pending: <code>Layer masks, opacity and blending</code></li>
+<li>Pending: <code>Offscreen layer rendering and filters</code></li>
+</ul></details></td><td>0</td><td>0</td><td>6</td><td>6</td></tr>
+<tr><td><details><summary>Security / crypto</summary><ul>
+<li>Pending: <code>Biometric LocalAuthentication mapping</code></li>
+<li>Pending: <code>Code signing identity vs runtime permissions</code></li>
+<li>Pending: <code>CommonCrypto hashing and encryption</code></li>
+<li>Pending: <code>File protection and app container encryption</code></li>
+<li>Pending: <code>Secure random values and key APIs</code></li>
+<li>Pending: <code>Security.framework keychain APIs</code></li>
+<li>Pending: <code>Trust stores, certificates and entitlement policy</code></li>
+</ul></details></td><td>0</td><td>0</td><td>7</td><td>7</td></tr>
+<tr><td><details><summary>SpriteKit / SceneKit</summary><ul>
+<li>Pending: <code>SCNScene node graph and asset import</code></li>
+<li>Pending: <code>SKAction animations, scheduling and timing</code></li>
+<li>Pending: <code>SKEmitterNode particles and filters</code></li>
+<li>Pending: <code>SKNode hierarchy and transforms</code></li>
+<li>Pending: <code>SKPhysicsBody collision and contacts</code></li>
+<li>Pending: <code>SKSpriteNode sprite batching and texture atlas</code></li>
+<li>Pending: <code>SKView and SKScene lifecycle</code></li>
+<li>Pending: <code>SceneKit lighting, geometry and rendering</code></li>
+</ul></details></td><td>0</td><td>0</td><td>8</td><td>8</td></tr>
+<tr><td><details><summary>Swift runtime</summary><ul>
+<li>Pending: <code>Generics, existential containers and bridging</code></li>
+<li>Pending: <code>Swift ABI-version compatibility</code></li>
+<li>Pending: <code>Swift concurrency actors/task scheduler</code></li>
+<li>Pending: <code>Swift error handling, exceptions and unwinding</code></li>
+<li>Pending: <code>Swift metadata and type descriptors</code></li>
+<li>Pending: <code>Swift retain/release ownership</code></li>
+<li>Pending: <code>Swift/Objective-C mixed dispatch</code></li>
+<li>Pending: <code>Value witness and protocol witness tables</code></li>
+</ul></details></td><td>0</td><td>0</td><td>8</td><td>8</td></tr>
+<tr><td><details><summary>System interoperability</summary><ul>
+<li>Partial: <code>Process startup and exit lifecycle</code></li>
+<li>Pending: <code>Accessibility tree and screen readers</code></li>
+<li>Pending: <code>CFPreferences and persistent settings</code></li>
+<li>Pending: <code>Environment/version/device capabilities</code></li>
+<li>Pending: <code>Error reporting, logs and symbolication</code></li>
+<li>Pending: <code>Privacy prompts and permission persistence</code></li>
+<li>Pending: <code>Time zones, locale and encoding</code></li>
+<li>Pending: <code>XPC/Mach IPC and bootstrap services</code></li>
+</ul></details></td><td>0</td><td>1</td><td>7</td><td>8</td></tr>
+<tr><td><details><summary>UIKit app lifecycle</summary><ul>
+<li>Pending: <code>App foreground/background lifecycle</code></li>
+<li>Pending: <code>Root view controller and lifecycle callbacks</code></li>
+<li>Pending: <code>Status bar/appearance and accessibility hooks</code></li>
+<li>Pending: <code>Storyboard/NIB loading and object awakening</code></li>
+<li>Pending: <code>UIApplication event loop and scenes</code></li>
+<li>Pending: <code>UIApplicationMain and delegate construction</code></li>
+<li>Pending: <code>UIKit trait/environment state</code></li>
+<li>Pending: <code>UIWindow creation and visibility</code></li>
+</ul></details></td><td>0</td><td>0</td><td>8</td><td>8</td></tr>
+<tr><td><details><summary>UIKit views and controls</summary><ul>
+<li>Pending: <code>Animation, coordinate and hit-testing semantics</code></li>
+<li>Pending: <code>Clipboard, menus and context actions</code></li>
+<li>Pending: <code>Gestures, taps, touch dragging and multi-touch</code></li>
+<li>Pending: <code>Layout constraints and Auto Layout engine</code></li>
+<li>Pending: <code>Navigation, modal presentation and alerts</code></li>
+<li>Pending: <code>Scroll/table/collection views</code></li>
+<li>Pending: <code>Text input, keyboard and IME</code></li>
+<li>Pending: <code>UIButton, UILabel, UIImageView and text rendering</code></li>
+<li>Pending: <code>UIView hierarchy, transforms and layers</code></li>
+</ul></details></td><td>0</td><td>0</td><td>9</td><td>9</td></tr>
+<tr><td><details><summary>Web / UI embeddings</summary><ul>
+<li>Pending: <code>HTML forms, cookies and storage</code></li>
+<li>Pending: <code>JSCore guest/host JavaScript bridge</code></li>
+<li>Pending: <code>URL interception and custom schemes</code></li>
+<li>Pending: <code>WKWebView/WebKit DOM and JS engine</code></li>
+<li>Pending: <code>Web content process isolation</code></li>
+</ul></details></td><td>0</td><td>0</td><td>5</td><td>5</td></tr>
+<tr><td><details><summary>Windows ARM64 execution</summary><ul>
+<li>Verified: <code>Trusted native ARM64 owned two-instruction fixture</code></li>
+<li>Partial: <code>Windows 11 ARM64 x64-emulated Dynarmic fallback</code></li>
+<li>Pending: <code>ABI interoperability and native exception safety</code></li>
+<li>Pending: <code>Cross-architecture same-app regression tests</code></li>
+<li>Pending: <code>Darwin service traps in native backend</code></li>
+<li>Pending: <code>General native guest Mach-O mapped executable pages</code></li>
+<li>Pending: <code>Guest TLS state isolation on native backend</code></li>
+<li>Pending: <code>Native ARM64 renderer/app integration</code></li>
+</ul></details></td><td>1</td><td>1</td><td>6</td><td>8</td></tr>
+<tr><td><details><summary>Windows GUI backend</summary><ul>
+<li>Pending: <code>Actual resizable Win32 window with guest-driven pixels</code></li>
+<li>Pending: <code>DPI scaling, fullscreen and multiple monitors</code></li>
+<li>Pending: <code>GDI fallbacks for test fixtures</code></li>
+<li>Pending: <code>Guest UI scene to Direct3D 11/12 compositor</code></li>
+<li>Pending: <code>Input hit testing, cursor and touch dispatch</code></li>
+<li>Pending: <code>Multi-window, swapchain and compositor resources</code></li>
+<li>Pending: <code>Presentation frame timing and resize</code></li>
+</ul></details></td><td>0</td><td>0</td><td>7</td><td>7</td></tr>
+</tbody><tfoot><tr><th>Total</th><th>6</th><th>10</th><th>223</th><th>239</th></tr></tfoot></table>
+<p>Source: <a href="https://github.com/uknes/AnyiOS/blob/main/tools/progress.py">progress generator</a>, <a href="https://github.com/uknes/AnyiOS/blob/main/tools/api_inventory.json">API inventory</a>, <a href="https://github.com/uknes/AnyiOS/blob/main/tools/compat_capabilities.json">capability catalog</a>, <a href="https://github.com/uknes/AnyiOS/blob/main/tools/api_manifest.json">API evidence</a>.</p>
+</body></html>

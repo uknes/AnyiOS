@@ -1,0 +1,94 @@
+name: Compatibility Progress
+on:
+  push:
+    branches: [main, feature/full-compatibility-treemap-and-sasquatch-intake]
+    paths:
+      - 'tools/**'
+      - 'tests/test_progress.py'
+      - 'tests/test_unchanged_ipa_probe.py'
+      - 'compatibility/targets/**'
+      - '.github/workflows/progress-status.yml'
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: anyios-progress-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  progress:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 2
+      - name: Test evidence scope and original immutable IPA
+        run: |
+          python3 -m unittest discover -s tests -p test_progress.py -v
+          python3 -m unittest discover -s tests -p test_unchanged_ipa_probe.py -v
+      - name: Render AnyPS5-style status and confirm game blocked honestly
+        run: |
+          python3 tools/progress.py docs
+          python3 tools/progress.py docs --check
+          set +e
+          python3 tools/unchanged_ipa_probe.py --target sneaky-sasquatch --output docs/sneaky-sasquatch-intake.json
+          result=$?
+          set -e
+          if [ "$result" -ne 2 ]; then echo 'Original game missing must return blocked status'; exit 1; fi
+          python3 -c "import json; j=json.load(open('docs/sneaky-sasquatch-intake.json')); assert j['status']=='blocked-no-original-app-binary' and not j['execution_attempted']"
+      - name: Compare PR API and runtime coverage with base commit
+        if: github.event_name == 'pull_request'
+        run: |
+          git worktree add --detach "$RUNNER_TEMP/anyios-base" HEAD^1
+          if [ -f "$RUNNER_TEMP/anyios-base/tools/api_inventory.json" ] && [ -f "$RUNNER_TEMP/anyios-base/tools/compat_capabilities.json" ]; then
+            python3 tools/progress.py --root "$RUNNER_TEMP/anyios-base" "$RUNNER_TEMP/anyios-base-report"
+            python3 tools/progress.py --compare "$RUNNER_TEMP/anyios-base-report/progress.json" docs/progress.json | tee "$RUNNER_TEMP/progress-diff.md"
+            cat "$RUNNER_TEMP/progress-diff.md" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'First complete AnyiOS inventory is introduced in this PR; no comparable base inventory.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload visual progress and real-game no-binary evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: anyios-comprehensive-compatibility-map
+          path: |
+            docs/progress.json
+            docs/progress.svg
+            docs/progress.html
+            docs/progress.md
+            docs/badge-apis.svg
+            docs/badge-runtime.svg
+            docs/sneaky-sasquatch-intake.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Verify committed status is current on main
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git diff --exit-code -- docs/progress.json docs/progress.svg docs/progress.html docs/progress.md docs/badge-apis.svg docs/badge-runtime.svg
+
+  publish:
+    needs: progress
+    if: github.event_name == 'push' && github.ref == 'refs/heads/feature/full-compatibility-treemap-and-sasquatch-intake'
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: anyios-comprehensive-compatibility-map
+          path: docs
+      - name: Commit generated first-party status assets once
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/progress.json docs/progress.svg docs/progress.html docs/progress.md docs/badge-apis.svg docs/badge-runtime.svg docs/sneaky-sasquatch-intake.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'docs(progress): publish exact tested coverage and unchanged-game intake'
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi

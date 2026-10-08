@@ -1,32 +1,1006 @@
 {
-  "categories": {
-    "Darwin C / process": {
-      "implemented": 3,
-      "partial": 0,
-      "tracked": 3
-    },
-    "Thread-local storage": {
-      "implemented": 0,
-      "partial": 1,
-      "tracked": 1
-    },
-    "Objective-C runtime": {
-      "implemented": 0,
-      "partial": 0,
-      "tracked": 4
-    },
-    "UIKit entry": {
-      "implemented": 0,
-      "partial": 0,
-      "tracked": 1
-    }
+  "libraries": {
+    "done": 3,
+    "groups": [
+      {
+        "done_names": [
+          "_exit",
+          "_malloc"
+        ],
+        "label": "Darwin memory / strings",
+        "name": "Darwin memory / strings",
+        "partial_names": [],
+        "todo_names": [
+          "_abort",
+          "_bzero",
+          "_calloc",
+          "_free",
+          "_memcmp",
+          "_memcpy",
+          "_memmove",
+          "_memset",
+          "_realloc",
+          "_strchr",
+          "_strcmp",
+          "_strdup",
+          "_strlcat",
+          "_strlcpy",
+          "_strlen",
+          "_strncmp",
+          "_strstr"
+        ],
+        "total": 19
+      },
+      {
+        "done_names": [
+          "_write"
+        ],
+        "label": "Darwin file / process",
+        "name": "Darwin file / process",
+        "partial_names": [],
+        "todo_names": [
+          "_access",
+          "_clock_gettime",
+          "_close",
+          "_fstat",
+          "_getcwd",
+          "_getenv",
+          "_getpid",
+          "_getppid",
+          "_gettimeofday",
+          "_lseek",
+          "_mkdir",
+          "_mmap",
+          "_mprotect",
+          "_munmap",
+          "_nanosleep",
+          "_open",
+          "_openat",
+          "_read",
+          "_rename",
+          "_rmdir",
+          "_setenv",
+          "_stat",
+          "_sysctl",
+          "_sysctlbyname",
+          "_unlink"
+        ],
+        "total": 26
+      },
+      {
+        "done_names": [],
+        "label": "Darwin threads / locks",
+        "name": "Darwin threads / locks",
+        "partial_names": [
+          "__tlv_bootstrap"
+        ],
+        "todo_names": [
+          "_pthread_cond_signal",
+          "_pthread_cond_wait",
+          "_pthread_create",
+          "_pthread_getspecific",
+          "_pthread_join",
+          "_pthread_key_create",
+          "_pthread_mutex_init",
+          "_pthread_mutex_lock",
+          "_pthread_mutex_unlock",
+          "_pthread_once",
+          "_pthread_self",
+          "_pthread_setspecific"
+        ],
+        "total": 13
+      },
+      {
+        "done_names": [],
+        "label": "Darwin dispatch / blocks",
+        "name": "Darwin dispatch / blocks",
+        "partial_names": [],
+        "todo_names": [
+          "__Block_copy",
+          "__Block_release",
+          "_dispatch_after",
+          "_dispatch_async",
+          "_dispatch_group_create",
+          "_dispatch_group_enter",
+          "_dispatch_group_leave",
+          "_dispatch_once_f",
+          "_dispatch_queue_create",
+          "_dispatch_semaphore_create",
+          "_dispatch_semaphore_signal",
+          "_dispatch_semaphore_wait",
+          "_dispatch_sync"
+        ],
+        "total": 13
+      },
+      {
+        "done_names": [],
+        "label": "Objective-C ABI",
+        "name": "Objective-C ABI",
+        "partial_names": [],
+        "todo_names": [
+          "_NSStringFromClass",
+          "_class_getInstanceMethod",
+          "_class_getSuperclass",
+          "_objc_allocateClassPair",
+          "_objc_autorelease",
+          "_objc_autoreleasePoolPop",
+          "_objc_autoreleasePoolPush",
+          "_objc_getAssociatedObject",
+          "_objc_getClass",
+          "_objc_getMetaClass",
+          "_objc_loadWeakRetained",
+          "_objc_msgSend",
+          "_objc_msgSendSuper2",
+          "_objc_registerClassPair",
+          "_objc_release",
+          "_objc_retain",
+          "_objc_setAssociatedObject",
+          "_objc_storeStrong",
+          "_objc_storeWeak",
+          "_object_getClass",
+          "_sel_registerName"
+        ],
+        "total": 21
+      },
+      {
+        "done_names": [],
+        "label": "Swift ABI",
+        "name": "Swift ABI",
+        "partial_names": [],
+        "todo_names": [
+          "_swift_allocObject",
+          "_swift_beginAccess",
+          "_swift_bridgeObjectRelease",
+          "_swift_bridgeObjectRetain",
+          "_swift_deallocClassInstance",
+          "_swift_endAccess",
+          "_swift_getTypeByMangledNameInContext",
+          "_swift_getWitnessTable",
+          "_swift_once",
+          "_swift_release",
+          "_swift_retain"
+        ],
+        "total": 11
+      },
+      {
+        "done_names": [],
+        "label": "CoreFoundation",
+        "name": "CoreFoundation",
+        "partial_names": [],
+        "todo_names": [
+          "_CFArrayCreate",
+          "_CFArrayGetCount",
+          "_CFBundleGetMainBundle",
+          "_CFDataCreate",
+          "_CFDictionaryCreate",
+          "_CFDictionaryGetValue",
+          "_CFNotificationCenterGetLocalCenter",
+          "_CFRelease",
+          "_CFRetain",
+          "_CFRunLoopGetMain",
+          "_CFRunLoopRun",
+          "_CFStringCreateWithCString",
+          "_CFStringGetCString",
+          "_CFStringGetLength",
+          "_CFURLCreateWithFileSystemPath"
+        ],
+        "total": 15
+      },
+      {
+        "done_names": [],
+        "label": "Foundation classes",
+        "name": "Foundation classes",
+        "partial_names": [],
+        "todo_names": [
+          "_OBJC_CLASS_$_NSArray",
+          "_OBJC_CLASS_$_NSBundle",
+          "_OBJC_CLASS_$_NSData",
+          "_OBJC_CLASS_$_NSDate",
+          "_OBJC_CLASS_$_NSDictionary",
+          "_OBJC_CLASS_$_NSError",
+          "_OBJC_CLASS_$_NSFileManager",
+          "_OBJC_CLASS_$_NSJSONSerialization",
+          "_OBJC_CLASS_$_NSMutableArray",
+          "_OBJC_CLASS_$_NSMutableDictionary",
+          "_OBJC_CLASS_$_NSMutableString",
+          "_OBJC_CLASS_$_NSNotificationCenter",
+          "_OBJC_CLASS_$_NSNumber",
+          "_OBJC_CLASS_$_NSObject",
+          "_OBJC_CLASS_$_NSRunLoop",
+          "_OBJC_CLASS_$_NSSet",
+          "_OBJC_CLASS_$_NSString",
+          "_OBJC_CLASS_$_NSTimer",
+          "_OBJC_CLASS_$_NSURL",
+          "_OBJC_CLASS_$_NSUserDefaults"
+        ],
+        "total": 20
+      },
+      {
+        "done_names": [],
+        "label": "UIKit lifecycle / views",
+        "name": "UIKit lifecycle / views",
+        "partial_names": [],
+        "todo_names": [
+          "_OBJC_CLASS_$_UIApplication",
+          "_OBJC_CLASS_$_UIApplicationDelegate",
+          "_OBJC_CLASS_$_UIButton",
+          "_OBJC_CLASS_$_UICollectionView",
+          "_OBJC_CLASS_$_UIGestureRecognizer",
+          "_OBJC_CLASS_$_UIImage",
+          "_OBJC_CLASS_$_UIImageView",
+          "_OBJC_CLASS_$_UILabel",
+          "_OBJC_CLASS_$_UINavigationController",
+          "_OBJC_CLASS_$_UIResponder",
+          "_OBJC_CLASS_$_UIScreen",
+          "_OBJC_CLASS_$_UIStackView",
+          "_OBJC_CLASS_$_UIStoryboard",
+          "_OBJC_CLASS_$_UITableView",
+          "_OBJC_CLASS_$_UITextField",
+          "_OBJC_CLASS_$_UITouch",
+          "_OBJC_CLASS_$_UIView",
+          "_OBJC_CLASS_$_UIViewController",
+          "_OBJC_CLASS_$_UIWindow",
+          "_UIApplicationMain"
+        ],
+        "total": 20
+      },
+      {
+        "done_names": [],
+        "label": "CoreGraphics / text",
+        "name": "CoreGraphics / text",
+        "partial_names": [],
+        "todo_names": [
+          "_CGBitmapContextCreate",
+          "_CGColorCreate",
+          "_CGColorRelease",
+          "_CGColorSpaceCreateDeviceRGB",
+          "_CGContextConcatCTM",
+          "_CGContextDrawImage",
+          "_CGContextFillRect",
+          "_CGContextSetFillColorWithColor",
+          "_CGContextSetLineWidth",
+          "_CGContextSetStrokeColorWithColor",
+          "_CGContextStrokePath",
+          "_CGDataProviderCreateWithData",
+          "_CGImageCreate",
+          "_CGImageRelease",
+          "_CGPathAddLineToPoint",
+          "_CGPathCreateMutable",
+          "_CGPathRelease",
+          "_CTFontCreateWithName",
+          "_CTLineCreateWithAttributedString"
+        ],
+        "total": 19
+      },
+      {
+        "done_names": [],
+        "label": "QuartzCore",
+        "name": "QuartzCore",
+        "partial_names": [],
+        "todo_names": [
+          "_CACurrentMediaTime",
+          "_OBJC_CLASS_$_CAAnimation",
+          "_OBJC_CLASS_$_CABasicAnimation",
+          "_OBJC_CLASS_$_CADisplayLink",
+          "_OBJC_CLASS_$_CAKeyframeAnimation",
+          "_OBJC_CLASS_$_CALayer",
+          "_OBJC_CLASS_$_CAMediaTimingFunction",
+          "_OBJC_CLASS_$_CATransaction"
+        ],
+        "total": 8
+      },
+      {
+        "done_names": [],
+        "label": "Metal / MetalKit",
+        "name": "Metal / MetalKit",
+        "partial_names": [],
+        "todo_names": [
+          "_MTLCreateSystemDefaultDevice",
+          "_OBJC_CLASS_$_CAMetalLayer",
+          "_OBJC_CLASS_$_MTKView",
+          "_OBJC_CLASS_$_MTLCompileOptions",
+          "_OBJC_CLASS_$_MTLDepthStencilDescriptor",
+          "_OBJC_CLASS_$_MTLRenderPassDescriptor",
+          "_OBJC_CLASS_$_MTLTextureDescriptor"
+        ],
+        "total": 7
+      },
+      {
+        "done_names": [],
+        "label": "OpenGL ES",
+        "name": "OpenGL ES",
+        "partial_names": [],
+        "todo_names": [
+          "_glBindTexture",
+          "_glClear",
+          "_glClearColor",
+          "_glCompileShader",
+          "_glCreateProgram",
+          "_glCreateShader",
+          "_glDrawArrays",
+          "_glDrawElements",
+          "_glEnableVertexAttribArray",
+          "_glGenTextures",
+          "_glGetError",
+          "_glGetString",
+          "_glLinkProgram",
+          "_glTexImage2D",
+          "_glUseProgram",
+          "_glVertexAttribPointer",
+          "_glViewport"
+        ],
+        "total": 17
+      },
+      {
+        "done_names": [],
+        "label": "SpriteKit",
+        "name": "SpriteKit",
+        "partial_names": [],
+        "todo_names": [
+          "_OBJC_CLASS_$_SKAction",
+          "_OBJC_CLASS_$_SKEmitterNode",
+          "_OBJC_CLASS_$_SKLabelNode",
+          "_OBJC_CLASS_$_SKNode",
+          "_OBJC_CLASS_$_SKPhysicsBody",
+          "_OBJC_CLASS_$_SKScene",
+          "_OBJC_CLASS_$_SKSpriteNode",
+          "_OBJC_CLASS_$_SKTexture",
+          "_OBJC_CLASS_$_SKView"
+        ],
+        "total": 9
+      },
+      {
+        "done_names": [],
+        "label": "Audio / AVFoundation",
+        "name": "Audio / AVFoundation",
+        "partial_names": [],
+        "todo_names": [
+          "_AudioComponentFindNext",
+          "_AudioComponentInstanceNew",
+          "_AudioOutputUnitStart",
+          "_AudioQueueEnqueueBuffer",
+          "_AudioQueueNewOutput",
+          "_AudioQueueStart",
+          "_AudioQueueStop",
+          "_AudioUnitInitialize",
+          "_ExtAudioFileOpenURL",
+          "_OBJC_CLASS_$_AVAudioEngine",
+          "_OBJC_CLASS_$_AVAudioPlayer",
+          "_OBJC_CLASS_$_AVAudioSession",
+          "_OBJC_CLASS_$_AVPlayer"
+        ],
+        "total": 13
+      },
+      {
+        "done_names": [],
+        "label": "Network / IPC",
+        "name": "Network / IPC",
+        "partial_names": [],
+        "todo_names": [
+          "_CFHTTPMessageCreateRequest",
+          "_CFReadStreamCreateForHTTPRequest",
+          "_OBJC_CLASS_$_NSURLConnection",
+          "_OBJC_CLASS_$_NSURLRequest",
+          "_OBJC_CLASS_$_NSURLSession",
+          "_connect",
+          "_getaddrinfo",
+          "_poll",
+          "_recv",
+          "_select",
+          "_send",
+          "_socket"
+        ],
+        "total": 12
+      },
+      {
+        "done_names": [],
+        "label": "Security / keychain",
+        "name": "Security / keychain",
+        "partial_names": [],
+        "todo_names": [
+          "_CCCrypt",
+          "_CC_SHA256",
+          "_OBJC_CLASS_$_LAContext",
+          "_SecItemAdd",
+          "_SecItemCopyMatching",
+          "_SecItemDelete",
+          "_SecItemUpdate",
+          "_SecKeyCreateRandomKey",
+          "_SecRandomCopyBytes"
+        ],
+        "total": 9
+      },
+      {
+        "done_names": [],
+        "label": "GameKit / stores",
+        "name": "GameKit / stores",
+        "partial_names": [],
+        "todo_names": [
+          "_OBJC_CLASS_$_GKAchievement",
+          "_OBJC_CLASS_$_GKLeaderboard",
+          "_OBJC_CLASS_$_GKLocalPlayer",
+          "_OBJC_CLASS_$_GKMatch",
+          "_OBJC_CLASS_$_SKPaymentQueue",
+          "_OBJC_CLASS_$_SKProduct",
+          "_OBJC_CLASS_$_SKProductsRequest"
+        ],
+        "total": 7
+      },
+      {
+        "done_names": [],
+        "label": "Persistence / CloudKit",
+        "name": "Persistence / CloudKit",
+        "partial_names": [],
+        "todo_names": [
+          "_OBJC_CLASS_$_CKContainer",
+          "_OBJC_CLASS_$_CKDatabase",
+          "_OBJC_CLASS_$_NSManagedObjectContext",
+          "_OBJC_CLASS_$_NSPersistentStoreCoordinator",
+          "_sqlite3_bind_text",
+          "_sqlite3_close",
+          "_sqlite3_finalize",
+          "_sqlite3_open",
+          "_sqlite3_prepare_v2",
+          "_sqlite3_step"
+        ],
+        "total": 10
+      }
+    ],
+    "partial": 1,
+    "pending": 265,
+    "percent": 1.12,
+    "source": "tools/api_inventory.json",
+    "total": 269,
+    "unit": "API exports"
   },
-  "disclaimer": "Not a percentage of iOS apps, Apple frameworks, or total Darwin APIs.",
-  "implemented": 3,
-  "not_implemented_or_unknown": 5,
-  "partial": 1,
-  "schema": 1,
-  "scope": "tracked guest ABI symbols only",
-  "source": "tools/api_manifest.json",
-  "tracked": 9
+  "notes": [
+    "Percentages apply ONLY to explicitly tracked selected API exports and declared compatibility gates.",
+    "Selected API examples do NOT enumerate Apple's full frameworks or every iOS release.",
+    "Partial work does not count toward the implemented/verified percentage.",
+    "An API's missing evidence means unverified, not necessarily proven impossible.",
+    "No iOS app or game is rated playable merely from a symbol or feature count."
+  ],
+  "runtime": {
+    "done": 6,
+    "groups": [
+      {
+        "done_names": [
+          "Fat/FAT64 universal slice selection",
+          "Thin ARM64 MH_EXECUTE and MH_DYLIB metadata"
+        ],
+        "label": "Mach-O formats",
+        "name": "Mach-O formats",
+        "partial_names": [],
+        "todo_names": [
+          "Encrypted binary detection and explicit rejection",
+          "LC_MAIN and LC_UNIXTHREAD bootstrap",
+          "Mach-O segment protections and page zero",
+          "Symbol table and export trie lookup",
+          "Versioned iOS platform and load-command variants",
+          "arm64e pointer authentication compatibility"
+        ],
+        "total": 8
+      },
+      {
+        "done_names": [],
+        "label": "dyld and linking",
+        "name": "dyld and linking",
+        "partial_names": [
+          "Chained rebases and binds for owned fixtures"
+        ],
+        "todo_names": [
+          "App/framework nested bundle resolution",
+          "C/C++ static constructors across images",
+          "Classic binds, lazy binds and weak symbols",
+          "Multi-dylib recursive load and @rpath resolution",
+          "Objective-C category/selector initialization order",
+          "Stable ASLR and image slides",
+          "Thread local variable fixups across modules",
+          "dyld shared cache equivalent / substitute frameworks"
+        ],
+        "total": 9
+      },
+      {
+        "done_names": [
+          "Windows x86-64 Dynarmic owned ARM64 instructions"
+        ],
+        "label": "ARM64 CPU / ABI",
+        "name": "ARM64 CPU / ABI",
+        "partial_names": [
+          "Darwin SVC trap and Mach syscall handling",
+          "Host-to-guest fixed-argument ABI callbacks"
+        ],
+        "todo_names": [
+          "Exception, unwind and stack walkers",
+          "Float/vector NEON and SIMD across callbacks",
+          "Hardware atomics and memory ordering",
+          "Instruction cache invalidation and self-modifying code",
+          "MRS/MSR platform register virtualization",
+          "Variadic calls, structs and ABI thunks"
+        ],
+        "total": 9
+      },
+      {
+        "done_names": [
+          "Trusted native ARM64 owned two-instruction fixture"
+        ],
+        "label": "Windows ARM64 execution",
+        "name": "Windows ARM64 execution",
+        "partial_names": [
+          "Windows 11 ARM64 x64-emulated Dynarmic fallback"
+        ],
+        "todo_names": [
+          "ABI interoperability and native exception safety",
+          "Cross-architecture same-app regression tests",
+          "Darwin service traps in native backend",
+          "General native guest Mach-O mapped executable pages",
+          "Guest TLS state isolation on native backend",
+          "Native ARM64 renderer/app integration"
+        ],
+        "total": 8
+      },
+      {
+        "done_names": [
+          "Input-binary validation and refusal of protected code"
+        ],
+        "label": "Guest memory / sandbox",
+        "name": "Guest memory / sandbox",
+        "partial_names": [
+          "Bounded W^X guest memory ranges"
+        ],
+        "todo_names": [
+          "App sandbox path translation",
+          "Crash isolation from host UI",
+          "Host resource limits and watchdogs",
+          "Large address-space sparse virtual memory",
+          "Memory allocation/free/heap fragmentation",
+          "Virtual filesystem and document directories",
+          "mmap, mprotect and guard pages"
+        ],
+        "total": 9
+      },
+      {
+        "done_names": [],
+        "label": "Darwin libSystem",
+        "name": "Darwin libSystem",
+        "partial_names": [
+          "malloc/write/exit guest C fixture ABI",
+          "process arguments/envp/apple arrays"
+        ],
+        "todo_names": [
+          "Full memcpy/memmove/memset and string semantics",
+          "calloc/realloc/free and aligned alloc",
+          "clocks, timers, gettimeofday and sysctl",
+          "errno and libc thread state",
+          "posix files/read/write/seek/stat",
+          "sockets and POSIX DNS",
+          "stdio, snprintf/vsnprintf/formatting"
+        ],
+        "total": 9
+      },
+      {
+        "done_names": [],
+        "label": "Pthreads and dispatch",
+        "name": "Pthreads and dispatch",
+        "partial_names": [
+          "Owned Darwin guest TLV sequential threads"
+        ],
+        "todo_names": [
+          "Atomic callbacks across guest and host threads",
+          "Main-thread dispatch and runloop integration",
+          "Thread cancel, join and teardown",
+          "Thread-safe autorelease pools",
+          "Work queues/QoS scheduling",
+          "dispatch queues, groups, semaphores",
+          "pthread creation, mutex, condvar and once"
+        ],
+        "total": 8
+      },
+      {
+        "done_names": [],
+        "label": "Objective-C runtime",
+        "name": "Objective-C runtime",
+        "partial_names": [
+          "Classlist/selector metadata inspection"
+        ],
+        "todo_names": [
+          "Autorelease pool push/pop with actual objects",
+          "Categories, protocols and dynamic method lookup",
+          "Class registry, metaclasses and inheritance",
+          "Exceptions and Objective-C synchronized blocks",
+          "General objc_msgSend instance/class/super dispatch",
+          "KVO, blocks and associated objects",
+          "Runtime-generated class and method interop",
+          "alloc/init/retain/release/weak references"
+        ],
+        "total": 9
+      },
+      {
+        "done_names": [],
+        "label": "Swift runtime",
+        "name": "Swift runtime",
+        "partial_names": [],
+        "todo_names": [
+          "Generics, existential containers and bridging",
+          "Swift ABI-version compatibility",
+          "Swift concurrency actors/task scheduler",
+          "Swift error handling, exceptions and unwinding",
+          "Swift metadata and type descriptors",
+          "Swift retain/release ownership",
+          "Swift/Objective-C mixed dispatch",
+          "Value witness and protocol witness tables"
+        ],
+        "total": 8
+      },
+      {
+        "done_names": [],
+        "label": "CoreFoundation",
+        "name": "CoreFoundation",
+        "partial_names": [],
+        "todo_names": [
+          "CFArray/CFDictionary/CFSet ownership",
+          "CFBundle/CFURL/CFPreferences",
+          "CFData/CFNumber/CFBoolean and date",
+          "CFError and bridging with Foundation",
+          "CFNotificationCenter and observers",
+          "CFRunLoop and source/timer scheduling",
+          "CFString and mutable strings"
+        ],
+        "total": 7
+      },
+      {
+        "done_names": [],
+        "label": "Foundation",
+        "name": "Foundation",
+        "partial_names": [],
+        "todo_names": [
+          "JSON parsing, serialization and regex",
+          "NSBundle resources and localization",
+          "NSCoder, archiving, keyed storage",
+          "NSData, NSNumber, NSDate, NSURL objects",
+          "NSError, exceptions and NSNotificationCenter",
+          "NSFileManager, URLs and path semantics",
+          "NSOperationQueue and async APIs",
+          "NSRunLoop, NSTimer and observers",
+          "NSString, NSArray, NSDictionary classes",
+          "NSUserDefaults and key-value persistence"
+        ],
+        "total": 10
+      },
+      {
+        "done_names": [],
+        "label": "UIKit app lifecycle",
+        "name": "UIKit app lifecycle",
+        "partial_names": [],
+        "todo_names": [
+          "App foreground/background lifecycle",
+          "Root view controller and lifecycle callbacks",
+          "Status bar/appearance and accessibility hooks",
+          "Storyboard/NIB loading and object awakening",
+          "UIApplication event loop and scenes",
+          "UIApplicationMain and delegate construction",
+          "UIKit trait/environment state",
+          "UIWindow creation and visibility"
+        ],
+        "total": 8
+      },
+      {
+        "done_names": [],
+        "label": "UIKit views and controls",
+        "name": "UIKit views and controls",
+        "partial_names": [],
+        "todo_names": [
+          "Animation, coordinate and hit-testing semantics",
+          "Clipboard, menus and context actions",
+          "Gestures, taps, touch dragging and multi-touch",
+          "Layout constraints and Auto Layout engine",
+          "Navigation, modal presentation and alerts",
+          "Scroll/table/collection views",
+          "Text input, keyboard and IME",
+          "UIButton, UILabel, UIImageView and text rendering",
+          "UIView hierarchy, transforms and layers"
+        ],
+        "total": 9
+      },
+      {
+        "done_names": [],
+        "label": "QuartzCore / animation",
+        "name": "QuartzCore / animation",
+        "partial_names": [],
+        "todo_names": [
+          "Animation transactions and timing",
+          "CADisplayLink vsync callbacks",
+          "CALayer tree and compositing",
+          "Core Animation keyframes and easing",
+          "Layer masks, opacity and blending",
+          "Offscreen layer rendering and filters"
+        ],
+        "total": 6
+      },
+      {
+        "done_names": [],
+        "label": "CoreGraphics / CoreText",
+        "name": "CoreGraphics / CoreText",
+        "partial_names": [],
+        "todo_names": [
+          "2D compositing, clipping and performance",
+          "Bitmap, JPEG/PNG asset decode and scaling",
+          "CGContext and image drawing",
+          "Color management and HiDPI output",
+          "Color spaces and alpha blending",
+          "Font shaping, text glyphs and CoreText",
+          "Paths, clipping, transforms and strokes"
+        ],
+        "total": 7
+      },
+      {
+        "done_names": [],
+        "label": "Metal graphics",
+        "name": "Metal graphics",
+        "partial_names": [],
+        "todo_names": [
+          "Compute dispatch and barriers",
+          "Depth/stencil and blend states",
+          "Indirect drawing and synchronization",
+          "MTLCommandQueue and command buffers",
+          "MTLDevice and GPU feature query",
+          "Metal shader libraries and MSL compilation",
+          "Metal swapchain via CAMetalLayer",
+          "Render pass and pipeline states",
+          "Textures, buffers, heaps and resources"
+        ],
+        "total": 9
+      },
+      {
+        "done_names": [],
+        "label": "Legacy OpenGL ES",
+        "name": "Legacy OpenGL ES",
+        "partial_names": [],
+        "todo_names": [
+          "Buffer objects and vertex attribute streams",
+          "EAGLContext and framebuffer setup",
+          "Extensions and driver capability query",
+          "GLES2/GLES3 shader translator",
+          "Textures, renderbuffers and framebuffer objects",
+          "Uniforms, draws, blending and depth"
+        ],
+        "total": 6
+      },
+      {
+        "done_names": [],
+        "label": "SpriteKit / SceneKit",
+        "name": "SpriteKit / SceneKit",
+        "partial_names": [],
+        "todo_names": [
+          "SCNScene node graph and asset import",
+          "SKAction animations, scheduling and timing",
+          "SKEmitterNode particles and filters",
+          "SKNode hierarchy and transforms",
+          "SKPhysicsBody collision and contacts",
+          "SKSpriteNode sprite batching and texture atlas",
+          "SKView and SKScene lifecycle",
+          "SceneKit lighting, geometry and rendering"
+        ],
+        "total": 8
+      },
+      {
+        "done_names": [],
+        "label": "Game engine integration",
+        "name": "Game engine integration",
+        "partial_names": [],
+        "todo_names": [
+          "AssetBundles, compressed game assets and codecs",
+          "Dynamic library and plugin sandbox",
+          "Frame pacing and shader-cache behavior",
+          "Unity IL2CPP and Mono runtime compatibility",
+          "Unreal engine iOS build architecture",
+          "cocos2d and native C++ engine support"
+        ],
+        "total": 6
+      },
+      {
+        "done_names": [],
+        "label": "Audio / media",
+        "name": "Audio / media",
+        "partial_names": [],
+        "todo_names": [
+          "AVAudioEngine and playback APIs",
+          "AVPlayer video playback, synchronization",
+          "Audio session categories and route events",
+          "AudioUnits and callback/render graph",
+          "CoreAudio device abstraction and timing",
+          "Hardware volume and Bluetooth behavior",
+          "Microphone capture and permission mapping",
+          "WAV/MP3/AAC/ALAC decoding"
+        ],
+        "total": 8
+      },
+      {
+        "done_names": [],
+        "label": "Input / controllers",
+        "name": "Input / controllers",
+        "partial_names": [],
+        "todo_names": [
+          "Accelerometer/gyro synthetic sensors",
+          "GameController.framework profiles and analog axes",
+          "Gamepad reconnect and focus behavior",
+          "Haptics/CoreHaptics vibration mapping",
+          "Keyboard, on-screen text and IME mapping",
+          "Multi-touch gestures, drag and pinch",
+          "Windows mouse to UITouch translation"
+        ],
+        "total": 7
+      },
+      {
+        "done_names": [],
+        "label": "Networking / services",
+        "name": "Networking / services",
+        "partial_names": [],
+        "todo_names": [
+          "Bonjour/mDNS discovery and LAN permission",
+          "CFNetwork TCP/TLS streams",
+          "NSURLSession HTTP(S) and URL loading",
+          "Network path change callbacks",
+          "Offline/cache and network reachability",
+          "POSIX sockets and DNS resolver",
+          "TLS certificate validation and pinning",
+          "WebSockets, background transfers and proxies"
+        ],
+        "total": 8
+      },
+      {
+        "done_names": [],
+        "label": "Security / crypto",
+        "name": "Security / crypto",
+        "partial_names": [],
+        "todo_names": [
+          "Biometric LocalAuthentication mapping",
+          "Code signing identity vs runtime permissions",
+          "CommonCrypto hashing and encryption",
+          "File protection and app container encryption",
+          "Secure random values and key APIs",
+          "Security.framework keychain APIs",
+          "Trust stores, certificates and entitlement policy"
+        ],
+        "total": 7
+      },
+      {
+        "done_names": [],
+        "label": "Data and persistence",
+        "name": "Data and persistence",
+        "partial_names": [],
+        "todo_names": [
+          "App sandbox documents and caches",
+          "Core Data contexts and model migration",
+          "Resource bundles and localized assets",
+          "SQLite bundled API coverage",
+          "Save state persistence and corruption recovery",
+          "iCloud/CloudKit record and sync API"
+        ],
+        "total": 6
+      },
+      {
+        "done_names": [],
+        "label": "GameKit / commerce",
+        "name": "GameKit / commerce",
+        "partial_names": [],
+        "todo_names": [
+          "Apple Arcade entitlement and licensing constraints",
+          "Cloud saves and cross-device state",
+          "Game Center sign-in and achievements",
+          "In-app purchases and StoreKit receipts",
+          "Leaderboards, match and invites",
+          "Subscription and entitlement validation"
+        ],
+        "total": 6
+      },
+      {
+        "done_names": [],
+        "label": "Web / UI embeddings",
+        "name": "Web / UI embeddings",
+        "partial_names": [],
+        "todo_names": [
+          "HTML forms, cookies and storage",
+          "JSCore guest/host JavaScript bridge",
+          "URL interception and custom schemes",
+          "WKWebView/WebKit DOM and JS engine",
+          "Web content process isolation"
+        ],
+        "total": 5
+      },
+      {
+        "done_names": [],
+        "label": "App capabilities",
+        "name": "App capabilities",
+        "partial_names": [],
+        "todo_names": [
+          "Background tasks and scheduling",
+          "Camera, photo library and media selection",
+          "Files picker and document providers",
+          "HealthKit, contacts and calendars",
+          "Location and map views",
+          "Push notifications / APNs",
+          "Universal links and URL handlers",
+          "WidgetKit and app extensions"
+        ],
+        "total": 8
+      },
+      {
+        "done_names": [],
+        "label": "System interoperability",
+        "name": "System interoperability",
+        "partial_names": [
+          "Process startup and exit lifecycle"
+        ],
+        "todo_names": [
+          "Accessibility tree and screen readers",
+          "CFPreferences and persistent settings",
+          "Environment/version/device capabilities",
+          "Error reporting, logs and symbolication",
+          "Privacy prompts and permission persistence",
+          "Time zones, locale and encoding",
+          "XPC/Mach IPC and bootstrap services"
+        ],
+        "total": 8
+      },
+      {
+        "done_names": [],
+        "label": "Windows GUI backend",
+        "name": "Windows GUI backend",
+        "partial_names": [],
+        "todo_names": [
+          "Actual resizable Win32 window with guest-driven pixels",
+          "DPI scaling, fullscreen and multiple monitors",
+          "GDI fallbacks for test fixtures",
+          "Guest UI scene to Direct3D 11/12 compositor",
+          "Input hit testing, cursor and touch dispatch",
+          "Multi-window, swapchain and compositor resources",
+          "Presentation frame timing and resize"
+        ],
+        "total": 7
+      },
+      {
+        "done_names": [
+          "Strict Mach-O inspection and import-gap report"
+        ],
+        "label": "Compatibility tooling",
+        "name": "Compatibility tooling",
+        "partial_names": [],
+        "todo_names": [
+          "Crash trace attribution and deterministic reproduction",
+          "Function-level regression tests and stub classification",
+          "Golden screenshots and event replay",
+          "Original IPA/.app metadata-only intake",
+          "Per-framework unimplemented function catalog",
+          "Unmodified app launch+render+input evidence gates",
+          "Windows ARM64 CI and artifact packaging",
+          "Windows x64 CI and artifact packaging"
+        ],
+        "total": 9
+      },
+      {
+        "done_names": [],
+        "label": "Distribution / platform",
+        "name": "Distribution / platform",
+        "partial_names": [],
+        "todo_names": [
+          "App-specific optional user supplied assets only",
+          "Auto-update, error reporting and diagnostics",
+          "Bundled redistributable OSS license notices",
+          "Installation, PATH/file associations and drag-drop",
+          "Real-world GPU/CPU compatibility test matrix",
+          "Self-contained Windows x86-64 release package",
+          "Windows ARM64 native runtime release package"
+        ],
+        "total": 7
+      }
+    ],
+    "partial": 10,
+    "pending": 223,
+    "percent": 2.51,
+    "source": "tools/compat_capabilities.json",
+    "total": 239,
+    "unit": "capability gates"
+  },
+  "schema": 2
 }

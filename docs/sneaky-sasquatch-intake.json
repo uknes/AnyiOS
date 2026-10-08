@@ -1,0 +1,13 @@
+{
+  "developer": "RAC7 Games",
+  "execution_attempted": false,
+  "original_application": true,
+  "original_bytes_modified": false,
+  "reason": "No legally acquired, unprotected original Apple Arcade app executable was provided; no fake or substituted binary was used.",
+  "schema": 1,
+  "source_code_changes": false,
+  "status": "blocked-no-original-app-binary",
+  "target": "sneaky-sasquatch",
+  "title": "Sneaky Sasquatch",
+  "window_created": false
+}
