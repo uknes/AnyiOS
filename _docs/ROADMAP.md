@@ -14,7 +14,9 @@
 - [x] Test with Clang-built owned iOS ARM64 object files; independent LLVM verification when present
 - [x] LLVM libFuzzer with ASan/UBSan, original synthetic corpus and CI run
 - [x] Explicit count, symbol length, path traversal and aggregate allocation limits
-- [ ] Inspect sections, symbol tables and indirect symbol ranges
+- [x] Inspect section_64 and static LC_SYMTAB names/types/values with negative fixtures
+- [x] Validate LC_DYSYMTAB indirect-symbol table presence and bounds
+- [ ] Resolve indirect symbol indexes and validate other dynamic symbol ranges
 - [ ] Validate full chained pointer formats, export terminal variants and import ordinals
 - [ ] Inspect original app bundle metadata and Info.plist
 - [ ] Obtain reproducible independently linked owned MH_EXECUTE and MH_DYLIB fixtures

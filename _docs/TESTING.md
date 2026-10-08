@@ -16,6 +16,7 @@ These are original synthetic fixtures with no Apple copyrighted assets. Mutation
 ## M1 tests
 
 - FAT/FAT64 with both canonical and swapped byte orders, malformed slices, alignment and subtype mismatches.
+- LC_SYMTAB symbol names, string-table bounds, forged symbol counts and LC_DYSYMTAB prerequisites; section_64 zero-fill, contents and relocation table ranges.
 - Chained import table and symbol bounds, uncompressed names, export tries, cycles and ULEB128 errors.
 - Host Clang compiles original ARM64 iOS source to an MH_OBJECT Mach-O in tests/real_fixture.py; both the thin object and a crafted dual-architecture wrapper are inspected. Where llvm-objdump is available, its metadata provides an independent cross-check.
 - tests/fuzz_corpus.py generates four original seeds (thin, universal, chained imports, exports); tests/fuzz_macho.cpp feeds arbitrary byte spans to the same parser.

@@ -7,8 +7,10 @@ Updated: 2026-10-08. Source history and GitHub Actions are the primary evidence 
 - M0: portable C++20 Mach-O inspector and diagnostics; thin ARM64, command/segment/dependency/version metadata, encryption indicator.
 - M1 partial: big-endian and byte-swapped FAT/FAT64 universal container selection of ARM64 slices, with bounds, alignment, overlap and subtype checks.
 - M1 partial: inspect LC_DYLD_CHAINED_FIXUPS import descriptors and symbol names, plus LC_DYLD_EXPORTS_TRIE symbol names. This does not perform relocation or fixup application.
+- M1 partial: inspect section_64 metadata, relocation ranges, LC_SYMTAB names/types/values and LC_DYSYMTAB indirect symbol table bounds. Indirect symbols are not yet resolved.
 - M1 tests: synthetic valid and corrupted fixtures, standalone regression tests, deterministic mutations, and compiler-produced real ARM64 iOS *object file* inspection with independent LLVM comparison where available.
-- CI: Linux GCC, Linux Clang, Windows MSVC, macOS Clang, plus Linux LLVM libFuzzer with ASan/UBSan all passed on implementation commit 7749776f1cd06ac73013c0aff0dd85e21bc8ca33.
+- CI for foundational M1: Linux GCC, Linux Clang, Windows MSVC, macOS Clang, and libFuzzer passed on commit 7749776f1cd06ac73013c0aff0dd85e21bc8ca33.
+- New section/symbol parser commit: 671383b82ddf5ab144a87b3c82c4e445f9a817cc; verify CI run https://github.com/uknes/AnyiOS/actions/runs/37708487977 before claiming all jobs passed.
 - Verified run: https://github.com/uknes/AnyiOS/actions/runs/37708104543
 - Standalone local 10,000-run fuzzing and sanitizer checks also passed. Fuzzing is bounded test evidence, not proof of memory safety.
 
@@ -22,7 +24,7 @@ Updated: 2026-10-08. Source history and GitHub Actions are the primary evidence 
 
 ## Immediate next work
 
-1. Parse sections, LC_SYMTAB and LC_DYSYMTAB with bounded name lookup; compare against independently built object fixtures.
+1. Finish LC_DYSYMTAB indirect symbol index resolution and validate other dynamic symbol ranges.
 2. Verify chained fixup pointer-format semantics and export-terminal encoding without assuming every iOS version is identical.
 3. Introduce a dedicated bundle metadata reader only after choosing a small, validated plist implementation.
 4. Build reproducible *owned* MH_EXECUTE/MH_DYLIB test fixtures using a capable toolchain; do not simulate execution success.

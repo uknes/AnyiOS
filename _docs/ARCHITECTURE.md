@@ -31,6 +31,8 @@ No empty framework stubs pretending to be supported. Use reproducible narrow ver
 - src/universal.cpp: FAT/FAT64 input validation, endian decoding, slice selection and metadata; dispatches only to the thin parser.
 - src/macho.cpp: thin ARM64 load-command metadata scanning; delegates complex linkedit payloads to separate functions.
 - src/linkedit.cpp: bounded dyld chained-import and export-name inspection; no runtime relocation performed.
+- src/symbols.cpp: independent bounded nlist_64 static symbol name/value/type extraction.
+- src/macho.cpp: validates section_64 boundaries and indirect symbol table ranges; no relocation execution.
 - src/internal.hpp: private inter-module interfaces. The public metadata API remains include/anyios/macho.hpp.
 - tests/m1_tests.cpp and tests/real_fixture.py: systematic negative inputs and original cross-compiled object verification.
 - tests/fuzz_macho.cpp: standalone instrumentation (not an uninstrumented static-library wrapper).
