@@ -31,6 +31,9 @@ public:
     std::optional<std::string> local_class_name(std::uint64_t receiver) const;
     // Bounded, validated class_ro_t instance size for locally compiled classes.
     std::optional<std::uint32_t> local_instance_size(std::uint64_t receiver) const;
+    // Verify method-list shape and every declared selector/IMP before using
+    // a missing method as permission to search an ancestor.
+    bool local_instance_method_table_valid(std::uint64_t receiver) const;
     std::optional<GuestObjcMethod> local_instance_method(
         std::uint64_t receiver, std::string_view name) const;
     std::optional<std::uint64_t> invoke_class_identity(

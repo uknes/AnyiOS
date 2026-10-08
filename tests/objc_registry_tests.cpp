@@ -166,6 +166,17 @@ void check_bounded_guest_instance_method_inheritance() {
     ensure(!external.resolve_local_instance_method(0x20100, "handleEvent:"),
            "foreign superclass was traversed");
 
+    // Malformed subclass metadata must NOT fall through to an inherited IMP.
+    ensure(memory.write(0x20100 + 8, 0x20000, 8) &&
+           memory.write(0x21100 + 32, 0x21300, 8) &&
+           memory.write(0x21300, 0x80000018U, 4),
+           "cannot stage unsupported subclass method list");
+    const anyios::darwin::GuestObjcClassRegistry malformed(classes, memory);
+    ensure(!malformed.resolve_local_instance_method(0x20100, "handleEvent:"),
+           "unsupported overriding list incorrectly fell through to parent");
+    ensure(memory.write(0x21100 + 32, 0, 8),
+           "cannot clear unsupported subclass method list");
+
     // Cycles never recurse or fall through to a fabricated method.
     ensure(memory.write(0x20100 + 8, 0x20000, 8) &&
            memory.write(0x20000 + 8, 0x20100, 8),

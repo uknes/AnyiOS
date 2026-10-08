@@ -86,6 +86,11 @@ std::optional<GuestObjcMethod> GuestObjcClassRegistry::resolve_local_instance_me
         if (!visited.insert(current).second) {
             return std::nullopt; // Corrupt local superclass cycle.
         }
+        // Missing method and unrecognized method table are different: never
+        // inherit past an unsupported, possibly overriding guest method list.
+        if (!metadata_.local_instance_method_table_valid(current)) {
+            return std::nullopt;
+        }
         if (const auto method = metadata_.local_instance_method(current, selector)) {
             return method;
         }
