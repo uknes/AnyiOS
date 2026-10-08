@@ -23,6 +23,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
+          fetch-depth: 2
       - name: Test evidence scope and original immutable IPA
         run: |
           python3 -m unittest discover -s tests -p test_progress.py -v
@@ -37,6 +38,17 @@ jobs:
           set -e
           if [ "$result" -ne 2 ]; then echo 'Original game missing must return blocked status'; exit 1; fi
           python3 -c "import json; j=json.load(open('docs/sneaky-sasquatch-intake.json')); assert j['status']=='blocked-no-original-app-binary' and not j['execution_attempted']"
+      - name: Compare PR API and runtime coverage with base commit
+        if: github.event_name == 'pull_request'
+        run: |
+          git worktree add --detach "$RUNNER_TEMP/anyios-base" HEAD^1
+          if [ -f "$RUNNER_TEMP/anyios-base/tools/api_inventory.json" ] && [ -f "$RUNNER_TEMP/anyios-base/tools/compat_capabilities.json" ]; then
+            python3 tools/progress.py --root "$RUNNER_TEMP/anyios-base" "$RUNNER_TEMP/anyios-base-report"
+            python3 tools/progress.py --compare "$RUNNER_TEMP/anyios-base-report/progress.json" docs/progress.json | tee "$RUNNER_TEMP/progress-diff.md"
+            cat "$RUNNER_TEMP/progress-diff.md" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'First complete AnyiOS inventory is introduced in this PR; no comparable base inventory.' >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Upload visual progress and real-game no-binary evidence
         uses: actions/upload-artifact@v4
         with:
