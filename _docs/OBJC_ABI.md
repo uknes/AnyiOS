@@ -56,3 +56,15 @@ permissive public documentation, not another emulator's source.
 Do not commit to SVC per-call for objc_msgSend or retain/release before
 measuring host-to-guest crossing costs against a guest-side fast path on
 actual trace workloads. Guard guest pointers and fail closed on unknown ABI.
+
+## Bounded guest instance milestone (stacked on PR #6)
+
+`GuestObjcObjectArena` allocates 16-byte-aligned, zero-filled instances using
+only the validated local Clang class_ro_t `instanceSize` and the original guest
+Class address as `isa`. The test arena is one iOS page, fail-closed on
+unrecognized classes and size bounds. A refcounted last release clears the
+guest bytes and permanently retires that address within the arena. It does
+not run ObjC dealloc, destructors, weak cleanup, or autorelease callbacks.
+This supports the pinned Bitrise AppDelegate *diagnostic* callback with an
+allocated guest object rather than a hardcoded object pointer. It is NOT
+`objc_alloc` compatibility, a UIApplication, an app-owned UIWindow, or a GUI.

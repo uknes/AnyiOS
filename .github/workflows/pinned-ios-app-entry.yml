@@ -48,12 +48,17 @@ jobs:
       - name: Configure guest runtime test
         run: cmake -S . -B build-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
       - name: Build guest runtime and portable ObjC identity contract
-        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests --parallel 2
+        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests anyios-objc-objects-tests --parallel 2
       - name: Validate local guest ObjC class identity contract
         shell: pwsh
         run: |
           & ./build-guest/Release/anyios-objc-identity-tests.exe
           if ($LASTEXITCODE -ne 0) { throw "ObjC metadata identity contract failed" }
+      - name: Validate guest-owned Objective-C instance lifecycle
+        shell: pwsh
+        run: |
+          & ./build-guest/Release/anyios-objc-objects-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Guest ObjC instance contract failed" }
       - name: Execute pinned third-party iOS app until next genuine blocker
         shell: pwsh
         run: |
@@ -71,6 +76,11 @@ jobs:
           if (-not ($trace -match "DIAGNOSTIC_BRIDGE=_NSStringFromClass") -or
               -not ($trace -match "CLASS_NAME=AppDelegate")) {
             throw "Original app class-to-name bridge not reached"
+          }
+          if (-not ($trace -match "GUEST_DELEGATE_INSTANCE=allocated-from-class-ro") -or
+              -not ($trace -match "GUEST_DELEGATE_ISA=original-guest-class") -or
+              -not ($trace -match "GUEST_DELEGATE_RELEASE=verified")) {
+            throw "Original AppDelegate did not receive and release a genuine guest-memory instance"
           }
           if (-not ($trace -match "APP_DELEGATE_GUEST_IMP=executed") -or
               -not ($trace -match "APP_DELEGATE_CALLBACK_RESULT=1")) {
