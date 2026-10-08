@@ -98,7 +98,7 @@ def main():
                 raise AssertionError(f"hello process unresolved import {symbol}")
         if "Section: __DATA/__mod_init_func" not in hello_info and \
            "Section: __DATA_CONST/__mod_init_func" not in hello_info:
-            raise AssertionError("hello process is missing expected initializer section")
+            raise AssertionError("hello process is missing expected initializer section:\\n" + hello_info)
         if "Entry file offset:" not in hello_info:
             raise AssertionError("hello process has no LC_MAIN entry")
         libsystem_info = run([str(inspector), str(libsystem_app)])
