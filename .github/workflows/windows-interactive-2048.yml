@@ -30,6 +30,24 @@ jobs:
           assert not j["reports"][0]["imports"], "owned GUI guest must be SDK-free with zero external imports"
           print("Compiled SDK-free ARM64 iOS guest with no Objective-C/UIKit/SpriteKit imports")
           PY
+      - name: Build original MIT 2048 iOS entry and report its real missing APIs
+        run: |
+          python3 tests/build_2048_upstream_probe.py --clang clang-19 --linker ld64.lld-19 --nm llvm-nm-19 --output-dir gui-output/external-2048
+          python3 - <<'PY'
+          import json,pathlib,subprocess,sys
+          directory=pathlib.Path("gui-output/external-2048")
+          state=json.loads((directory/"danqing-2048-status.json").read_text())
+          assert state["repository"]=="danqing/2048" and state["commit"]=="6f89eab8f3e5e044f66c381095a9f5402bacaab5"
+          if state["status"]=="original-objc-entry-linked-only":
+              subprocess.run([sys.executable,"tools/macho_gap.py",
+                              str(directory/"Danqing2048Entry"),"--output",
+                              str(directory/"danqing-2048-gap.json")],check=True)
+              report=json.loads((directory/"danqing-2048-gap.json").read_text())
+              assert len(report["reports"][0]["imports"])>=3
+              print("Original MIT 2048 app compiled for static ARM64 gap analysis only")
+          else:
+              print("Original 2048 entry compile/link is blocked:",state.get("error","")[-1000:])
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: anyios-owned-interactive-arm64-app
