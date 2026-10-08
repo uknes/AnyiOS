@@ -133,14 +133,12 @@ def decode_bind_stream(data, offset, length):
             names.append(name)
             at += len(name.encode("utf-8")) + 1
             continue
-        if code in (0x20, 0x60, 0x70, 0x80, 0xa0):
+        if code in (0x20, 0x70, 0x80, 0xa0):
             _, at = read_uleb(blob, at)
         elif code == 0xb0:
             continue
         elif code == 0xc0:
             _, at = read_uleb(blob, at)
-            _, at = read_uleb(blob, at)
-        elif code == 0x70:  # covered by ULEB branch, kept explicit for audit
             _, at = read_uleb(blob, at)
         elif code == 0x60:
             at = read_sleb(blob, at)
@@ -175,7 +173,8 @@ def analyze(data, manifest):
         if command == 0x19:
             require(size >= 72, "truncated segment command")
             fields = struct.unpack_from("<II16sQQQQiiII", blob, cursor)
-            vmaddr, vmsize, fileoff, filesize, nsects = fields[3:8]
+            vmaddr, vmsize, fileoff, filesize = fields[3:7]
+            nsects = fields[9]
             require(fileoff <= len(blob) and filesize <= len(blob) - fileoff,
                     "segment file extent invalid")
             require(nsects <= (size - 72) // 80, "truncated section array")
