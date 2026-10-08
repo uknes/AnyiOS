@@ -125,6 +125,11 @@ if(ANYIOS_BUILD_FUZZER)
 endif()
 
 
+if(WIN32 AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(arm64|ARM64|aarch64|AARCH64)$")
+    add_executable(anyios-arm64-launcher WIN32 tools/win_arm64_launcher.cpp)
+    target_link_libraries(anyios-arm64-launcher PRIVATE user32 shell32)
+endif()
+
 option(ANYIOS_WITH_DYNARMIC "Enable experimental ARM64 translation backend (Dynarmic 0BSD)" OFF)
 if(ANYIOS_WITH_DYNARMIC)
     include(FetchContent)
