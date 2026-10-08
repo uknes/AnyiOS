@@ -7,6 +7,7 @@
 #include <anyios/macho.hpp>
 #include <anyios/libsystem_shim.hpp>
 #include <anyios/linked_image.hpp>
+#include <anyios/process_bootstrap.hpp>
 #include <anyios/darwin_syscall.hpp>
 
 
@@ -17,6 +18,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <optional>
 #include <stdexcept>
@@ -119,7 +121,7 @@ void verify_real_linked_call(const std::vector<std::byte>& main_image,
 }
 
 
-void verify_sdkfree_libsystem(const std::vector<std::byte>& file) {
+void verify_sdkfree_libsystem(const std::vector<std::byte>& file, bool complete_process = false) {
     constexpr std::uint64_t stubs_base = 0x80000;
     constexpr std::uint64_t heap_base = 0x200000;
     constexpr std::uint64_t stack_base = 0x300000;
@@ -180,6 +182,33 @@ void verify_sdkfree_libsystem(const std::vector<std::byte>& file) {
     guest.pc = mapped.guest_entry;
     guest.sp = stack_base + 0x10000;
     guest.x[30] = sentinel;
+    if (complete_process) {
+        const std::array<std::string_view, 2> args{"anyios-hello", "guest"};
+        const std::array<std::string_view, 1> environment{"ANYIOS_TEST=1"};
+        const std::array<std::string_view, 1> apple{
+            "executable_path=/AnyiOS/hello"
+        };
+        const auto process = anyios::loader::prepare_owned_process_stack(
+            memory, stack_base + 0x20000, 0x10000, args, environment, apple);
+        guest.sp = process.sp;
+        guest.x[0] = process.argc;
+        guest.x[1] = process.argv;
+        guest.x[2] = process.envp;
+        guest.x[3] = process.apple;
+        backend->set_state(guest);
+        const auto initializers = anyios::loader::find_owned_module_initializers(
+            image, memory, mapped.guest_base);
+        if (initializers.size() != 1) {
+            throw std::runtime_error("owned hello process requires one real __mod_init_func");
+        }
+        const std::array<std::uint64_t, 4> initializer_args{
+            process.argc, process.argv, process.envp, process.apple
+        };
+        for (const auto init : initializers) {
+            static_cast<void>(anyios::abi::invoke_guest_callback(
+                *backend, init, initializer_args, sentinel, 2048));
+        }
+    }
     backend->set_state(guest);
     for (unsigned event_count = 0; event_count < 24; ++event_count) {
         const auto event = backend->run_until_event(100000, sentinel);
@@ -200,10 +229,16 @@ void verify_sdkfree_libsystem(const std::vector<std::byte>& file) {
         const auto result = libsystem.invoke(stub->name,
             {guest.x[0], guest.x[1], guest.x[2]});
         if (result.exited) {
-            if (result.value != 0 || libsystem.output() != "OK") {
-                throw std::runtime_error("owned libSystem application returned wrong exit/output");
+            const auto expected_exit = complete_process ? 23U : 0U;
+            const std::string expected_output = complete_process ? "hello\n" : "OK";
+            if (result.value != expected_exit || libsystem.output() != expected_output) {
+                throw std::runtime_error("owned Apple process wrong exit code or captured output");
             }
-            std::cout << "Executed SDK-free iOS _malloc/_write/_exit through Dynarmic: OK\\n";
+            if (complete_process) {
+                std::cout << "Executed owned iOS LC_MAIN process with initializer and startup vectors: hello / exit 23\n";
+            } else {
+                std::cout << "Executed SDK-free iOS _malloc/_write/_exit through Dynarmic: OK\n";
+            }
             return;
         }
         guest.x[0] = result.value;
@@ -320,6 +355,10 @@ void verify(const std::vector<std::byte>& code) {
 int main(int argc, char** argv) {
     try {
         std::vector<std::byte> code;
+        if (argc == 3 && std::string(argv[1]) == "--hello") {
+            verify_sdkfree_libsystem(read_owned_binary(argv[2]), true);
+            return 0;
+        }
         if (argc == 3 && std::string(argv[1]) == "--libsystem") {
             verify_sdkfree_libsystem(read_owned_binary(argv[2]));
             return 0;
