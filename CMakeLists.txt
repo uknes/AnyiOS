@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(anyios_macho STATIC src/macho.cpp)
+add_library(anyios_macho STATIC src/macho.cpp src/universal.cpp src/linkedit.cpp)
 target_include_directories(anyios_macho PUBLIC include)
 target_compile_features(anyios_macho PUBLIC cxx_std_20)
 if(MSVC)
