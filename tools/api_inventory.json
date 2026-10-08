@@ -1,0 +1,371 @@
+{
+  "schema": 1,
+  "scope": "Selected candidate iOS ARM64 ABI/framework imports, NOT the complete Apple API universe; candidates require real app evidence to claim relevance.",
+  "status_basis": "implemented and partial ONLY from tools/api_manifest.json scope/evidence; any other entry is unverified",
+  "groups": [
+    {
+      "name": "Darwin memory / strings",
+      "symbols": [
+        "_malloc",
+        "_calloc",
+        "_realloc",
+        "_free",
+        "_memcpy",
+        "_memmove",
+        "_memset",
+        "_memcmp",
+        "_strlen",
+        "_strcmp",
+        "_strncmp",
+        "_strdup",
+        "_strchr",
+        "_strstr",
+        "_strlcpy",
+        "_strlcat",
+        "_bzero",
+        "_abort",
+        "_exit"
+      ]
+    },
+    {
+      "name": "Darwin file / process",
+      "symbols": [
+        "_write",
+        "_read",
+        "_open",
+        "_openat",
+        "_close",
+        "_lseek",
+        "_fstat",
+        "_stat",
+        "_rename",
+        "_unlink",
+        "_mkdir",
+        "_rmdir",
+        "_access",
+        "_getcwd",
+        "_getpid",
+        "_getppid",
+        "_getenv",
+        "_setenv",
+        "_sysctl",
+        "_sysctlbyname",
+        "_gettimeofday",
+        "_clock_gettime",
+        "_nanosleep",
+        "_mmap",
+        "_munmap",
+        "_mprotect"
+      ]
+    },
+    {
+      "name": "Darwin threads / locks",
+      "symbols": [
+        "_pthread_create",
+        "_pthread_join",
+        "_pthread_self",
+        "_pthread_once",
+        "_pthread_mutex_init",
+        "_pthread_mutex_lock",
+        "_pthread_mutex_unlock",
+        "_pthread_cond_wait",
+        "_pthread_cond_signal",
+        "_pthread_key_create",
+        "_pthread_getspecific",
+        "_pthread_setspecific",
+        "__tlv_bootstrap"
+      ]
+    },
+    {
+      "name": "Darwin dispatch / blocks",
+      "symbols": [
+        "_dispatch_async",
+        "_dispatch_sync",
+        "_dispatch_after",
+        "_dispatch_once_f",
+        "_dispatch_queue_create",
+        "_dispatch_group_create",
+        "_dispatch_group_enter",
+        "_dispatch_group_leave",
+        "_dispatch_semaphore_create",
+        "_dispatch_semaphore_wait",
+        "_dispatch_semaphore_signal",
+        "__Block_copy",
+        "__Block_release"
+      ]
+    },
+    {
+      "name": "Objective-C ABI",
+      "symbols": [
+        "_objc_msgSend",
+        "_objc_msgSendSuper2",
+        "_objc_getClass",
+        "_objc_getMetaClass",
+        "_objc_allocateClassPair",
+        "_objc_registerClassPair",
+        "_objc_autoreleasePoolPush",
+        "_objc_autoreleasePoolPop",
+        "_objc_retain",
+        "_objc_release",
+        "_objc_autorelease",
+        "_objc_storeStrong",
+        "_objc_loadWeakRetained",
+        "_objc_storeWeak",
+        "_objc_setAssociatedObject",
+        "_objc_getAssociatedObject",
+        "_sel_registerName",
+        "_class_getInstanceMethod",
+        "_class_getSuperclass",
+        "_object_getClass",
+        "_NSStringFromClass"
+      ]
+    },
+    {
+      "name": "Swift ABI",
+      "symbols": [
+        "_swift_retain",
+        "_swift_release",
+        "_swift_allocObject",
+        "_swift_deallocClassInstance",
+        "_swift_getTypeByMangledNameInContext",
+        "_swift_getWitnessTable",
+        "_swift_bridgeObjectRetain",
+        "_swift_bridgeObjectRelease",
+        "_swift_once",
+        "_swift_beginAccess",
+        "_swift_endAccess"
+      ]
+    },
+    {
+      "name": "CoreFoundation",
+      "symbols": [
+        "_CFRetain",
+        "_CFRelease",
+        "_CFStringCreateWithCString",
+        "_CFStringGetLength",
+        "_CFStringGetCString",
+        "_CFArrayCreate",
+        "_CFArrayGetCount",
+        "_CFDictionaryCreate",
+        "_CFDictionaryGetValue",
+        "_CFRunLoopGetMain",
+        "_CFRunLoopRun",
+        "_CFDataCreate",
+        "_CFURLCreateWithFileSystemPath",
+        "_CFBundleGetMainBundle",
+        "_CFNotificationCenterGetLocalCenter"
+      ]
+    },
+    {
+      "name": "Foundation classes",
+      "symbols": [
+        "_OBJC_CLASS_$_NSObject",
+        "_OBJC_CLASS_$_NSString",
+        "_OBJC_CLASS_$_NSMutableString",
+        "_OBJC_CLASS_$_NSArray",
+        "_OBJC_CLASS_$_NSMutableArray",
+        "_OBJC_CLASS_$_NSDictionary",
+        "_OBJC_CLASS_$_NSMutableDictionary",
+        "_OBJC_CLASS_$_NSNumber",
+        "_OBJC_CLASS_$_NSData",
+        "_OBJC_CLASS_$_NSDate",
+        "_OBJC_CLASS_$_NSError",
+        "_OBJC_CLASS_$_NSURL",
+        "_OBJC_CLASS_$_NSBundle",
+        "_OBJC_CLASS_$_NSFileManager",
+        "_OBJC_CLASS_$_NSRunLoop",
+        "_OBJC_CLASS_$_NSTimer",
+        "_OBJC_CLASS_$_NSSet",
+        "_OBJC_CLASS_$_NSUserDefaults",
+        "_OBJC_CLASS_$_NSNotificationCenter",
+        "_OBJC_CLASS_$_NSJSONSerialization"
+      ]
+    },
+    {
+      "name": "UIKit lifecycle / views",
+      "symbols": [
+        "_UIApplicationMain",
+        "_OBJC_CLASS_$_UIApplication",
+        "_OBJC_CLASS_$_UIApplicationDelegate",
+        "_OBJC_CLASS_$_UIResponder",
+        "_OBJC_CLASS_$_UIWindow",
+        "_OBJC_CLASS_$_UIView",
+        "_OBJC_CLASS_$_UIViewController",
+        "_OBJC_CLASS_$_UIScreen",
+        "_OBJC_CLASS_$_UIImage",
+        "_OBJC_CLASS_$_UIImageView",
+        "_OBJC_CLASS_$_UILabel",
+        "_OBJC_CLASS_$_UIButton",
+        "_OBJC_CLASS_$_UIStoryboard",
+        "_OBJC_CLASS_$_UIStackView",
+        "_OBJC_CLASS_$_UINavigationController",
+        "_OBJC_CLASS_$_UITableView",
+        "_OBJC_CLASS_$_UICollectionView",
+        "_OBJC_CLASS_$_UITextField",
+        "_OBJC_CLASS_$_UIGestureRecognizer",
+        "_OBJC_CLASS_$_UITouch"
+      ]
+    },
+    {
+      "name": "CoreGraphics / text",
+      "symbols": [
+        "_CGBitmapContextCreate",
+        "_CGContextDrawImage",
+        "_CGContextFillRect",
+        "_CGContextSetFillColorWithColor",
+        "_CGContextSetStrokeColorWithColor",
+        "_CGContextSetLineWidth",
+        "_CGContextStrokePath",
+        "_CGContextConcatCTM",
+        "_CGImageCreate",
+        "_CGImageRelease",
+        "_CGColorCreate",
+        "_CGColorRelease",
+        "_CGColorSpaceCreateDeviceRGB",
+        "_CGDataProviderCreateWithData",
+        "_CGPathCreateMutable",
+        "_CGPathAddLineToPoint",
+        "_CGPathRelease",
+        "_CTFontCreateWithName",
+        "_CTLineCreateWithAttributedString"
+      ]
+    },
+    {
+      "name": "QuartzCore",
+      "symbols": [
+        "_CACurrentMediaTime",
+        "_OBJC_CLASS_$_CALayer",
+        "_OBJC_CLASS_$_CATransaction",
+        "_OBJC_CLASS_$_CADisplayLink",
+        "_OBJC_CLASS_$_CAAnimation",
+        "_OBJC_CLASS_$_CABasicAnimation",
+        "_OBJC_CLASS_$_CAKeyframeAnimation",
+        "_OBJC_CLASS_$_CAMediaTimingFunction"
+      ]
+    },
+    {
+      "name": "Metal / MetalKit",
+      "symbols": [
+        "_MTLCreateSystemDefaultDevice",
+        "_OBJC_CLASS_$_CAMetalLayer",
+        "_OBJC_CLASS_$_MTKView",
+        "_OBJC_CLASS_$_MTLRenderPassDescriptor",
+        "_OBJC_CLASS_$_MTLTextureDescriptor",
+        "_OBJC_CLASS_$_MTLDepthStencilDescriptor",
+        "_OBJC_CLASS_$_MTLCompileOptions"
+      ]
+    },
+    {
+      "name": "OpenGL ES",
+      "symbols": [
+        "_glGetString",
+        "_glGetError",
+        "_glClear",
+        "_glClearColor",
+        "_glViewport",
+        "_glDrawArrays",
+        "_glDrawElements",
+        "_glGenTextures",
+        "_glBindTexture",
+        "_glTexImage2D",
+        "_glCreateShader",
+        "_glCompileShader",
+        "_glCreateProgram",
+        "_glLinkProgram",
+        "_glUseProgram",
+        "_glEnableVertexAttribArray",
+        "_glVertexAttribPointer"
+      ]
+    },
+    {
+      "name": "SpriteKit",
+      "symbols": [
+        "_OBJC_CLASS_$_SKView",
+        "_OBJC_CLASS_$_SKScene",
+        "_OBJC_CLASS_$_SKNode",
+        "_OBJC_CLASS_$_SKSpriteNode",
+        "_OBJC_CLASS_$_SKTexture",
+        "_OBJC_CLASS_$_SKAction",
+        "_OBJC_CLASS_$_SKPhysicsBody",
+        "_OBJC_CLASS_$_SKLabelNode",
+        "_OBJC_CLASS_$_SKEmitterNode"
+      ]
+    },
+    {
+      "name": "Audio / AVFoundation",
+      "symbols": [
+        "_AudioQueueNewOutput",
+        "_AudioQueueStart",
+        "_AudioQueueStop",
+        "_AudioQueueEnqueueBuffer",
+        "_AudioComponentFindNext",
+        "_AudioComponentInstanceNew",
+        "_AudioUnitInitialize",
+        "_AudioOutputUnitStart",
+        "_ExtAudioFileOpenURL",
+        "_OBJC_CLASS_$_AVAudioEngine",
+        "_OBJC_CLASS_$_AVAudioPlayer",
+        "_OBJC_CLASS_$_AVPlayer",
+        "_OBJC_CLASS_$_AVAudioSession"
+      ]
+    },
+    {
+      "name": "Network / IPC",
+      "symbols": [
+        "_CFReadStreamCreateForHTTPRequest",
+        "_CFHTTPMessageCreateRequest",
+        "_OBJC_CLASS_$_NSURLSession",
+        "_OBJC_CLASS_$_NSURLRequest",
+        "_OBJC_CLASS_$_NSURLConnection",
+        "_socket",
+        "_connect",
+        "_send",
+        "_recv",
+        "_select",
+        "_poll",
+        "_getaddrinfo"
+      ]
+    },
+    {
+      "name": "Security / keychain",
+      "symbols": [
+        "_SecItemAdd",
+        "_SecItemCopyMatching",
+        "_SecItemUpdate",
+        "_SecItemDelete",
+        "_SecRandomCopyBytes",
+        "_SecKeyCreateRandomKey",
+        "_CCCrypt",
+        "_CC_SHA256",
+        "_OBJC_CLASS_$_LAContext"
+      ]
+    },
+    {
+      "name": "GameKit / stores",
+      "symbols": [
+        "_OBJC_CLASS_$_GKLocalPlayer",
+        "_OBJC_CLASS_$_GKLeaderboard",
+        "_OBJC_CLASS_$_GKAchievement",
+        "_OBJC_CLASS_$_GKMatch",
+        "_OBJC_CLASS_$_SKPaymentQueue",
+        "_OBJC_CLASS_$_SKProduct",
+        "_OBJC_CLASS_$_SKProductsRequest"
+      ]
+    },
+    {
+      "name": "Persistence / CloudKit",
+      "symbols": [
+        "_sqlite3_open",
+        "_sqlite3_close",
+        "_sqlite3_prepare_v2",
+        "_sqlite3_step",
+        "_sqlite3_finalize",
+        "_sqlite3_bind_text",
+        "_OBJC_CLASS_$_NSManagedObjectContext",
+        "_OBJC_CLASS_$_NSPersistentStoreCoordinator",
+        "_OBJC_CLASS_$_CKContainer",
+        "_OBJC_CLASS_$_CKDatabase"
+      ]
+    }
+  ]
+}
