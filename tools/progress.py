@@ -32,39 +32,54 @@ def render(manifest):
             raise ValueError("Verified/partial API needs scope evidence: " + key)
     totals = {key: sum(symbols[s]["status"] == key for s in tracked)
               for key in COLORS}
-    width, height = 840, 390
-    output = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="AnyiOS tracked guest API implementation progress">',
-        '<rect width="840" height="390" rx="20" fill="#101726"/>',
-        '<text x="32" y="43" fill="#f5f7fb" font-family="Arial,sans-serif" font-size="25" font-weight="bold">AnyiOS / Guest API coverage</text>',
-        '<text x="32" y="68" fill="#9eacc2" font-family="Arial,sans-serif" font-size="13">Evidence-scoped manifest • NOT total iOS compatibility</text>',
-    ]
+    def badge(label, value, color):
+        left, right = 132, 82
+        return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{left+right}" height="28" '
+                f'viewBox="0 0 {left+right} 28" role="img" aria-label="{label}: {value}">'
+                f'<rect width="{left+right}" height="28" rx="5" fill="#303a4c"/>'
+                f'<path d="M{left} 0H{left+right-5}Q{left+right} 0 {left+right} 5V23'
+                f'Q{left+right} 28 {left+right-5} 28H{left}Z" fill="{color}"/>'
+                f'<text x="{left/2}" y="19" text-anchor="middle" fill="white" '
+                f'font-family="Verdana,Arial,sans-serif" font-size="12">{label}</text>'
+                f'<text x="{left+right/2}" y="19" text-anchor="middle" fill="#0b1220" '
+                f'font-weight="bold" font-family="Verdana,Arial,sans-serif" font-size="12">{value}</text>'
+                '</svg>\\n')
     implemented = totals["implemented"]
     partial = totals["partial"]
-    remaining = len(tracked) - implemented - partial
-    output.append(f'<text x="32" y="115" fill="#f5f7fb" font-family="Arial,sans-serif" font-size="29" font-weight="bold">{implemented}/{len(tracked)} <tspan font-size="15" font-weight="normal" fill="#9eacc2">implemented ({implemented/len(tracked):.0%})</tspan></text>')
-    output.append(f'<text x="32" y="137" fill="#9eacc2" font-family="Arial,sans-serif" font-size="13">{partial} partial • {remaining} unimplemented/unknown • denominator grows as APIs are inventoried</text>')
-    def bar(x, y, w, h, names):
-        output.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="6" fill="#2a3449"/>')
-        cursor = x
-        for status in ("implemented", "partial"):
-            count = sum(symbols[s]["status"] == status for s in names)
-            segment = w * count / len(names)
-            if segment:
-                output.append(f'<rect x="{cursor:.1f}" y="{y}" width="{segment:.1f}" height="{h}" fill="{COLORS[status]}"/>')
-                cursor += segment
-    bar(32, 151, 776, 16, tracked)
-    y = 210
-    for group, names in GROUPS.items():
-        complete = sum(symbols[s]["status"] == "implemented" for s in names)
-        halfway = sum(symbols[s]["status"] == "partial" for s in names)
-        output.append(f'<text x="32" y="{y}" fill="#e9effa" font-family="Arial,sans-serif" font-size="15">{html.escape(group)}</text>')
-        output.append(f'<text x="808" y="{y}" fill="#b7c3d8" text-anchor="end" font-family="Arial,sans-serif" font-size="14">{complete}/{len(names)} verified' + (f' + {halfway} partial' if halfway else '') + '</text>')
-        bar(32, y + 9, 776, 11, names)
-        y += 44
-    output.append('<text x="32" y="376" fill="#8998b0" font-family="Arial,sans-serif" font-size="12">Counts only tools/api_manifest.json. An import shim does not imply UIKit, SpriteKit, or app compatibility.</text>')
-    output.append('</svg>')
-    return "\n".join(output) + "\n", {
+    groups = [("Darwin / process", GROUPS["Darwin C / process"]),
+              ("TLS", GROUPS["Thread-local storage"]),
+              ("Objective-C", GROUPS["Objective-C runtime"]),
+              ("UIKit", GROUPS["UIKit entry"])]
+    output = [
+        '<svg xmlns="http://www.w3.org/2000/svg" width="850" height="330" viewBox="0 0 850 330" role="img" aria-label="AnyiOS API implementation map by subsystem">',
+        '<rect width="850" height="330" rx="12" fill="#111827"/>',
+        '<text x="24" y="36" fill="#f9fafb" font-family="Verdana,Arial,sans-serif" font-size="22" font-weight="bold">API implementation map</text>',
+        '<text x="24" y="59" fill="#9ca3af" font-family="Verdana,Arial,sans-serif" font-size="12">Tracked guest ABI symbols only · green implemented · amber partial · slate missing</text>',
+    ]
+    colors = {"implemented": "#36c98c", "partial": "#eebd57", "not implemented": "#344256"}
+    y = 86
+    for label, names in groups:
+        output.append(f'<text x="24" y="{y+16}" fill="#d1d5db" font-family="Verdana,Arial,sans-serif" font-size="14">{label}</text>')
+        x = 180
+        for name in names:
+            w = max(100, min(170, 30 + len(name) * 6))
+            status = symbols[name]["status"]
+            color = colors[status]
+            foreground = "#cbd5e1" if status == "not implemented" else "#111827"
+            output.append(f'<rect x="{x}" y="{y}" width="{w}" height="28" rx="5" fill="{color}"/>')
+            output.append(f'<text x="{x+w/2}" y="{y+18}" text-anchor="middle" fill="{foreground}" font-family="Consolas,monospace" font-size="11">{html.escape(name)}</text>')
+            x += w + 8
+        y += 55
+    output.extend([
+        '<text x="24" y="315" fill="#94a3b8" font-family="Verdana,Arial,sans-serif" font-size="11">3 implemented / 1 partial / 5 missing. Not a percentage of all iOS APIs or runnable apps.</text>',
+        '</svg>',
+    ])
+    svg = "\\n".join(output) + "\\n"
+    badges = {
+        "docs/badge-apis.svg": badge("Guest APIs", f"{round(implemented / len(tracked) * 100)}%", "#55d4a0"),
+        "docs/badge-runtime.svg": badge("Runtime partial", f"{partial}/{len(tracked)}", "#f0c36a"),
+    }
+    return svg, badges, {
         "schema": 1, "source": "tools/api_manifest.json",
         "scope": "tracked guest ABI symbols only",
         "implemented": implemented, "partial": partial, "not_implemented_or_unknown": remaining,
@@ -86,8 +101,8 @@ def main():
     parser.add_argument("--json", type=Path, default=Path("docs/progress.json"))
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    svg, stats = render(json.loads(args.manifest.read_text(encoding="utf-8")))
-    generated = {args.svg: svg, args.json: json.dumps(stats, indent=2, sort_keys=True) + "\n"}
+    svg, badges, stats = render(json.loads(args.manifest.read_text(encoding="utf-8")))
+    generated = {args.svg: svg, args.json: json.dumps(stats, indent=2, sort_keys=True) + "\n"}\n    generated.update({Path(name): content for name, content in badges.items()})
     if args.check:
         for path, content in generated.items():
             if not path.is_file() or path.read_text(encoding="utf-8") != content:
