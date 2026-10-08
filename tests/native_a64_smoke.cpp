@@ -1,4 +1,6 @@
 #include <anyios/native_a64.hpp>
+#include <anyios/cpu_backend.hpp>
+#include <anyios/guest_memory.hpp>
 #include <anyios/object_code.hpp>
 
 #include <array>
@@ -31,6 +33,27 @@ int main(int argc, char** argv) {
             std::byte{0xc0}, std::byte{0x03}, std::byte{0x5f}, std::byte{0xd6}
         };
         check(anyios::cpu::execute_owned_arm64_fixture(known) == 42, "native ARM64 return value");
+        {
+            anyios::cpu::GuestMemory memory(0x10000, 0x4000);
+            const auto rx = anyios::cpu::bits(anyios::cpu::Access::read) |
+                            anyios::cpu::bits(anyios::cpu::Access::execute);
+            check(memory.map(0x10000, 0x1000, rx), "native backend guest code map");
+            check(memory.load(0x10000, known), "native backend guest code load");
+            auto backend = anyios::cpu::make_native_fixture_backend(memory);
+            anyios::cpu::CpuState initial;
+            initial.pc = 0x10000;
+            initial.x[30] = 0x20000;
+            backend->set_state(initial);
+            const auto event = backend->step();
+            const auto state = backend->state();
+            check(event.kind == anyios::cpu::CpuEventKind::stepped &&
+                  state.x[0] == 42 && state.pc == 0x20000,
+                  "native and Dynarmic CPU contracts diverged");
+            initial.pc = 0x11000;
+            backend->set_state(initial);
+            check(backend->step().kind == anyios::cpu::CpuEventKind::fault,
+                  "unmapped guest fetch accepted");
+        }
         auto invalid = known;
         invalid[4] = std::byte{0};
         rejects(invalid);
