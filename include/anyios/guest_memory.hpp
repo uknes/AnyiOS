@@ -34,6 +34,8 @@ public:
     bool write(std::uint64_t address, std::uint64_t value, unsigned width);
     bool allowed(std::uint64_t address, std::size_t size, Access access) const;
     bool copy_from(std::uint64_t address, std::span<std::byte> destination) const;
+    // Runtime write API: unlike load(), requires guest write permission.
+    bool copy_to(std::uint64_t address, std::span<const std::byte> source);
 
 private:
     std::optional<std::size_t> offset_of(std::uint64_t address, std::size_t size) const;
