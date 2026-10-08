@@ -129,6 +129,7 @@ def command(arguments, cwd):
 
 
 def build(clang, linker, nm, outdir):
+    outdir = outdir.resolve()
     outdir.mkdir(parents=True, exist_ok=True)
     report = {
         "source": REPO, "commit": COMMIT, "scope": "original five translation-unit files",
