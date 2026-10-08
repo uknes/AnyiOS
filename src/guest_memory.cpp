@@ -1,5 +1,6 @@
 #include <anyios/guest_memory.hpp>
 
+#include <algorithm>
 #include <limits>
 #include <stdexcept>
 
@@ -49,6 +50,13 @@ bool GuestMemory::allowed(std::uint64_t address, std::size_t size, Access access
     for (std::size_t i = first_page; i <= last_page; ++i) {
         if ((page_flags_[i] & bits(access)) == 0) return false;
     }
+    return true;
+}
+
+bool GuestMemory::copy_from(std::uint64_t address, std::span<std::byte> destination) const {
+    if (destination.empty() || !allowed(address, destination.size(), Access::read)) return false;
+    const auto begin = *offset_of(address, destination.size());
+    std::copy_n(bytes_.begin() + static_cast<std::ptrdiff_t>(begin), destination.size(), destination.begin());
     return true;
 }
 

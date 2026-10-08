@@ -83,6 +83,16 @@ jobs:
         run: |
           & "C:\Program Files\LLVM\bin\clang.exe" --target=arm64-apple-ios13.0 -O2 -ffreestanding -c tests/fixtures/arm64_sample.c -o build-jit/owned-arm64.o
           if ($LASTEXITCODE -ne 0) { throw 'ARM64 Mach-O compilation failed' }
+      - name: Compile owned ARM64 Darwin SVC Mach-O sample
+        shell: pwsh
+        run: |
+          & "C:\Program Files\LLVM\bin\clang.exe" --target=arm64-apple-ios13.0 -c tests/fixtures/arm64_syscall.S -o build-jit/owned-arm64-syscall.o
+          if ($LASTEXITCODE -ne 0) { throw 'ARM64 SVC Mach-O compilation failed' }
+      - name: Execute guest Darwin syscall on Windows x64
+        shell: pwsh
+        run: |
+          & ./build-jit/Release/anyios-a64-smoke.exe --syscall build-jit/owned-arm64-syscall.o
+          if ($LASTEXITCODE -ne 0) { throw 'Guest Darwin syscall test failed' }
       - name: Execute compiled ARM64 Mach-O function on Windows x64
         shell: pwsh
         run: |

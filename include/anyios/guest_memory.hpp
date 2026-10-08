@@ -30,6 +30,7 @@ public:
     std::optional<std::uint32_t> fetch(std::uint64_t address) const;
     bool write(std::uint64_t address, std::uint64_t value, unsigned width);
     bool allowed(std::uint64_t address, std::size_t size, Access access) const;
+    bool copy_from(std::uint64_t address, std::span<std::byte> destination) const;
 
 private:
     std::optional<std::size_t> offset_of(std::uint64_t address, std::size_t size) const;

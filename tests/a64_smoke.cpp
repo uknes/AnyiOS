@@ -1,6 +1,7 @@
 #include <anyios/guest_memory.hpp>
 #include <anyios/object_code.hpp>
 #include <anyios/executable.hpp>
+#include <anyios/darwin_syscall.hpp>
 
 #include <dynarmic/interface/A64/a64.h>
 #include <dynarmic/interface/A64/config.h>
@@ -71,7 +72,15 @@ public:
     }
 
     void InterpreterFallback(Dynarmic::A64::VAddr, std::size_t) override { fault_ = true; }
-    void CallSVC(std::uint32_t) override { fault_ = true; }
+    void CallSVC(std::uint32_t immediate) override {
+        if (trap_) fault_ = true;
+        trap_ = immediate;
+    }
+    std::optional<std::uint32_t> take_trap() {
+        auto result = trap_;
+        trap_.reset();
+        return result;
+    }
     void ExceptionRaised(Dynarmic::A64::VAddr, Dynarmic::A64::Exception) override {
         fault_ = true;
     }
@@ -92,9 +101,13 @@ private:
     GuestMemory& memory_;
     std::uint64_t ticks_ = 0;
     bool fault_ = false;
+    std::optional<std::uint32_t> trap_;
 };
 
-void execute_guest(GuestMemory& memory, std::uint64_t entry, std::uint64_t return_address) {
+void execute_guest(GuestMemory& memory, std::uint64_t entry, std::uint64_t return_address,
+                   anyios::darwin::SyscallBridge* bridge = nullptr,
+                   std::uint64_t syscall_buffer = 0,
+                   std::uint64_t syscall_length = 0) {
     Callbacks callbacks(memory);
     Dynarmic::A64::UserConfig config{};
     config.callbacks = &callbacks;
@@ -102,10 +115,25 @@ void execute_guest(GuestMemory& memory, std::uint64_t entry, std::uint64_t retur
     Dynarmic::A64::Jit jit(config);
     jit.SetPC(entry);
     jit.SetRegister(30, return_address);
+    if (bridge) {
+        jit.SetRegister(1, syscall_buffer);
+        jit.SetRegister(2, syscall_length);
+    }
     bool returned = false;
     for (unsigned i = 0; i < 128; ++i) {
         static_cast<void>(jit.Step());
         if (callbacks.failed()) throw std::runtime_error("guest execution raised a fault");
+        if (const auto immediate = callbacks.take_trap()) {
+            if (!bridge) throw std::runtime_error("guest SVC requires a Darwin bridge");
+            const auto result = bridge->dispatch(*immediate, jit.GetRegister(16),
+                {jit.GetRegister(0), jit.GetRegister(1), jit.GetRegister(2)}, memory);
+            if (!result.supported) throw std::runtime_error(result.diagnostic);
+            if (result.exited) throw std::runtime_error("unexpected guest exit syscall");
+            jit.SetRegister(0, result.value);
+            const auto pstate = jit.GetPstate();
+            jit.SetPstate((pstate & ~(std::uint32_t(1) << 29)) |
+                           (std::uint32_t(result.carry) << 29));
+        }
         if (jit.GetPC() == return_address) {
             returned = true;
             break;
@@ -113,6 +141,28 @@ void execute_guest(GuestMemory& memory, std::uint64_t entry, std::uint64_t retur
     }
     if (!returned || jit.GetRegister(0) != 42) {
         throw std::runtime_error("ARM64 code returned an incorrect result");
+    }
+}
+
+void verify_syscall_object(const std::vector<std::byte>& code) {
+    GuestMemory memory(0x10000, 0x30000);
+    const auto rx = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::execute);
+    const auto rw = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::write);
+    if (!memory.map(0x10000, 4096, rx) || !memory.map(0x20000, 4096, rw)) {
+        throw std::runtime_error("syscall test guest mappings failed");
+    }
+    if (code.empty() || code.size() > 4096 || (code.size() % 4) != 0 ||
+        !memory.load(0x10000, code)) {
+        throw std::runtime_error("syscall test object code was invalid");
+    }
+    constexpr char output[] = "Hello from guest ARM64\n";
+    const auto bytes = std::span<const std::byte>(
+        reinterpret_cast<const std::byte*>(output), sizeof(output) - 1);
+    if (!memory.load(0x20000, bytes)) throw std::runtime_error("guest message loading failed");
+    anyios::darwin::SyscallBridge bridge;
+    execute_guest(memory, 0x10000, 0x10000 + code.size(), &bridge, 0x20000, bytes.size());
+    if (bridge.standard_output() != output || !bridge.standard_error().empty()) {
+        throw std::runtime_error("guest Darwin write output mismatch");
     }
 }
 
@@ -188,8 +238,9 @@ int main(int argc, char** argv) {
         if (argc == 1) {
             code = {std::byte{0x40}, std::byte{0x05}, std::byte{0x80}, std::byte{0xd2},
                     std::byte{0xc0}, std::byte{0x03}, std::byte{0x5f}, std::byte{0xd6}};
-        } else if (argc == 2) {
-            std::ifstream input(argv[1], std::ios::binary | std::ios::ate);
+        } else if (argc == 2 || (argc == 3 && std::string(argv[1]) == "--syscall")) {
+            const bool syscall_test = argc == 3;
+            std::ifstream input(syscall_test ? argv[2] : argv[1], std::ios::binary | std::ios::ate);
             if (!input) throw std::runtime_error("cannot open owned Mach-O object");
             const auto length = input.tellg();
             if (length <= 0 || length > 4 * 1024 * 1024) {
@@ -200,9 +251,15 @@ int main(int argc, char** argv) {
             if (!input.read(reinterpret_cast<char*>(bytes.data()), static_cast<std::streamsize>(bytes.size()))) {
                 throw std::runtime_error("cannot read owned Mach-O fixture");
             }
-            code = anyios::loader::extract_object_function(bytes, "_anyios_answer").code;
+            code = anyios::loader::extract_object_function(
+                bytes, syscall_test ? "_anyios_syscall_demo" : "_anyios_answer").code;
+            if (syscall_test) {
+                verify_syscall_object(code);
+                std::cout << "Executed ARM64 Darwin SVC guest write via Windows x64: Hello from guest ARM64\n";
+                return 0;
+            }
         } else {
-            throw std::runtime_error("usage: anyios-a64-smoke [owned-mach-o-object]");
+            throw std::runtime_error("usage: anyios-a64-smoke [owned-mach-o-object | --syscall owned-mach-o-object]");
         }
         verify(code);
         verify_synthetic_executable(code);
