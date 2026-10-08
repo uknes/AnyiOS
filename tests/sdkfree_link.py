@@ -54,7 +54,13 @@ def main():
         run(clang_flags + [str(fixtures / "arm64_widget.c"), "-o", str(lib_obj)])
         dylib = work / "libRuntimeWidget.dylib"
         app = work / "RuntimeApp"
-        link = [args.linker, "-arch", "arm64", "-platform_version", "ios", "15.0", "15.0"]
+        link = [
+            args.linker, "-arch", "arm64", "-platform_version", "ios", "15.0", "15.0",
+            "-seg_page_size", "__TEXT", "0x4000",
+            "-seg_page_size", "__DATA", "0x4000",
+            "-seg_page_size", "__DATA_CONST", "0x4000",
+            "-seg_page_size", "__LINKEDIT", "0x4000",
+        ]
         run(link + [
             "-dylib", str(lib_obj), "-install_name",
             "@rpath/libRuntimeWidget.dylib", "-L", str(work),

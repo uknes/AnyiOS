@@ -109,6 +109,11 @@ LinkedImage stage_linked_image(
     for (const auto& segment : image.segments) {
         if (segment.name == "__PAGEZERO" && segment.file_size == 0 &&
             segment.init_protection == 0) continue;
+        if (options.require_ios_pages &&
+            (segment.vm_address % cpu::GuestMemory::ios_page_size != 0 ||
+             segment.vm_size % cpu::GuestMemory::ios_page_size != 0)) {
+            throw macho::FormatError("linked iOS segment violates 16 KiB guest page alignment");
+        }
         if (segment.vm_size == 0 || segment.vm_size % page != 0 ||
             segment.vm_address < original_base ||
             (segment.vm_address - original_base) % page != 0 ||
@@ -123,11 +128,7 @@ LinkedImage stage_linked_image(
         }
         const auto address = sum(guest_base, segment.vm_address - original_base,
                                  "linked segment address overflow");
-        if (options.require_ios_pages &&
-            (segment.vm_address % cpu::GuestMemory::ios_page_size != 0 ||
-             segment.vm_size % cpu::GuestMemory::ios_page_size != 0)) {
-            throw macho::FormatError("linked iOS segment violates 16 KiB guest page alignment");
-        }
+
         if (!journal.map(address, static_cast<std::size_t>(segment.vm_size),
                          perms, options.require_ios_pages)) {
             throw macho::FormatError("linked guest mapping failed");
