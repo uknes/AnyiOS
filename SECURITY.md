@@ -21,3 +21,6 @@ The Windows ARM64 native linked-code executor runs **inside the AnyiOS test proc
 Please avoid publishing exploit details against in-development sandbox components before maintainers can triage them. Open a GitHub security advisory in the repository if available, or contact the maintainer privately via the repository's listed contact channel. Never submit real secrets, credentials, or proprietary IPA contents in test reports.
 
 Security claims follow only successful CI tests and reviewed, committed source.
+### Guest thread registers and TLS
+
+No guest Darwin TLS is implemented. Dynarmic MRS/MSR guest instructions are now refused until per-thread TPIDRRO_EL0 state is available. The trusted native executable mapping scan refuses MRS/MSR words as well as SVC, including lookalike literal data. This guard is not safe native system-register interception, and untrusted native guest code remains prohibited. See [_docs/TLS_DESIGN.md](_docs/TLS_DESIGN.md).

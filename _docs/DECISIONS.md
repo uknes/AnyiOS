@@ -46,3 +46,25 @@ Accepted 2026-10-08. Running iOS ARM64 instructions on a Windows ARM64 CPU is no
 ## ADR-011 — Strict iOS pages with final LINKEDIT padding
 
 Accepted 2026-10-08 after focused CI tests. Every iOS user-code and data mapping requires 16 KiB guest virtual page alignment. The LLVM Mach-O linker can emit a *final, read-only* `__LINKEDIT` metadata segment with a shorter declared VM extent. The loader may round **only this last read-only metadata mapping** to the next full 16 KiB page and must reject an unaligned base, nonfinal LINKEDIT, executable/writable short segments, overlaps or out-of-range padding. Padded bytes remain zero and read-only. The original 4 KiB `__TEXT` regression still rejects. Verified SDK-free staging on Windows x64/ARM64 and synthetic CTest: https://github.com/uknes/AnyiOS/actions/runs/37762837584.
+
+## ADR-012 — Start with explicit host-side libSystem shims; do not port guest libc yet
+
+Accepted 2026-10-08. AnyiOS remains MIT. Two options were evaluated and **no external libc source was copied**.
+
+### Option A: signature-aware host-side libSystem shims
+
+The current design resolves explicitly approved dyld symbols to bounded ARM64 guest thunks. A Windows-x64 Dynarmic SVC event invokes a host implementation that operates solely on guest memory. Pros: tiny trusted API surface, deterministic tests, precise unsupported diagnostics, inspectable permissions, and no new bundled third-party libc dependency. Cons: each API requires a compatible Apple ARM64 contract (narrow integer extension, Apple stack-passed variadics, return values, pointer copy-in/out, errno, callbacks and indirect blocks), plus Mach/dispatch/TLS semantics. Windows ARM64 cannot directly enter host functions by jumping from arbitrary Apple code: a separate isolated process and native ABI thunk must protect x18, callee-saved registers and stack.
+
+### Option B: compile a guest-side, permissively licensed libc to arm64-apple-ios
+
+**musl** — verified repository `kraj/musl`, pinned commit `5122f9f3c99fee366167c5de98b31546312921ab` (commit date 2026-04-10); read actual `COPYRIGHT` on 2026-10-08. Project-wide MIT, with documented permissively licensed individual portions. The source targets the **Linux** syscall and ELF/libc startup contract, so targeting arm64-apple-ios is not a CFLAGS switch: Mach-O/TAPI linking, Darwin syscalls and Mach IPC, guest TLS/TPIDRRO_EL0, TLV descriptors, pthread/dispatch, signals, errno and allocator/thread registration must be reworked.
+
+**FreeBSD libc** — verified repository `freebsd/freebsd-src`, pinned commit `c2b7fe4a9e94a0edba9dd2772874928b565c4f9e` (commit date 2026-10-08); read actual top-level `COPYRIGHT` on 2026-10-08. Compilation under BSD-2-Clause; individual source files can have different copyright/license terms, so **a separate file-by-file audit is required before adoption**. A BSD syscall/ABI heritage may be somewhat closer to Darwin POSIX names, but Darwin Mach traps, Apple arm64 calling conventions, dyld TLS and Apple process startup still differ. FreeBSD's guest-side libc cannot simply call the Windows kernel.
+
+A single guest syscall primitive would simplify selected `write`/`exit` APIs under Dynarmic (SVC callbacks); it would **not** solve allocator thread-safety, TLS, block callbacks or variadic libc API ABI compatibility, and it cannot run natively on Windows ARM64 before isolated SVC trapping. Guest libc would still depend on a host Mach/Darwin emulation layer for nontrivial applications.
+
+**Decision: Option A for the first hello-world and basic libSystem subset.** Keep the door open for selectively linked, separately audited MIT/BSD guest-side implementations only after real TLS, threads and syscall contracts are measurable. Do not fork/copy musl or FreeBSD libc or claim libc compatibility today. Keep the original guest program and ABI regression tests as the oracle.
+
+References (license files verified at those commits):
+- https://github.com/kraj/musl/blob/5122f9f3c99fee366167c5de98b31546312921ab/COPYRIGHT
+- https://github.com/freebsd/freebsd-src/blob/c2b7fe4a9e94a0edba9dd2772874928b565c4f9e/COPYRIGHT
