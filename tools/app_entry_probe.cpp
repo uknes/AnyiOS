@@ -1,3 +1,4 @@
+#include <anyios/abi_thunk.hpp>
 #include <anyios/cpu_backend.hpp>
 #include <anyios/guest_memory.hpp>
 #include <anyios/linked_image.hpp>
@@ -112,6 +113,10 @@ int main(int argc, char** argv) {
         // No autoreleased objects, retain/release, nested drain callbacks,
         // exceptions, or cross-thread semantics are claimed.
         std::vector<std::uint64_t> empty_pools;
+        std::optional<std::uint64_t> bridged_delegate_class;
+        std::optional<std::string> bridged_delegate_name;
+        constexpr std::uint64_t kProbeNameHandle = 0x360000;
+        constexpr std::uint64_t kDiagnosticDelegate = 0x380000;
         std::uint64_t budget = 10000;
         while (budget--) {
             const auto event = cpu->step();
@@ -159,6 +164,73 @@ int main(int argc, char** argv) {
                 std::cout << "FIRST_RUNTIME_BLOCKER=_objc_msgSend"
                           << "\nUNSUPPORTED_SELECTOR="
                           << selector.value_or("(unresolved-selector)")
+                          << "\nEXECUTION=stopped-at-unimplemented-import\n";
+                return 0;
+            }
+            if (symbol == "_NSStringFromClass") {
+                const auto name = objc.local_class_name(state.x[0]);
+                if (!name || name->size() > 127) {
+                    std::cout << "FIRST_RUNTIME_BLOCKER=_NSStringFromClass"
+                              << "\nREASON=unresolvable-class-metadata"
+                              << "\nEXECUTION=stopped-at-unimplemented-import\n";
+                    return 0;
+                }
+                // Narrow ABI hand-off token for the immediately following
+                // UIApplicationMain probe. This is NOT an NSString object;
+                // any attempted guest dereference would fault closed.
+                bridged_delegate_class = state.x[0];
+                bridged_delegate_name = *name;
+                state.x[0] = kProbeNameHandle;
+                cpu->set_state(state);
+                std::cout << "DIAGNOSTIC_BRIDGE=_NSStringFromClass"
+                          << "\nCLASS_NAME=" << *name
+                          << "\nOBJECT_SCOPE=probe-only-token-not-NSString\n";
+                continue;
+            }
+            if (symbol == "_UIApplicationMain") {
+                if (!bridged_delegate_class || !bridged_delegate_name ||
+                    state.x[3] != kProbeNameHandle) {
+                    std::cout << "FIRST_RUNTIME_BLOCKER=_UIApplicationMain"
+                              << "\nREASON=invalid-delegate-name-proxy"
+                              << "\nEXECUTION=stopped-at-unimplemented-import\n";
+                    return 0;
+                }
+                const auto did_launch = objc.local_instance_method(
+                    *bridged_delegate_class,
+                    "application:didFinishLaunchingWithOptions:");
+                if (!did_launch) {
+                    std::cout << "FIRST_RUNTIME_BLOCKER=_UIApplicationMain"
+                              << "\nREASON=unsupported-delegate-method-metadata"
+                              << "\nEXECUTION=stopped-at-unimplemented-import\n";
+                    return 0;
+                }
+                // Diagnostic callback of actual app-owned ARM64 IMP. No
+                // UIKit app object, framework scheduler or window exists.
+                // Zero UIApplication/options are valid ONLY for this
+                // pinned fixture's inspected, scalar-return callback.
+                const auto rw = anyios::cpu::bits(anyios::cpu::Access::read) |
+                                anyios::cpu::bits(anyios::cpu::Access::write);
+                if (!memory.map_ios(kDiagnosticDelegate, 0x4000, rw) ||
+                    !memory.write(kDiagnosticDelegate,
+                                  *bridged_delegate_class, 8)) {
+                    throw std::runtime_error(
+                        "could not map diagnostic-only guest delegate instance");
+                }
+                const std::array<std::uint64_t, 4> params{
+                    kDiagnosticDelegate, did_launch->selector, 0, 0
+                };
+                const auto result = anyios::abi::invoke_guest_callback(
+                    *cpu, did_launch->entry, params, kReturn, 4096);
+                std::cout << "APP_DELEGATE_GUEST_IMP=executed"
+                          << "\nAPP_DELEGATE_METHOD=application:didFinishLaunchingWithOptions:"
+                          << "\nAPP_DELEGATE_CALLBACK_RESULT=" << result
+                          << "\nCALLBACK_SCOPE=diagnostic-only-no-UIKit-lifecycle\n";
+                if (result != 1) {
+                    throw std::runtime_error(
+                        "original Objective-C app launch callback returned unexpected BOOL");
+                }
+                std::cout << "FIRST_RUNTIME_BLOCKER=_UIApplicationMain"
+                          << "\nWINDOW=not-created"
                           << "\nEXECUTION=stopped-at-unimplemented-import\n";
                 return 0;
             }
