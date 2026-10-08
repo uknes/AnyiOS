@@ -111,10 +111,13 @@ jobs:
           Copy-Item anyios-ui-preview.bmp gui-output/windows/
           Copy-Item anyios-ui-preview.png gui-output/windows/
           Copy-Item gui-output/guest/guest-receipt.json gui-output/windows/
+          Copy-Item tests/verify_windows_gui.ps1 gui-output/windows/
           @'
           AnyiOS interactive GUI compatibility proof (Windows x64)
           ========================================================
           Double-click anyios-win-2048.exe; it loads AnyiOS2048Guest next to it.
+          Or run verify_windows_gui.ps1 using PowerShell for an actual local
+          keyboard / swipe / click / screenshot end-to-end test.
           Use arrows, WASD, mouse swipes/drag, or click NEW GAME.
           This is an ORIGINAL SDK-free ARM64 iPhoneOS GAME-STATE FIXTURE
           rendered with native Windows GDI (genuine Dynarmic guest execution).
