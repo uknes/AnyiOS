@@ -96,6 +96,22 @@ void check_objc_classname_section() {
            "canonical __objc_classname secondary class metadata not resolved");
 }
 
+void check_unsupported_class_record_refused_without_losing_siblings() {
+    auto memory = memory_fixture();
+    // Refuse the bad secondary class without losing valid AppDelegate data.
+    ensure(memory.write(0x21100 + 8, 0, 4),
+           "cannot stage an unsupported instance size");
+    const anyios::darwin::ObjcIdentityProbe classes(fixture_image(), memory, 0x10000);
+    const anyios::darwin::GuestObjcClassRegistry registry(classes, memory);
+    ensure(registry.size() == 1 && registry.unresolved_count() == 1,
+           "unsupported record was registered or valid sibling was rejected");
+    ensure(registry.find("AppDelegate") == 0x20000 &&
+           !registry.find("ViewController"),
+           "fail-closed registry leaked an unsupported Objective-C class");
+    ensure(!registry.local_superclass(0x20100),
+           "unresolved subclass incorrectly registered");
+}
+
 void check_duplicate_name_rejected() {
     auto memory = memory_fixture(true);
     const anyios::darwin::ObjcIdentityProbe classes(fixture_image(), memory, 0x10000);
@@ -113,6 +129,7 @@ void check_duplicate_name_rejected() {
 int main() {
     check_registration_and_subclass();
     check_duplicate_name_rejected();
+    check_unsupported_class_record_refused_without_losing_siblings();
     check_objc_classname_section();
     std::cout << "Local Objective-C class registry, guest lookup, inheritance and refusal passed\n";
 }

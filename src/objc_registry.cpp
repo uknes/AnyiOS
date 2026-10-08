@@ -14,12 +14,13 @@ GuestObjcClassRegistry::GuestObjcClassRegistry(
     for (const auto cls : classes) {
         const auto name = metadata.local_class_name(cls);
         const auto size = metadata.local_instance_size(cls);
-        if (!name || !size) {
-            throw std::invalid_argument("invalid local Objective-C class record");
-        }
         const auto superclass = memory_.read(cls + 8, 8);
-        if (!superclass) {
-            throw std::invalid_argument("unreadable local Objective-C superclass");
+        // Preserve independent valid classes when a separate local record has
+        // an unsupported class_ro_t layout. Do not fabricate such classes:
+        // only validated records are published for lookup and dispatch.
+        if (!name || !size || !superclass) {
+            ++unresolved_count_;
+            continue;
         }
         if (!by_name_.emplace(*name, cls).second ||
             !by_address_.emplace(cls, *superclass).second) {

@@ -83,3 +83,20 @@ metaclass registry, initializer runner, or true Foundation object.
 Both compiler-emitted `__TEXT,__objc_classname` and ordinary `__cstring`
 class name section layouts are accepted by the bounded class reader. Other
 unrecognized metadata forms remain unsupported until tested.
+
+
+## Original Bitrise local-class registry correction
+
+The pinned MIT Bitrise binary can expose compiler class records whose
+`class_ro_t` class-name or instance-size metadata is not supported by this
+narrowly validated parser. A previous strict constructor rejected the entire
+app on the first such record and prevented the already-proven AppDelegate
+ARM64 callback. The registry now **rejects individual unrecognized records**,
+counts them in `unresolved_count()`, and publishes only classes with a readable
+superclass, validated local name, and bounded instance size. Unknown records
+cannot be used for dispatch, allocation, superclass inference or class lookup.
+Duplicate **valid** names remain an error. This is not full class registration.
+
+The Windows x64 pinned original-app test must report both resolved and
+unresolved counts, execute the real AppDelegate callback, and explicitly stop
+at the unimplemented `UIApplicationMain`.

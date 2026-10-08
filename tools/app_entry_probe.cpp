@@ -93,7 +93,8 @@ int main(int argc, char** argv) {
         };
         const anyios::darwin::ObjcIdentityProbe objc(image, memory, loaded.guest_base);
         const anyios::darwin::GuestObjcClassRegistry registry(objc, memory);
-        std::cout << "OBJC_LOCAL_CLASSES_REGISTERED=" << registry.size() << "\n";
+        std::cout << "OBJC_LOCAL_CLASSES_REGISTERED=" << registry.size() << "\n"
+                  << "OBJC_UNRESOLVED_CLASS_RECORDS=" << registry.unresolved_count() << "\n";
         const auto process = anyios::loader::prepare_owned_process_stack(
             memory, 0x320000, 0x10000, arguments, environment, apple);
         auto cpu = anyios::cpu::make_dynarmic_backend(memory);
