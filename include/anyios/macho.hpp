@@ -28,6 +28,11 @@ struct Version {
     std::uint32_t sdk;
 };
 
+struct LinkeditRange {
+    std::uint32_t file_offset;
+    std::uint32_t file_size;
+};
+
 struct Image {
     std::uint32_t cpu_subtype = 0;
     std::uint32_t file_type = 0;
@@ -35,10 +40,18 @@ struct Image {
     std::vector<Segment> segments;
     std::vector<std::string> libraries;
     std::vector<std::string> rpaths;
+    std::vector<std::string> chained_imports;
+    std::vector<std::string> exported_symbols;
+    bool has_chained_fixups = false;
+    bool has_export_trie = false;
     std::vector<Version> versions;
     std::uint64_t entry_offset = 0;
     bool has_entry = false;
     bool is_encrypted = false;
+    bool is_fat = false;
+    std::uint32_t architecture_count = 1;
+    std::uint64_t slice_offset = 0;
+    std::uint64_t slice_size = 0;
 };
 
 Image inspect(std::span<const std::byte> bytes);

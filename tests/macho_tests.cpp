@@ -95,7 +95,7 @@ void test_valid() {
 void test_failures() {
     invalid({}, "magic");
     invalid(Bytes{std::byte{0x7f}, std::byte{'E'}, std::byte{'L'}, std::byte{'F'}}, "unsupported format");
-    invalid(Bytes{std::byte{0xca}, std::byte{0xfe}, std::byte{0xba}, std::byte{0xbe}}, "unsupported format");
+    invalid(Bytes{std::byte{0xca}, std::byte{0xfe}, std::byte{0xba}, std::byte{0xbe}}, "truncated universal header");
     invalid(Bytes{std::byte{0xcf}, std::byte{0xfa}, std::byte{0xed}, std::byte{0xfe}}, "header");
     auto data = image({});
     u32(data, 4, 0x01000007);

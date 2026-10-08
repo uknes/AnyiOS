@@ -1,8 +1,10 @@
 #include <anyios/macho.hpp>
+#include "internal.hpp"
 
 #include <algorithm>
 #include <array>
 #include <limits>
+#include <optional>
 #include <string_view>
 
 namespace anyios::macho {
@@ -20,6 +22,8 @@ constexpr std::uint32_t lc_main = 0x80000028;
 constexpr std::uint32_t lc_build_version = 0x32;
 constexpr std::uint32_t lc_version_min_iphoneos = 0x25;
 constexpr std::uint32_t lc_encryption_info_64 = 0x2c;
+constexpr std::uint32_t lc_exports_trie = 0x80000033;
+constexpr std::uint32_t lc_chained_fixups = 0x80000034;
 
 class Reader {
 public:
@@ -73,7 +77,7 @@ bool is_library_command(std::uint32_t command) {
 
 }
 
-Image inspect(std::span<const std::byte> bytes) {
+Image inspect_thin(std::span<const std::byte> bytes) {
     Reader reader(bytes);
     reader.require(0, 4, "Mach-O magic");
     const auto magic = reader.u32(0, "Mach-O magic");
@@ -95,6 +99,8 @@ Image inspect(std::span<const std::byte> bytes) {
         throw FormatError("load command count exceeds region capacity");
     }
 
+    std::optional<LinkeditRange> chained;
+    std::optional<LinkeditRange> exports;
     std::size_t cursor = 32;
     const std::size_t commands_end = cursor + commands_size;
     for (std::uint32_t index = 0; index < image.command_count; ++index) {
@@ -149,6 +155,14 @@ Image inspect(std::span<const std::byte> bytes) {
             if (size < 16) throw FormatError("truncated LC_VERSION_MIN_IPHONEOS");
             image.versions.push_back({2, reader.u32(cursor + 8, "minimum OS"),
                                       reader.u32(cursor + 12, "SDK")});
+        } else if (command == lc_exports_trie || command == lc_chained_fixups) {
+            if (size < 16) throw FormatError("truncated linkedit data command");
+            LinkeditRange range{reader.u32(cursor + 8, "linkedit data offset"),
+                                reader.u32(cursor + 12, "linkedit data size")};
+            reader.require(range.file_offset, range.file_size, "linkedit data");
+            auto& slot = command == lc_chained_fixups ? chained : exports;
+            if (slot.has_value()) throw FormatError("duplicate linkedit command");
+            slot = range;
         } else if (command == lc_encryption_info_64) {
             if (size < 24) throw FormatError("truncated LC_ENCRYPTION_INFO_64");
             const auto offset = reader.u32(cursor + 8, "encrypted offset");
@@ -159,6 +173,14 @@ Image inspect(std::span<const std::byte> bytes) {
         cursor += size;
     }
     if (cursor != commands_end) throw FormatError("load command count does not consume declared region");
+    if (chained) {
+        image.has_chained_fixups = true;
+        image.chained_imports = parse_chained_imports(bytes, chained->file_offset, chained->file_size);
+    }
+    if (exports) {
+        image.has_export_trie = true;
+        image.exported_symbols = parse_exports(bytes, exports->file_offset, exports->file_size);
+    }
     return image;
 }
 
