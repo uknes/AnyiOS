@@ -122,6 +122,11 @@ jobs:
         run: |
           & ./build-jit/Release/anyios-a64-smoke.exe --hello sdkfree-images/HelloProcess
           if ($LASTEXITCODE -ne 0) { throw 'Owned iOS LC_MAIN hello process failed on Windows x64' }
+      - name: Execute owned Clang iOS memory-string libc subset on Dynarmic
+        shell: pwsh
+        run: |
+          & ./build-jit/Release/anyios-a64-smoke.exe --memory-strings sdkfree-images/MemoryStringApp
+          if ($LASTEXITCODE -ne 0) { throw 'Owned memory/string libc fixture failed on Windows x64' }
       - name: Execute owned Clang iOS TLV process in two guest threads
         shell: pwsh
         run: |
