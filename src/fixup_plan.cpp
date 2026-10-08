@@ -87,6 +87,9 @@ std::vector<FixupPatch> plan_chained_fixups(
     import_addends.reserve(imports_count);
     for (std::uint32_t i = 0; i < imports_count; ++i) {
         const auto descriptor = std::uint64_t(imports_at) + std::uint64_t(i) * entry_size;
+        if (imports_format == 3 && (u32(payload, descriptor) & 0xfffe0000U) != 0) {
+            throw macho::FormatError("chained import64 reserved bits set");
+        }
         if (imports_format == 2) {
             import_addends.push_back(std::bit_cast<std::int32_t>(u32(payload, descriptor + 4)));
         } else if (imports_format == 3) {
