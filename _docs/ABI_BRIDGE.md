@@ -46,3 +46,11 @@ References (documentation only, no Apple implementation copied):
 Evidence: Windows MSVC, Linux GCC/Clang and macOS jobs in [run 37759173521](https://github.com/uknes/AnyiOS/actions/runs/37759173521).
 
 **Limitations:** This helper is **not** a Windows machine-code Apple↔Windows ABI assembly thunk. It cannot pass host pointers, implement Apple varargs/va_list, handle arm64e PAC, or guarantee native guest x18 preservation across a foreign call. All those capabilities remain blocked until dedicated call-gate and isolation tests exist.
+
+## Scoped Apple stack variadics and reverse calls — verified unit contracts
+
+`decode_apple_variadic_arguments` uses 16-byte aligned guest SP, reads integer/promoted variadic arguments from **8-byte guest stack slots**, and refuses raw pointers, aggregates and unsupported types. It does not pass a guest Apple `va_list` to native Windows variadic functions.
+
+`invoke_guest_callback` enters a bounded `CpuBackend` with a register snapshot, demands normal return, checks guest x18 and x19–x29, and restores original guest state even on faults. Integration tests run against both the Dynarmic x64 and deliberately restricted native ARM64 CPU backends. This **does not prove real machine-level Windows x18 preservation** during foreign function calls; a separate native assembly thunk, protected process and hardware register test are still required.
+
+Evidence for ABI parsing and native contracts: https://github.com/uknes/AnyiOS/actions/runs/37762837584. Dynarmic callback test in the slower Windows x64 backend is verified only after that job completes.

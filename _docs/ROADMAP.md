@@ -46,6 +46,17 @@ Commercial games, protected App Store IPAs, arm64e and modern Metal support are 
 - [ ] Host-specific Darwin SVC interception with no guest syscall escaping to host kernel
 - [ ] First graphical owned .app launches on both Windows variants
 
+## Focused ABI, memory and libSystem validations
+
+- [x] Typed Apple scalar variadic stack-slot decoding, 16-byte SP alignment and sign-extension tests (standard CI 37762837584)
+- [x] Enforce 16 KiB guest code/data pages; allow only final read-only __LINKEDIT rounded VM padding (Windows stage and CTest run 37762837584)
+- [x] One 64 KiB-aligned native Windows ARM64 address reservation; commit/protect per 16 KiB logical guest page and verify uncommitted guard gap (CI 37762837584)
+- [x] Scan each trusted native executable mapping for SVC opcodes before RX, rejecting literal-pool false positives (CI 37762837584)
+- [x] SECURITY.md restricts in-process native guest execution to trusted owned fixtures
+- [x] SDK-free authored libSystem.tbd with exact _malloc/_write/_exit imports and host-only bounded implementation (link/Ctests in run 37762837584)
+- [ ] Execute all three imported libSystem operations from the original linked guest C program via Dynarmic on Windows x64 (run 37763018410 pending)
+- [ ] Demonstrate real hardware Windows ARM64 x18 preservation across an Apple/Windows ABI thunk in a separate process
+
 ## Memory, dyld and native ABI hardening
 
 - [x] Define and test 16 KiB iOS arm64 guest-page policy with 4 KiB private backing (run 37752529646)

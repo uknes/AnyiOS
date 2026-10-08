@@ -20,3 +20,9 @@ The Ubuntu LLVM-19 test has passed in [run 37759173521](https://github.com/uknes
 LLD's Mach-O port documents support for Apple ld64-like command-line options: https://lld.llvm.org/MachO/index.html. The LLVM project license at pinned surveyed SHA `7ac405140aff8a754d5d669f8452d8e4c207f8cc` is Apache-2.0 WITH LLVM-exception; license reviewed on 2026-10-08 via `LICENSE.TXT`.
 
 Even if this test passes, SDK-free **linking** is not a libSystem implementation and proves no GUI/runtime support. The existing macOS linker fixture remains the reference until parity is established.
+
+## Added original libSystem import fixture
+
+The authored `tests/fixtures/arm64_libsystem_app.c` imports `malloc`, `write`, and `exit` from the authored metadata-only TAPI stub. The Linux `sdk-free-ios-link` job verifies those imports and libSystem's install name; this worked in CI run 37762837584. `LibSystemShim` implements a bounded guest bump allocator (null on exhaustion), captured writes, and guest exit signaling **in host unit tests**. No Apple runtime or proprietary SDK binary is distributed.
+
+A separate Windows x64 Dynarmic integration test now tries to execute those linked imports through registered ARM64 SVC thunks. It must **not** be marked verified until the specific guest execution CI step passes.

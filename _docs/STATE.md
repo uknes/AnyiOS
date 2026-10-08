@@ -2,6 +2,18 @@
 
 Updated 2026-10-08. Source history and green GitHub Actions job results are authoritative.
 
+## Verified focused milestones (CI run 37762837584)
+
+- Apple ARM64 stack-passed scalar varargs are marshaled from guest 8-byte stack slots (not host register varargs); 16-byte SP validation and sign/zero extension are covered by the cross-platform ABI CTest. Other argument classes (pointers, aggregates, unsafe va_list) deliberately fail.
+- Windows ARM64 trusted native fixture reserves a 64 KiB-aligned arena once, commits validated guest regions per iOS 16 KiB page, verifies an unmapped guard gap, scans each executable mapping for any SVC-shaped word (including literal-pool false positives), then applies RX permissions. Native **untrusted execution is forbidden**. Windows ARM64 linked-staging and SVC scan tests passed.
+- The Linux SDK-free LLVM linker emits project-owned iPhoneOS images that can be staged on both Windows x64 and ARM64 through the 16 KiB guest page loader. The only permitted short-VM mapping exception is the **final read-only __LINKEDIT segment**, rounded up to one or more full 16 KiB guest pages. Code/data segments with 4 KiB VM extents are rejected.
+- Original SDK-free C fixture imports `_malloc`, `_write`, `_exit` from a metadata-only libSystem.tbd; the Linux linker verifies those names. Host-side `LibSystemShim` unit tests validate guest heap allocations, captured write, exit signaling and missing-symbol rejection. This is not yet guest CPU execution of the imported functions.
+
+## Under CI review — do not claim compatible execution
+
+- The guest-to-host callback adapter verifies x18/x19–x29 logical guest register preservation, restorative failure behavior and native/translated backend callbacks. Host machine x18 preservation by a genuine native assembly ABI thunk remains unverified.
+- The Windows x64 Dynarmic test of the **original SDK-free linked LibSystemApp calling _malloc→_write→_exit** is committed at https://github.com/uknes/AnyiOS/commit/7e4ccee33fa6de0cd3684f71c345577b0200dbb1 and is **not verified** until its workflow execution step is green.
+
 ## Verified milestones
 
 - **Genuine iPhoneOS linked MH_EXECUTE → MH_DYLIB call** executed and returned 42 on **both Windows x86-64 (Dynarmic)** and **Windows ARM64 (trusted native CI fixture)**: https://github.com/uknes/AnyiOS/actions/runs/37751343388.

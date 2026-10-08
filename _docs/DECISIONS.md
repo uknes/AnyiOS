@@ -42,3 +42,7 @@ Accepted 2026-10-08 after introducing `GuestMemory::MappingJournal`. Loader mapp
 ## ADR-010 — Native ARM64 code always needs an ABI isolation boundary
 
 Accepted 2026-10-08. Running iOS ARM64 instructions on a Windows ARM64 CPU is not the same as the Apple ABI or Darwin runtime. The native test adapter denies arbitrary opcodes and SVCs. The trusted in-process linked test is an exception for project-owned, CI-generated code only, never a production loader. A future host libSystem call requires a signature-aware thunk layer, host x18 protection, Apple variadic/small-integer conventions, guest page guards and process isolation. See [ABI_BRIDGE.md](ABI_BRIDGE.md).
+
+## ADR-011 — Strict iOS pages with final LINKEDIT padding
+
+Accepted 2026-10-08 after focused CI tests. Every iOS user-code and data mapping requires 16 KiB guest virtual page alignment. The LLVM Mach-O linker can emit a *final, read-only* `__LINKEDIT` metadata segment with a shorter declared VM extent. The loader may round **only this last read-only metadata mapping** to the next full 16 KiB page and must reject an unaligned base, nonfinal LINKEDIT, executable/writable short segments, overlaps or out-of-range padding. Padded bytes remain zero and read-only. The original 4 KiB `__TEXT` regression still rejects. Verified SDK-free staging on Windows x64/ARM64 and synthetic CTest: https://github.com/uknes/AnyiOS/actions/runs/37762837584.
