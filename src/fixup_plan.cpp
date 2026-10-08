@@ -1,6 +1,7 @@
 #include <anyios/fixup_plan.hpp>
 
 #include <algorithm>
+#include <bit>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
@@ -34,6 +35,19 @@ std::uint32_t u32(std::span<const std::byte> bytes, std::uint64_t at) {
 std::uint64_t u64(std::span<const std::byte> bytes, std::uint64_t at) {
     return std::uint64_t(u32(bytes, at)) | (std::uint64_t(u32(bytes, at + 4)) << 32);
 }
+std::uint64_t add_signed(std::uint64_t value, std::int64_t addend) {
+    if (addend >= 0) {
+        const auto amount = static_cast<std::uint64_t>(addend);
+        if (amount > std::numeric_limits<std::uint64_t>::max() - value) {
+            throw macho::FormatError("chained signed bind addend overflow");
+        }
+        return value + amount;
+    }
+    const auto amount = static_cast<std::uint64_t>(-(addend + 1)) + 1;
+    if (amount > value) throw macho::FormatError("chained signed bind addend underflow");
+    return value - amount;
+}
+
 std::uint64_t plus(std::uint64_t a, std::uint64_t b, const char* subject) {
     if (b > std::numeric_limits<std::uint64_t>::max() - a) {
         throw macho::FormatError(std::string(subject) + " overflow");
@@ -61,11 +75,26 @@ std::vector<FixupPatch> plan_chained_fixups(
     const auto imports_at = u32(payload, 8);
     const auto imports_count = u32(payload, 16);
     const auto imports_format = u32(payload, 20);
-    if (imports_format != 1) throw macho::FormatError("unsupported chained import addend format");
+    if (imports_format < 1 || imports_format > 3) {
+        throw macho::FormatError("unsupported chained import addend format");
+    }
     if (imports_count != import_addresses.size() || imports_count != image.chained_imports.size()) {
         throw macho::FormatError("chained import target count mismatch");
     }
-    require(payload, imports_at, std::uint64_t(imports_count) * 4, "chained imports");
+    const std::uint64_t entry_size = imports_format == 1 ? 4 : imports_format == 2 ? 8 : 16;
+    require(payload, imports_at, std::uint64_t(imports_count) * entry_size, "chained imports");
+    std::vector<std::int64_t> import_addends;
+    import_addends.reserve(imports_count);
+    for (std::uint32_t i = 0; i < imports_count; ++i) {
+        const auto descriptor = std::uint64_t(imports_at) + std::uint64_t(i) * entry_size;
+        if (imports_format == 2) {
+            import_addends.push_back(std::bit_cast<std::int32_t>(u32(payload, descriptor + 4)));
+        } else if (imports_format == 3) {
+            import_addends.push_back(std::bit_cast<std::int64_t>(u64(payload, descriptor + 8)));
+        } else {
+            import_addends.push_back(0);
+        }
+    }
     require(payload, starts, 4, "chained segment starts");
     const auto segments = u32(payload, starts);
     if (segments != image.segments.size() || segments > 4096) {
@@ -141,7 +170,8 @@ std::vector<FixupPatch> plan_chained_fixups(
                         throw macho::FormatError("unresolved chained bind ordinal");
                     }
                     const auto addend = (raw >> 24) & 0xff;
-                    value = plus(import_addresses[ordinal], addend, "chained bind address");
+                    value = add_signed(plus(import_addresses[ordinal], addend, "chained bind address"),
+                                       import_addends[static_cast<std::size_t>(ordinal)]);
                 } else {
                     if ((raw & (std::uint64_t{0x7f} << 44)) != 0) {
                         throw macho::FormatError("reserved chained rebase bits set");

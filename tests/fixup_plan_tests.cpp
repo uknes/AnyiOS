@@ -143,7 +143,38 @@ void run() {
     rejects(b, targets, "unresolved chained bind ordinal");
     b = image(); put64(b, 4096, (std::uint64_t{1024} << 51) | 0x1234);
     rejects(b, targets, "chained pointer crosses page");
-    b = image(); put32(b, 256 + 20, 2);
+    // Import format 2: signed 32-bit addend stored after the descriptor.
+    b = image();
+    put32(b, 188, 96);
+    put32(b, 256 + 20, 2);
+    put32(b, 256 + 12, 72);
+    put32(b, 256 + 68, 0xfffffffbU);
+    b[256 + 72] = std::byte{'f'};
+    b[256 + 73] = std::byte{'o'};
+    b[256 + 74] = std::byte{'o'};
+    auto signed32 = anyios::dyld::plan_chained_fixups(
+        b, anyios::macho::inspect(b), targets);
+    check(signed32[1].value == 0x3fffe, "signed 32-bit import addend incorrect");
+
+    // Import format 3: 64-bit descriptor and signed 64-bit addend.
+    b = image();
+    put32(b, 188, 96);
+    put32(b, 256 + 20, 3);
+    put32(b, 256 + 12, 80);
+    put64(b, 256 + 64, 1);
+    put64(b, 256 + 72, UINT64_MAX - 4);
+    b[256 + 80] = std::byte{'f'};
+    b[256 + 81] = std::byte{'o'};
+    b[256 + 82] = std::byte{'o'};
+    auto signed64 = anyios::dyld::plan_chained_fixups(
+        b, anyios::macho::inspect(b), targets);
+    check(signed64[1].value == 0x3fffe, "signed 64-bit import addend incorrect");
+    put64(b, 256 + 72, UINT64_MAX / 2);
+    rejects(b, targets, "chained signed bind addend overflow");
+    put64(b, 256 + 72, 0x8000000000000000ULL);
+    rejects(b, targets, "chained signed bind addend underflow");
+
+    b = image(); put32(b, 256 + 20, 4);
     rejects(b, targets, "unsupported chained import addend format");
     b = image();
     rejects(b, {0}, "unresolved chained bind ordinal");

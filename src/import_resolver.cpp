@@ -61,12 +61,15 @@ std::vector<std::uint64_t> resolve_chained_import_targets(
     const auto payload = importing_file.subspan(range.file_offset, range.file_size);
     const auto count = read32(payload, 16);
     const auto format = read32(payload, 20);
-    if (format != 1) throw macho::FormatError("unsupported chained import addend format");
+    if (format < 1 || format > 3) {
+        throw macho::FormatError("unsupported chained import addend format");
+    }
     if (count != importer.chained_imports.size() || count > 100000) {
         throw macho::FormatError("chained import names/count mismatch");
     }
     const auto table = read32(payload, 8);
-    if (table > payload.size() || std::uint64_t(count) * 4 > payload.size() - table) {
+    const std::uint64_t entry_size = format == 1 ? 4 : format == 2 ? 8 : 16;
+    if (table > payload.size() || std::uint64_t(count) * entry_size > payload.size() - table) {
         throw macho::FormatError("chained import table out of bounds");
     }
     if (loaded_libraries.size() > 4096) throw macho::FormatError("too many loaded dylibs");
@@ -81,10 +84,16 @@ std::vector<std::uint64_t> resolve_chained_import_targets(
     std::vector<std::uint64_t> resolved;
     resolved.reserve(count);
     for (std::uint32_t index = 0; index < count; ++index) {
-        const auto descriptor = read32(payload, std::uint64_t(table) + std::uint64_t(index) * 4);
-        const auto ordinal = descriptor & 0xff;
-        const auto weak = (descriptor & 0x100) != 0;
-        if (ordinal == 0 || ordinal > importer.dependencies.size() || ordinal > 240) {
+        const auto offset = std::uint64_t(table) + std::uint64_t(index) * entry_size;
+        const auto low = read32(payload, offset);
+        const auto upper = format == 3 ? read32(payload, offset + 4) : 0U;
+        const auto ordinal = format == 3 ? (low & 0xffff) : (low & 0xff);
+        const auto weak = (format == 3 ? (low & 0x10000) : (low & 0x100)) != 0;
+        if (format == 3 && (low & 0xfffe0000U) != 0) {
+            throw macho::FormatError("chained import64 reserved bits set");
+        }
+        static_cast<void>(upper);
+        if (ordinal == 0 || ordinal > importer.dependencies.size()) {
             throw macho::FormatError("unsupported chained import library ordinal");
         }
         const auto& name = importer.dependencies[ordinal - 1].install_name;

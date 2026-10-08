@@ -101,7 +101,29 @@ void run() {
     importer.chained_imports = {"_anyios_widget", "_second"};
     reject(payload, importer, lib, "chained import names/count mismatch");
     importer.chained_imports = {"_anyios_widget"};
-    word(payload, 20, 3);
+    {
+        auto with32 = payload;
+        with32.resize(64);
+        importer.chained_fixups_range = anyios::macho::LinkeditRange{0, 64};
+        word(with32, 20, 2);
+        word(with32, 28, 1);
+        word(with32, 32, 0xfffffffbU);
+        check(anyios::dyld::resolve_chained_import_targets(with32, importer, libraries)[0] ==
+              0x11000, "format-2 import descriptor resolution");
+        auto with64 = payload;
+        with64.resize(64);
+        word(with64, 20, 3);
+        word(with64, 28, 1);
+        word(with64, 32, 0);
+        word(with64, 36, 0xfffffffbU);
+        word(with64, 40, UINT32_MAX);
+        check(anyios::dyld::resolve_chained_import_targets(with64, importer, libraries)[0] ==
+              0x11000, "format-3 import descriptor resolution");
+        word(with64, 28, 0x20001);
+        reject(with64, importer, lib, "chained import64 reserved bits set");
+        importer.chained_fixups_range = anyios::macho::LinkeditRange{0, 32};
+    }
+    word(payload, 20, 4);
     reject(payload, importer, lib, "unsupported chained import addend format");
     word(payload, 20, 1);
 
