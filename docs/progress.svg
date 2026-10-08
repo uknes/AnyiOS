@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="390" viewBox="0 0 840 390" role="img" aria-label="AnyiOS tracked guest API implementation progress">
+<rect width="840" height="390" rx="20" fill="#101726"/>
+<text x="32" y="43" fill="#f5f7fb" font-family="Arial,sans-serif" font-size="25" font-weight="bold">AnyiOS / Guest API coverage</text>
+<text x="32" y="68" fill="#9eacc2" font-family="Arial,sans-serif" font-size="13">Evidence-scoped manifest • NOT total iOS compatibility</text>
+<text x="32" y="115" fill="#f5f7fb" font-family="Arial,sans-serif" font-size="29" font-weight="bold">3/9 <tspan font-size="15" font-weight="normal" fill="#9eacc2">implemented (33%)</tspan></text>
+<text x="32" y="137" fill="#9eacc2" font-family="Arial,sans-serif" font-size="13">1 partial • 5 unimplemented/unknown • denominator grows as APIs are inventoried</text>
+<rect x="32" y="151" width="776" height="16" rx="6" fill="#2a3449"/>
+<rect x="32.0" y="151" width="258.7" height="16" fill="#47d7a0"/>
+<rect x="290.7" y="151" width="86.2" height="16" fill="#f5c86a"/>
+<text x="32" y="210" fill="#e9effa" font-family="Arial,sans-serif" font-size="15">Darwin C / process</text>
+<text x="808" y="210" fill="#b7c3d8" text-anchor="end" font-family="Arial,sans-serif" font-size="14">3/3 verified</text>
+<rect x="32" y="219" width="776" height="11" rx="6" fill="#2a3449"/>
+<rect x="32.0" y="219" width="776.0" height="11" fill="#47d7a0"/>
+<text x="32" y="254" fill="#e9effa" font-family="Arial,sans-serif" font-size="15">Thread-local storage</text>
+<text x="808" y="254" fill="#b7c3d8" text-anchor="end" font-family="Arial,sans-serif" font-size="14">0/1 verified + 1 partial</text>
+<rect x="32" y="263" width="776" height="11" rx="6" fill="#2a3449"/>
+<rect x="32.0" y="263" width="776.0" height="11" fill="#f5c86a"/>
+<text x="32" y="298" fill="#e9effa" font-family="Arial,sans-serif" font-size="15">Objective-C runtime</text>
+<text x="808" y="298" fill="#b7c3d8" text-anchor="end" font-family="Arial,sans-serif" font-size="14">0/4 verified</text>
+<rect x="32" y="307" width="776" height="11" rx="6" fill="#2a3449"/>
+<text x="32" y="342" fill="#e9effa" font-family="Arial,sans-serif" font-size="15">UIKit entry</text>
+<text x="808" y="342" fill="#b7c3d8" text-anchor="end" font-family="Arial,sans-serif" font-size="14">0/1 verified</text>
+<rect x="32" y="351" width="776" height="11" rx="6" fill="#2a3449"/>
+<text x="32" y="376" fill="#8998b0" font-family="Arial,sans-serif" font-size="12">Counts only tools/api_manifest.json. An import shim does not imply UIKit, SpriteKit, or app compatibility.</text>
+</svg>
