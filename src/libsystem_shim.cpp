@@ -109,7 +109,7 @@ LibSystemCall LibSystemShim::invoke(
             throw std::invalid_argument("guest puts output budget exceeded");
         }
         const auto scratch = invoke("_malloc", {16, 0, 0}, guest_thread_id).value;
-        if (!scratch || !memory_.write(scratch, '\\n', 1)) {
+        if (!scratch || !memory_.write(scratch, '\n', 1)) {
             throw std::runtime_error("guest puts newline allocation failed");
         }
         const auto first = calls_.dispatch(0x80, 4, {1, args[0], length}, memory_);
