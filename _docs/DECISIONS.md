@@ -28,3 +28,9 @@ Accepted 2026-10-08. Select ARM64 from a bounded universal wrapper and parse eac
 ## ADR-007 — Untrusted input resource ceilings
 
 Accepted 2026-10-08. Cap arch count at 4096, load command count at 16384, chained imports at 100000, per-name length at 16384 bytes, aggregate imported name data at 8 MiB and exported trie nodes at 65536. Limits are defensive policy and are not file-format specifications.
+
+## ADR-008 — 16 KiB iOS arm64 guest pages, 4 KiB private backing granules
+
+Accepted 2026-10-08. Apple documents that 64-bit iOS userspace exposes 16 KiB virtual-memory pages. AnyiOS therefore treats **16,384 bytes as the guest ARM64 process page size**. `GuestMemory::map_ios` enforces 16 KiB address/size alignment, while its existing private 4 KiB backing granules remain an implementation detail for legacy synthetic fixtures and host-independent bounds testing. A real linked-image load must use `map_ios` and must never grant different permissions to adjacent 4 KiB backing granules inside one iOS guest page. This explicit dual-granularity migration prevents silently treating a host Windows 4 KiB page as an iOS page. The synthetic parser/unit fixture path remains allowed to use 4 KiB backing pages temporarily; it is **not a conforming iOS process mapping**.
+
+References: https://developer.apple.com/library/archive/documentation/Performance/Conceptual/ManagingMemory/Articles/AboutMemory.html and https://developer.apple.com/documentation/xcode/writing-arm64-code-for-apple-platforms.

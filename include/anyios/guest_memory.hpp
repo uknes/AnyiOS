@@ -21,10 +21,12 @@ constexpr unsigned bits(Access access) {
 class GuestMemory {
 public:
     static constexpr std::size_t page_size = 4096;
+    static constexpr std::size_t ios_page_size = 16 * 1024;
 
     GuestMemory(std::uint64_t base, std::size_t size);
 
     bool map(std::uint64_t address, std::size_t size, unsigned permissions);
+    bool map_ios(std::uint64_t address, std::size_t size, unsigned permissions);
     bool load(std::uint64_t address, std::span<const std::byte> source);
     std::optional<std::uint64_t> read(std::uint64_t address, unsigned width) const;
     std::optional<std::uint32_t> fetch(std::uint64_t address) const;

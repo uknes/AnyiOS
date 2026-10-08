@@ -41,6 +41,12 @@ bool GuestMemory::map(std::uint64_t address, std::size_t size, unsigned permissi
     return true;
 }
 
+bool GuestMemory::map_ios(std::uint64_t address, std::size_t size, unsigned permissions) {
+    if (size == 0 || address % ios_page_size != 0 ||
+        size % ios_page_size != 0) return false;
+    return map(address, size, permissions);
+}
+
 bool GuestMemory::allowed(std::uint64_t address, std::size_t size, Access access) const {
     if (size == 0) return false;
     const auto begin = offset_of(address, size);
