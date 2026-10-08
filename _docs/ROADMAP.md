@@ -23,9 +23,9 @@
 ## Scoped process and TLS milestones
 
 - [x] Execute owned SDK-free C `_malloc` → `_write` → `_exit` through Dynarmic Windows x64, verified run 37763147842
-- [ ] Execute original linked hello C process under Dynarmic with LC_MAIN, 16-byte-aligned argv/envp/apple stack and a real constructor, exact stdout `hello\\n`, exit 23 (CI under review)
-- [ ] Verify modern `__init_offsets` and legacy `__mod_init_func` initializer CTests on all desktop platforms (CI under review)
-- [ ] Verify Dynarmic and native MRS/MSR refusal tests; TLS remains unimplemented (CI under review)
+- [x] Execute owned linked hello C process under Dynarmic with LC_MAIN, argv/envp/apple, constructor, exact stdout `hello\\n` and exit 23 (run 37766283476)
+- [x] Verify modern `__init_offsets` and legacy `__mod_init_func` initializer CTests on Linux GCC/Clang, macOS Clang and Windows MSVC (run 37766283476)
+- [x] Verify Dynarmic and native MRS/MSR refusal tests on Windows x64/ARM64 and Linux ARM64; **TLS itself is not implemented** (run 37766283476)
 - [ ] Implement real Darwin TPIDRRO_EL0, _tlv_get_addr and guest __thread_vars tests
 - [ ] Windows ARM64 ABI hardware x18/callee-saved register test in separate isolated process
 

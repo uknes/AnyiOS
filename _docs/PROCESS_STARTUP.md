@@ -1,6 +1,6 @@
 # Owned iOS hello-world process experiment
 
-Status: **CI pending** as of 2026-10-08.
+Status: **verified original owned Windows x86-64 Dynarmic process** on 2026-10-08. Full run: https://github.com/uknes/AnyiOS/actions/runs/37766283476.
 
 ## Input
 
@@ -27,4 +27,4 @@ It validates readable descriptors, alignment/count limits and executable targets
 - Windows x64 Dynarmic runs complete guest constructor/main/write/exit, validates stdout and exit code from the guest.
 - Only after green full job mark this a successfully executed owned process (not an arbitrary iOS app launch).
 
-CI: https://github.com/uknes/AnyiOS/actions/runs/37766283476.
+Evidence: Windows x64 `Boot owned iOS hello-world process with initializer and argv/envp/apple` step returned success, with log `Executed owned iOS LC_MAIN process with initializer and startup vectors: hello / exit 23`. This is scoped to one project-owned C fixture, not arbitrary IPA or UIKit process support. CI: https://github.com/uknes/AnyiOS/actions/runs/37766283476.

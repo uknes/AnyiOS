@@ -1,6 +1,6 @@
 # Darwin ARM64 thread-local storage plan
 
-Status: **TLS not implemented**. Documented and unimplemented-register negative tests added 2026-10-08. A green CI result is required before the newly added tests are marked verified.
+Status: **TLS remains unimplemented**. MRS/MSR refusal negative tests were verified on 2026-10-08 by Windows x64 Dynarmic, Windows/Linux ARM64 native jobs, and portable SVC scan CTests: https://github.com/uknes/AnyiOS/actions/runs/37766283476.
 
 ## Architecture: two host backends, one guest TLS model
 
