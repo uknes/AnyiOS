@@ -22,13 +22,13 @@ void run() {
     require(!memory.map(0x10000, 4096, rx));
     require(!memory.map(0x1f000, 8192, rw));
     require(!memory.map(0x30000, 4096, rx | anyios::cpu::bits(Access::write)));
-    require(!memory.map_ios(0x30000, 4096, rx));
-    require(!memory.map_ios(0x31000, 16384, rx));
-    require(!memory.map_ios(0x30000, 16384, rx | anyios::cpu::bits(Access::write)));
-    require(memory.map_ios(0x30000, 16384, rx));
-    require(memory.allowed(0x33ffc, 4, Access::execute));
-    require(!memory.write(0x30000, 0, 4));
-    require(!memory.map_ios(0x30000, 16384, rx));
+    require(!memory.map_ios(0x28000, 4096, rx));
+    require(!memory.map_ios(0x29000, 16384, rx));
+    require(!memory.map_ios(0x28000, 16384, rx | anyios::cpu::bits(Access::write)));
+    require(memory.map_ios(0x28000, 16384, rx));
+    require(memory.allowed(0x2bffc, 4, Access::execute));
+    require(!memory.write(0x28000, 0, 4));
+    require(!memory.map_ios(0x28000, 16384, rx));
 
     require(!memory.map(0x20001, 4096, rw));
     require(!memory.map(UINT64_MAX - 4095, 4096, rw));
