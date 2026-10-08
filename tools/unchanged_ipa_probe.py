@@ -43,7 +43,10 @@ def sha256(data):
 
 def encryption_info(data):
     """Strictly extract cryptid from ARM64 Mach-O slice; no decryption."""
-    blob = macho_gap.arm64_slice(data)
+    try:
+        blob = macho_gap.arm64_slice(data)
+    except macho_gap.InvalidMachO as error:
+        raise IntakeError(str(error)) from error
     if len(blob) < 32:
         raise IntakeError("truncated ARM64 header")
     magic, cpu, sub, typ, count, size, flags, reserved = struct.unpack_from("<8I", blob, 0)
