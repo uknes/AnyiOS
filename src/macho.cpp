@@ -233,6 +233,7 @@ Image inspect_thin(std::span<const std::byte> bytes) {
     }
     if (chained) {
         image.has_chained_fixups = true;
+        image.chained_fixups_range = chained;
         image.chained_imports = parse_chained_imports(bytes, chained->file_offset, chained->file_size);
     }
     if (exports) {

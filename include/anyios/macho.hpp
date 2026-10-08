@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <span>
 #include <stdexcept>
 #include <string>
@@ -74,6 +75,7 @@ struct Image {
     std::vector<std::string> chained_imports;
     std::vector<std::string> exported_symbols;
     bool has_chained_fixups = false;
+    std::optional<LinkeditRange> chained_fixups_range;
     bool has_export_trie = false;
     std::vector<Version> versions;
     std::uint64_t entry_offset = 0;
