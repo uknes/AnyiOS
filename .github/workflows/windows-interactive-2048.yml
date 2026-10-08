@@ -86,7 +86,11 @@ jobs:
           $exe = (Resolve-Path "build-win-gui/Release/anyios-win-2048.exe").Path
           $guest = (Resolve-Path "gui-output/guest/AnyiOS2048Guest").Path
           $preview = Join-Path (Get-Location) "anyios-ui-preview.bmp"
-          $process = Start-Process -FilePath $exe -ArgumentList @("--self-test", """$guest""", """$preview""") -PassThru -Wait
+          $process = Start-Process -FilePath $exe -ArgumentList @("--self-test", """$guest""", """$preview""") -PassThru
+          if (-not $process.WaitForExit(90000)) {
+            $process.Kill()
+            throw "Windows x64 ARM64 guest/interactive GUI self test timed out"
+          }
           if ($process.ExitCode -ne 0) { throw "Win32 interaction/GDI/ARM64 guest self test exited $($process.ExitCode)" }
           if (-not (Test-Path $preview) -or (Get-Item $preview).Length -lt 100000) {
             throw "Win32 offscreen screenshot not produced"
@@ -126,5 +130,70 @@ jobs:
             gui-output/AnyiOS-interactive-Windows.zip
             gui-output/windows/anyios-ui-preview.png
             gui-output/windows/guest-receipt.json
+          if-no-files-found: error
+          retention-days: 7
+
+
+  windows-arm64-interactive-gui:
+    needs: windows-interactive-gui
+    runs-on: windows-11-vs2026-arm
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: anyios-interactive-windows-gui
+          path: arm64-input
+      - name: Build native ARM64 Windows bootstrap without Dynarmic x64 JIT
+        shell: pwsh
+        run: |
+          cmake -S . -B build-arm64-gui -A ARM64 -DBUILD_TESTING=OFF
+          if ($LASTEXITCODE -ne 0) { throw "Windows ARM64 launcher configure failed" }
+          cmake --build build-arm64-gui --config Release --target anyios-arm64-launcher --parallel 2
+          if ($LASTEXITCODE -ne 0) { throw "Windows native ARM64 launcher build failed" }
+      - name: Test x64 guest execution and GDI window on real Windows ARM64 runner
+        shell: pwsh
+        run: |
+          if ($env:PROCESSOR_ARCHITECTURE -ne "ARM64") {
+            throw "This must execute on a native Windows ARM64 host"
+          }
+          Expand-Archive -Path arm64-input/AnyiOS-interactive-Windows.zip -DestinationPath arm64-package -Force
+          Copy-Item build-arm64-gui/Release/anyios-arm64-launcher.exe arm64-package/
+          $launcher = (Resolve-Path "arm64-package/anyios-arm64-launcher.exe").Path
+          $guest = (Resolve-Path "arm64-package/AnyiOS2048Guest").Path
+          $preview = Join-Path (Get-Location) "arm64-gui-guest-preview.bmp"
+          $proc = Start-Process -FilePath $launcher -ArgumentList @("--self-test", """$guest""", """$preview""") -PassThru
+          if (-not $proc.WaitForExit(90000)) {
+            $proc.Kill()
+            throw "Windows ARM64 launcher/x64 Dynarmic emulation hung"
+          }
+          if ($proc.ExitCode -ne 0) {
+            throw "Windows ARM64 x64-emulation ARM64-iOS-guest integration returned $($proc.ExitCode)"
+          }
+          if (-not (Test-Path $preview) -or (Get-Item $preview).Length -lt 100000) {
+            throw "No offscreen rendering on Windows ARM64 emulator host"
+          }
+          Write-Output "PASS: native Windows ARM64 launcher + x64-emulated JIT + real iOS ARM64 owned guest + GDI keyboard/click/swipe"
+          Write-Output "Native ARM64 execution of arbitrary iOS apps remains NOT implemented"
+      - name: Package Windows ARM64 launcher and x64-emulated guest runtime
+        shell: pwsh
+        run: |
+          @'
+          AnyiOS Windows ARM64 (Windows 11)
+          =================================
+          Double-click anyios-arm64-launcher.exe.
+          Native ARM64 launcher starts the bundled x64 Dynarmic GUI under
+          Windows 11 ARM64 x64 emulation. The iOS ARM64 guest instructions
+          are translated by Dynarmic inside that x64-emulated process.
+          This is Windows ARM64 compatible, NOT a native ARM64 iOS runtime.
+          User interaction and actual guest input were tested on ARM64 CI.
+          This 2048 game remains the ANYIOS-OWNED compatibility fixture,
+          NOT the original danqing/2048 or Procreate iOS app.
+          '@ | Set-Content arm64-package/ARM64-README.txt
+          Compress-Archive -Path arm64-package/* -DestinationPath AnyiOS-Windows-ARM64-2048.zip -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: anyios-interactive-windows-arm64
+          path: AnyiOS-Windows-ARM64-2048.zip
           if-no-files-found: error
           retention-days: 7
