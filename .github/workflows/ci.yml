@@ -122,6 +122,11 @@ jobs:
         run: |
           & ./build-jit/Release/anyios-a64-smoke.exe --hello sdkfree-images/HelloProcess
           if ($LASTEXITCODE -ne 0) { throw 'Owned iOS LC_MAIN hello process failed on Windows x64' }
+      - name: Execute owned Clang iOS TLV process in two guest threads
+        shell: pwsh
+        run: |
+          & ./build-jit/Release/anyios-a64-smoke.exe --tlv sdkfree-images/TlvProcess
+          if ($LASTEXITCODE -ne 0) { throw 'Owned Darwin TLV fixture failed on Windows x64' }
       - name: Execute genuine iPhoneOS cross-dylib call through Dynarmic
         shell: pwsh
         run: |

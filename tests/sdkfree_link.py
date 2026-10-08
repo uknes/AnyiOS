@@ -44,7 +44,7 @@ def main():
             "current-version: 1.0\n"
             "exports:\n"
             "  - targets: [ arm64-ios ]\n"
-            "    symbols: [ '_malloc', '_write', '_exit' ]\n"
+            "    symbols: [ '_malloc', '_write', '_exit', '__tlv_bootstrap' ]\n"
             "...\n", encoding="utf-8"
         )
         clang_flags = [
@@ -92,6 +92,16 @@ def main():
             "-execute", str(hello_obj), "-e", "_main", "-L", str(work),
             "-lSystem", "-o", str(hello_app)
         ])
+        tlv_obj = work / "TlvProcess.o"
+        tlv_app = work / "TlvProcess"
+        run(clang_flags + ["-O1", str(fixtures / "arm64_tlv_process.c"), "-o", str(tlv_obj)])
+        run(link + ["-execute", str(tlv_obj), "-e", "_main",
+                    "-L", str(work), "-lSystem", "-o", str(tlv_app)])
+        tlv_info = run([str(inspector), str(tlv_app)])
+        for expected in ("Import: __tlv_bootstrap", "Section: __DATA/__thread_vars",
+                         "Section: __DATA/__thread_data"):
+            if expected not in tlv_info:
+                raise AssertionError("Clang TLV fixture missing " + expected + ":\\n" + tlv_info)
         hello_info = run([str(inspector), str(hello_app)])
         for symbol in ("_malloc", "_write", "_exit"):
             if f"Import: {symbol}" not in hello_info:
@@ -128,6 +138,7 @@ def main():
             shutil.copyfile(app, output / "RuntimeApp")
             shutil.copyfile(libsystem_app, output / "LibSystemApp")
             shutil.copyfile(hello_app, output / "HelloProcess")
+            shutil.copyfile(tlv_app, output / "TlvProcess")
             shutil.copyfile(dylib, output / "libRuntimeWidget.dylib")
         print("SDK-free LLVM linked project-owned iPhoneOS executable and dylib")
         print("Metadata-only libSystem stub does not provide executable OS services")
