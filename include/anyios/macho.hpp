@@ -52,6 +52,13 @@ struct Symbol {
     std::uint8_t section_index;
 };
 
+struct Dependency {
+    std::string install_name;
+    bool weak = false;
+    bool reexport = false;
+    bool upward = false;
+};
+
 struct Image {
     std::uint32_t cpu_subtype = 0;
     std::uint32_t file_type = 0;
@@ -61,6 +68,8 @@ struct Image {
     std::vector<Symbol> symbols;
     std::uint32_t indirect_symbol_count = 0;
     std::vector<std::string> libraries;
+    std::vector<Dependency> dependencies;
+    std::string install_name;
     std::vector<std::string> rpaths;
     std::vector<std::string> chained_imports;
     std::vector<std::string> exported_symbols;

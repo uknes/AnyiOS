@@ -14,6 +14,7 @@ constexpr std::uint32_t magic_64 = 0xfeedfacf;
 constexpr std::uint32_t cpu_arm64 = 0x0100000c;
 constexpr std::uint32_t lc_segment_64 = 0x19;
 constexpr std::uint32_t lc_load_dylib = 0x0c;
+constexpr std::uint32_t lc_id_dylib = 0x0d;
 constexpr std::uint32_t lc_load_weak_dylib = 0x80000018;
 constexpr std::uint32_t lc_reexport_dylib = 0x8000001f;
 constexpr std::uint32_t lc_load_upward_dylib = 0x80000023;
@@ -166,10 +167,21 @@ Image inspect_thin(std::span<const std::byte> bytes) {
             indirect = std::pair<std::uint32_t, std::uint32_t>{
                 reader.u32(cursor + 56, "indirect symbol offset"),
                 reader.u32(cursor + 60, "indirect symbol count")};
-        } else if (is_library_command(command)) {
+        } else if (is_library_command(command) || command == lc_id_dylib) {
             if (size < 24) throw FormatError("truncated dylib command");
-            image.libraries.push_back(reader.command_string(cursor, size,
-                reader.u32(cursor + 8, "dylib name offset"), 24, "dylib name"));
+            const auto name = reader.command_string(cursor, size,
+                reader.u32(cursor + 8, "dylib name offset"), 24, "dylib name");
+            if (name.empty()) throw FormatError("empty dylib install name");
+            if (command == lc_id_dylib) {
+                if (!image.install_name.empty()) throw FormatError("duplicate LC_ID_DYLIB");
+                image.install_name = name;
+            } else {
+                image.libraries.push_back(name);
+                image.dependencies.push_back({name,
+                    command == lc_load_weak_dylib,
+                    command == lc_reexport_dylib,
+                    command == lc_load_upward_dylib});
+            }
         } else if (command == lc_rpath) {
             if (size < 12) throw FormatError("truncated LC_RPATH");
             image.rpaths.push_back(reader.command_string(cursor, size,

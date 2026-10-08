@@ -1,42 +1,39 @@
-# Project state
+# Project state — Windows x86-64 target
 
-Updated: 2026-10-08. Source history and GitHub Actions are the primary evidence for implemented behavior.
+Updated: 2026-10-08. Source and CI are authoritative. An accepted binary is not necessarily a runnable iOS application.
 
-## Verified implementation
+## Fully verified before this update
 
-- M0: portable C++20 Mach-O inspector and diagnostics; thin ARM64, command/segment/dependency/version metadata, encryption indicator.
-- M1 partial: big-endian and byte-swapped FAT/FAT64 universal container selection of ARM64 slices, with bounds, alignment, overlap and subtype checks.
-- M1 partial: inspect LC_DYLD_CHAINED_FIXUPS import descriptors and symbol names, plus LC_DYLD_EXPORTS_TRIE symbol names. This does not perform relocation or fixup application.
-- M1 partial: inspect section_64 metadata, relocation ranges, LC_SYMTAB names/types/values and LC_DYSYMTAB indirect symbol table bounds. Indirect symbols are not yet resolved.
-- M1 tests: synthetic valid and corrupted fixtures, standalone regression tests, deterministic mutations, and compiler-produced real ARM64 iOS *object file* inspection with independent LLVM comparison where available.
-- CI for foundational M1: Linux GCC, Linux Clang, Windows MSVC, macOS Clang, and libFuzzer passed on commit 7749776f1cd06ac73013c0aff0dd85e21bc8ca33.
-- New section/symbol parser commit: 671383b82ddf5ab144a87b3c82c4e445f9a817cc; verify CI run https://github.com/uknes/AnyiOS/actions/runs/37708487977 before claiming all jobs passed.
-- Verified run: https://github.com/uknes/AnyiOS/actions/runs/37708104543
-- Standalone local 10,000-run fuzzing and sanitizer checks also passed. Fuzzing is bounded test evidence, not proof of memory safety.
+- Portable ARM64 Mach-O inspector, universal slices, sections, symbol tables and metadata diagnostics.
+- Bounded guest memory with read/write/execute protections, negative fixtures and sanitizer fuzzing.
+- Windows x86-64 translation of project-owned, independently compiled ARM64 iOS Mach-O MH_OBJECT function through Dynarmic; return value 42.
+- Restricted synthetic MH_EXECUTE mapping and Windows ARM64 execution smoke using page-protected guest memory.
+- CI evidence for the compiled object: https://github.com/uknes/AnyiOS/actions/runs/37710397827
+- CI evidence for hardened static loader: https://github.com/uknes/AnyiOS/actions/runs/37713669019
 
-## Experimental Windows x86-64 execution track
+## Newly implemented, awaiting full CI verification
 
-- Portable GuestMemory module now enforces per-page permissions and rejects W+X, mapping overlaps and out-of-bounds accesses.
-- Optional Dynarmic (0BSD) ARM64 -> Windows x86-64 translation test exists with pinned external dependency.
-- The initial Windows build compiled Dynarmic and the smoke executable; it ran the fixed instructions and reached the expected x0=42 and guest PC. A separate guard-page assertion was initially wrong and has been corrected. **The corrected GitHub Actions run must pass before marking the JIT milestone complete.**
-- No Mach-O guest code loading or Darwin runtime execution is implemented yet. Refer to _docs/WINDOWS_X64.md.
+- Darwin SVC #0x80 guest trap boundary: limited write(4) to captured stdout/stderr, exit(1) signaling, guest address validation, unsupported-call diagnostics.
+- Compiler-produced iOS ARM64 Mach-O assembly fixture exercises guest SVC on a real Windows x64 Dynarmic runner.
+- Dependency manifest planner with owned/bundle-relative module registry, @loader_path, @executable_path and @rpath resolution, strong/weak dependency diagnostics and cycle checks.
+- Mach-O LC_ID_DYLIB and typed library dependency metadata (weak, reexport, upward).
+- CI run for syscall bridge commit: https://github.com/uknes/AnyiOS/actions/runs/37714205260
+- The latest dependency-planner commit's CI must pass before those features are recorded as verified.
 
-## Honest limitations
+## Missing before an actual iOS .app can run
 
-- No Mach-O guest code execution, dyld link resolution, or fixup application. The only CPU execution test uses fixed project-owned ARM64 instruction bytes.
-- No Darwin ABI, Mach IPC, libSystem, Objective-C/Swift runtime, Foundation/UIKit or graphics support.
-- No iOS app installation, commercial game compatibility, decryption or signing bypass.
-- An ARM64 Mach-O object from Clang is not an MH_EXECUTE iOS application. The independent object fixture validates parser behavior, not app compatibility.
-- Chained import/export name extraction is partial metadata interpretation. Modern fixup pointer formats, reexports and full validation remain unfinished.
+- Real linked ARM64 MH_EXECUTE / MH_DYLIB loading, ASLR, dyld chained fixup application, imports, inter-module relocations and module initialization.
+- Guest Darwin libSystem API surface, process/thread emulation, complete syscall semantics, Mach ports and IPC.
+- Objective-C and Swift runtime ABI support, Foundation/CoreFoundation, UIKit/CoreAnimation, graphics/audio/input and app lifecycle.
+- IPA/app bundle installation, Info.plist processing, dynamic system framework substitution and compatibility matrix.
+- Reliable arm64e PAC and Metal handling; neither is implemented.
 
-## Immediate next work
+## Next execution milestone
 
-1. Finish LC_DYSYMTAB indirect symbol index resolution and validate other dynamic symbol ranges.
-2. Verify chained fixup pointer-format semantics and export-terminal encoding without assuming every iOS version is identical.
-3. Introduce a dedicated bundle metadata reader only after choosing a small, validated plist implementation.
-4. Build reproducible *owned* MH_EXECUTE/MH_DYLIB test fixtures using a capable toolchain; do not simulate execution success.
-5. Review _docs/M2_FEASIBILITY.md before implementing memory mappings.
+1. Stabilize both the Windows syscall CI and cross-platform dyld planner CI.
+2. Build and link a project-owned no-framework MH_EXECUTE and MH_DYLIB fixture, not a hand-synthesized executable.
+3. Implement strict dyld fixup and symbol resolution for one owned guest module, with negative tests.
+4. Demonstrate owned guest code calling a validated libSystem-like shim through a loaded Mach-O import.
+5. Only then pursue Objective-C runtime bootstrap and a minimal unprotected own-app window.
 
-## Source-of-truth rule
-
-Update this ledger only for tested code or grounded research. Notion tracks tasks but never overrides CI evidence or the actual repository revision.
+Every claim must cite a test run and commit; no retail iOS application currently runs.

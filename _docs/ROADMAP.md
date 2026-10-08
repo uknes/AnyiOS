@@ -1,44 +1,35 @@
-# Milestones and acceptance
+# Roadmap — evidence-based acceptance
 
-## M0 — Portable passive Mach-O inspector
+## M0/M1 — Binary format and security foundations
 
-- [x] Thin little-endian ARM64 Mach-O metadata
-- [x] Load commands, segments, dependencies, rpaths, entry, versions, encrypted-code flags
-- [x] Negative regression fixtures and deterministic mutation tests
-- [x] Cross-platform CI and local Clang sanitizer checks
+- [x] Thin ARM64 Mach-O, FAT/FAT64, sections, imports, versions, dylib metadata
+- [x] Synthetic negative fixtures, compiler-generated MH_OBJECT comparisons and libFuzzer
+- [x] Mach-O `LC_ID_DYLIB` and typed weak/reexport/upward dependency metadata (implementation committed; CI verification pending)
+- [ ] Full chained-fixup pointer formats, rebases, bindings, export terminal validation
+- [ ] App bundle Info.plist, executable path and resource manifests
 
-## M1 — Expanded static image analysis (in progress)
+## M2 — Windows x64 translation and restricted execution
 
-- [x] Safely locate ARM64 in FAT/FAT64 and swapped-endian universal containers
-- [x] Inspect chained dyld import-name metadata and exported-symbol trie names
-- [x] Test with Clang-built owned iOS ARM64 object files; independent LLVM verification when present
-- [x] LLVM libFuzzer with ASan/UBSan, original synthetic corpus and CI run
-- [x] Explicit count, symbol length, path traversal and aggregate allocation limits
-- [x] Inspect section_64 and static LC_SYMTAB names/types/values with negative fixtures
-- [x] Validate LC_DYSYMTAB indirect-symbol table presence and bounds
-- [ ] Resolve indirect symbol indexes and validate other dynamic symbol ranges
-- [ ] Validate full chained pointer formats, export terminal variants and import ordinals
-- [ ] Inspect original app bundle metadata and Info.plist
-- [ ] Obtain reproducible independently linked owned MH_EXECUTE and MH_DYLIB fixtures
+- [x] Dynarmic JIT executes a compiler-generated iOS ARM64 Mach-O function on Windows x64
+- [x] Bounded guest address space and W^X runtime writes
+- [x] Synthetic MH_EXECUTE mapping and guarded code execution
+- [ ] Verify Darwin SVC guest write/exit bridge on Windows x64 in GitHub CI
+- [ ] Verify deterministic bundle dependency planner on all supported platforms
+- [ ] Link owned MH_EXECUTE/MH_DYLIB fixtures independently and execute via a real loader
+- [ ] Import resolution, chained fixups and relocation rollback with owned dependencies
+- [ ] Darwin x16 syscall ABI, guest stack/thread state and first libSystem subset
 
-## M2 — Windows x86-64 guest execution (in progress)
+## M3 — iOS runtime / Framework HLE
 
-- [x] Specify Windows x64 translation architecture and strict guest memory boundaries
-- [x] Implement tested bounded guest page-memory operations and W^X policy
-- [ ] Verify opt-in Dynarmic ARM64 smoke via a successful Windows x86-64 GitHub Actions run
-- [ ] Document ARM64 host/guest calling conventions, Darwin syscalls and Mach facilities
-- [ ] Define page-mapping and relocation contracts with executable security isolation
-- [ ] Prove an owned hello-world MH_EXECUTE can be correctly loaded and called
-- [ ] Introduce precise unsupported-API diagnostics
+- [ ] Mach ports and event-loop contracts, thread-local state and dispatch
+- [ ] Objective-C runtime and Foundation/CoreFoundation contract tests
+- [ ] Basic UIKit/CoreAnimation window and input
+- [ ] Graphics backend selection and verified feature requirements
 
-## M3 — Runtime contracts (not started)
+## M4 — Own real app compatibility
 
-- [ ] Test libSystem/Darwin APIs against owned samples
-- [ ] Evaluate ObjC/Swift ABI requirements and license compatibility
+- [ ] Launch an unprotected, redistributable developer-owned `.app` on Windows x86-64
+- [ ] App lifecycle, window events, input and at least one rendered frame
+- [ ] Per-app compatibility matrix and explicit unsupported API reports
 
-## M4 — App lifecycle (not started)
-
-- [ ] Owned iOS sample window/input/bootstrap with reproducible evidence
-- [ ] Versioned support matrix and negative API tests
-
-Not promised: retail decrypted content, Apple services, ARM64e/PAC support, Metal translation or arbitrary commercial applications. Experimental ARM64-to-x86 CPU translation is separate from iOS app execution.
+Commercial games, protected App Store IPAs, arm64e and modern Metal support are **not promised**. Do not label a JIT or Mach-O parser test an app launch.

@@ -2,7 +2,7 @@
 
 Research into a clean-room compatibility layer for legally accessible, unprotected ARM64 iOS application binaries on non-Apple operating systems.
 
-**Current status: static Mach-O inspection and an experimental, opt-in ARM64-on-x86-64 CPU smoke test.** AnyiOS cannot launch iOS applications. It does not implement Darwin system APIs, Apple frameworks, decryption, signing or a complete iOS runtime.
+**Current status:** AnyiOS can inspect ARM64 Mach-O metadata and execute a project-owned compiled ARM64 Mach-O function on Windows x86-64 through Dynarmic. A restricted synthetic executable loader, experimental Darwin syscall bridge, and limited dyld dependency planner exist. **It cannot currently launch a complete iOS `.app`.**
 
 ## Build and test
 
@@ -41,7 +41,7 @@ The optional Dynarmic backend is pinned to revision a46601580d5512d324104f985b5f
     cmake --build build-jit --config Release --target anyios-a64-smoke
     ctest --test-dir build-jit --build-config Release -R arm64-on-x64 --output-on-failure
 
-The test executes original embedded ARM64 MOVZ/RET machine-code instructions and checks that x0=42 and execution returns to the expected guest PC. It does **not** execute a Mach-O file or an iOS application. CPU backend source is fetched during configuration; no third-party source is copied into the repository.
+The tests execute embedded instructions and compiler-generated ARM64 Mach-O MH_OBJECT functions; an additional SVC fixture exercises a bounded Darwin write bridge. A synthetic no-import MH_EXECUTE is mapped into guest memory, but **real linked iOS apps and frameworks do not execute**. Dynarmic is fetched externally, not copied into the repo.
 
 ## Project documentation
 
@@ -50,6 +50,7 @@ The test executes original embedded ARM64 MOVZ/RET machine-code instructions and
 - [_docs/ARCHITECTURE.md](_docs/ARCHITECTURE.md) — implementation boundaries
 - [_docs/M2_FEASIBILITY.md](_docs/M2_FEASIBILITY.md) — evidence-based execution feasibility
 - [_docs/ROADMAP.md](_docs/ROADMAP.md) — acceptance-based phases
+- [_docs/DARWIN_RUNTIME.md](_docs/DARWIN_RUNTIME.md) — syscall boundary and dyld dependency architecture
 - [_docs/DECISIONS.md](_docs/DECISIONS.md) — architectural decisions
 - [_docs/RESEARCH.md](_docs/RESEARCH.md) — research, prior art and sources
 - [_docs/TESTING.md](_docs/TESTING.md) — test method and requirements
@@ -59,4 +60,4 @@ The test executes original embedded ARM64 MOVZ/RET machine-code instructions and
 
 Only project-owned or explicitly redistributable unprotected binaries should be used. No firmware, cryptographic keys, protected retail apps, DRM-bypass tooling, or proprietary Apple binaries are provided. Source is licensed under MIT. We studied [AnyPS5](https://github.com/boykopovar/AnyPS5) for engineering patterns without copying its GPL-licensed code.
 
-Verified M1 GitHub CI (GCC, Clang, MSVC, macOS, and sanitizer-enabled fuzzing): https://github.com/uknes/AnyiOS/actions/runs/37708104543
+Verified Windows CPU/JIT execution and ordinary CI: https://github.com/uknes/AnyiOS/actions/runs/37710397827. New runtime and dyld tests require separate successful CI before being marked verified.

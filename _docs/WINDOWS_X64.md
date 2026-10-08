@@ -1,6 +1,6 @@
 # Windows x86-64 execution roadmap
 
-Status: CPU translation experiment; no iOS application execution yet.
+Status: Windows x64 executes project-owned ARM64 Mach-O object code and a restricted synthetic executable. Real linked iOS apps cannot run yet.
 Research updated: 2026-10-08.
 
 ## Objective
@@ -12,8 +12,8 @@ Execute original and legally obtained ARM64 iOS code on Windows x86-64 through g
 1. Binary analysis: the existing Mach-O inspector checks headers, universal ARM64 slices, segments, symbols and dyld metadata.
 2. Guest memory: fixed-size, permission-checked guest virtual memory. Reject W+X pages, unaligned mappings, overlaps, cross-page access violations and arithmetic overflow.
 3. Optional A64 JIT: Dynarmic translates ARM64 guest instructions into host x86-64 for Windows. A separately built test runs owned MOVZ x0,#42; RET machine code.
-4. Planned loader: map Mach-O segments, assign guest address-space layout, apply dyld fixups, initialize stack and execute a compiled owned Mach-O function.
-5. Planned runtime: isolate Darwin guest syscalls and Mach IPC from Windows host APIs; make unsupported services fail explicitly.
+4. Loader: page-protected synthetic no-import MH_EXECUTE mapping with entry validation is implemented; realistic linked image layouts, dyld fixups and import resolution remain unsupported.
+5. Experimental runtime boundary: a bounded Darwin guest SVC #0x80 bridge provides captured write/exit behavior for owned tests; Mach IPC and full libSystem are unimplemented.
 6. Planned frameworks: libSystem, CoreFoundation/Foundation, ObjC/Swift metadata and messaging, UIKit, audio/graphics/input. No framework works yet.
 
 Guest addresses must never be dereferenced as native host pointers. Native shims validate/copy byte ranges and explicitly account for guest virtual memory and thread state.
