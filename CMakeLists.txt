@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(anyios_macho STATIC src/macho.cpp src/universal.cpp src/linkedit.cpp src/symbols.cpp src/fixup_plan.cpp src/import_resolver.cpp src/legacy_rebase.cpp)
+add_library(anyios_macho STATIC src/macho.cpp src/universal.cpp src/linkedit.cpp src/symbols.cpp src/fixup_plan.cpp src/import_resolver.cpp src/legacy_rebase.cpp src/legacy_bind.cpp)
 target_include_directories(anyios_macho PUBLIC include)
 target_compile_features(anyios_macho PUBLIC cxx_std_20)
 if(MSVC)
@@ -67,6 +67,9 @@ target_link_libraries(anyios_objc_identity PUBLIC anyios_macho anyios_guest_memo
 
 include(CTest)
 if(BUILD_TESTING)
+    add_executable(anyios-legacy-bind-tests tests/legacy_bind_tests.cpp)
+    target_link_libraries(anyios-legacy-bind-tests PRIVATE anyios_macho)
+    add_test(NAME macho-legacy-bind-opcodes COMMAND anyios-legacy-bind-tests)
     add_executable(anyios-legacy-rebase-tests tests/legacy_rebase_tests.cpp)
     target_link_libraries(anyios-legacy-rebase-tests PRIVATE anyios_macho)
     add_test(NAME macho-legacy-rebase-opcodes COMMAND anyios-legacy-rebase-tests)
