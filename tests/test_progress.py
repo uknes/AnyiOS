@@ -37,6 +37,24 @@ class ProgressTests(unittest.TestCase):
         self.assertIn("Objective-C", first["progress.svg"])
         self.assertEqual(json.loads(first["progress.json"])["schema"], 2)
 
+    def test_discovery_catalog_is_separate_from_implementation_counts(self):
+        state, assets = progress.generate(progress.REPO)
+        catalog = state["technology_catalog"]
+        rows = [i for g in catalog["groups"] for i in g["items"]]
+        self.assertEqual(len(rows), 405)
+        self.assertTrue(all(i["status"] == "unassessed" for i in rows))
+        self.assertEqual(state["runtime"]["total"], 575)
+        self.assertEqual(state["runtime"]["done"], 6)
+        self.assertEqual(state["libraries"]["total"], 269)
+        self.assertIn("AppAttest", assets["progress.md"])
+        self.assertIn("applicability unassessed", assets["progress.svg"])
+        self.assertIn("Foundation Models", assets["apple-technologies.md"])
+        # The appended discovery panel must fit inside the SVG viewBox.
+        root = ElementTree.fromstring(assets["progress.svg"])
+        height = float(root.attrib["height"])
+        for rect in root.iter("{http://www.w3.org/2000/svg}rect"):
+            self.assertLessEqual(float(rect.attrib.get("y", 0)) + float(rect.attrib["height"]), height + 0.02)
+
     def test_status_transitions_and_regressions(self):
         state = progress.collect(progress.REPO)
         newer = copy.deepcopy(state)

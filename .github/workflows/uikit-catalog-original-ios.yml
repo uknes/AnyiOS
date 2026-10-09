@@ -115,9 +115,13 @@ jobs:
             Write-Output "RESULT=source-build-blocked"
             exit 0
           }
+          $apiInventory = Get-Content tools/api_inventory.json -Raw | ConvertFrom-Json
+          $gateInventory = Get-Content tools/compat_capabilities.json -Raw | ConvertFrom-Json
+          $expectedApis = @($apiInventory.groups | ForEach-Object { $_.symbols } | Sort-Object -Unique).Count
+          $expectedGates = @($gateInventory.groups | ForEach-Object { $_.items }).Count
           if ($report.target -ne "appium-uicatalog" -or
-              $report.api_inventory_total -ne 269 -or
-              $report.runtime_gate_inventory_total -ne 239) {
+              $report.api_inventory_total -ne $expectedApis -or
+              $report.runtime_gate_inventory_total -ne $expectedGates) {
             throw "Unverified source build provenance"
           }
           mkdir -Force original-catalog/recovered | Out-Null

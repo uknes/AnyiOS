@@ -5,7 +5,7 @@ The percentages below count only explicitly inventoried candidate API exports an
 | Metric | Verified | Partial | Pending or unverified | Tracked | Coverage |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | iOS API exports | 3 | 1 | 265 | 269 | 1.12% |
-| Compatibility gates | 6 | 11 | 222 | 239 | 2.51% |
+| Compatibility gates | 6 | 11 | 558 | 575 | 1.04% |
 
 ## Candidate API exports
 
@@ -376,6 +376,75 @@ The percentages below count only explicitly inventoried candidate API exports an
 
 ## Runtime/framework/Windows gates
 
+<details><summary><b>Advanced GPU and imaging</b> — 0 verified, 0 partial, 16 pending / 16 total</summary>
+
+- ⬜ `Argument buffers bindless resources and residency` — Pending / unverified
+- ⬜ `ColorSync ICC HDR EDR and wide-gamut output` — Pending / unverified
+- ⬜ `CoreImage filters kernels RAW and HDR processing` — Pending / unverified
+- ⬜ `IOSurface sharing and CoreVideo pixel buffers` — Pending / unverified
+- ⬜ `ImageIO HEIF AVIF GIF TIFF and orientation` — Pending / unverified
+- ⬜ `Metal 4 command and pipeline contracts` — Pending / unverified
+- ⬜ `Metal GPU-family versioned feature sets` — Pending / unverified
+- ⬜ `Metal Performance Shaders and MPSGraph` — Pending / unverified
+- ⬜ `Metal binary metallib and AIR intake` — Pending / unverified
+- ⬜ `Metal fences shared events and heap aliasing` — Pending / unverified
+- ⬜ `MetalFX temporal spatial upscaling` — Pending / unverified
+- ⬜ `ModelIO USD and texture mesh import` — Pending / unverified
+- ⬜ `Ray tracing acceleration structures` — Pending / unverified
+- ⬜ `Sparse textures compression and pixel formats` — Pending / unverified
+- ⬜ `Tessellation mesh shaders and indirect command buffers` — Pending / unverified
+- ⬜ `Tile shaders imageblocks and memoryless attachments` — Pending / unverified
+
+</details>
+
+<details><summary><b>Advanced media and capture</b> — 0 verified, 0 partial, 22 pending / 22 total</summary>
+
+- ⬜ `AVCapture camera formats autofocus and exposure` — Pending / unverified
+- ⬜ `AVFoundation composition export and seeking` — Pending / unverified
+- ⬜ `AVKit picture-in-picture and presentation` — Pending / unverified
+- ⬜ `AirPlay route discovery protected stream dependencies` — Pending / unverified
+- ⬜ `AudioToolbox queues converters and codecs` — Pending / unverified
+- ⬜ `AudioUnit v3 hosting presets and extensions` — Pending / unverified
+- ⬜ `Cinematic depth metadata and capture` — Pending / unverified
+- ⬜ `CoreMIDI MIDI protocols timestamps and endpoints` — Pending / unverified
+- ⬜ `CoreMedia sample buffers clocks and time ranges` — Pending / unverified
+- ⬜ `FairPlay encrypted media legitimate service dependency` — Pending / unverified
+- ⬜ `HLS adaptive playback subtitles and offline assets` — Pending / unverified
+- ⬜ `Live Photos paired media and resource access` — Pending / unverified
+- ⬜ `MediaPlayer remote commands and now-playing state` — Pending / unverified
+- ⬜ `Music Understanding on-device analysis` — Pending / unverified
+- ⬜ `MusicKit catalog authorization and protected playback` — Pending / unverified
+- ⬜ `Now Playing framework system presentation` — Pending / unverified
+- ⬜ `PHASE spatial audio and acoustic models` — Pending / unverified
+- ⬜ `PhotoKit limited-library authorization and edits` — Pending / unverified
+- ⬜ `ReplayKit recording broadcast extensions and consent` — Pending / unverified
+- ⬜ `ShazamKit recognition signature and service access` — Pending / unverified
+- ⬜ `SoundAnalysis classification and streaming` — Pending / unverified
+- ⬜ `VideoToolbox decode encode sessions and pixel formats` — Pending / unverified
+
+</details>
+
+<details><summary><b>AI language and model availability</b> — 0 verified, 0 partial, 16 pending / 16 total</summary>
+
+- ⬜ `Accelerate vDSP BLAS LAPACK and vImage ABI` — Pending / unverified
+- ⬜ `Apple model weights license device and availability restrictions` — Pending / unverified
+- ⬜ `CoreAI model loading specialization and memory contracts` — Pending / unverified
+- ⬜ `CoreML CPU GPU Neural Engine backend selection` — Pending / unverified
+- ⬜ `CoreML model format loading specialization and prediction` — Pending / unverified
+- ⬜ `Evaluations framework runtime vs developer-tool applicability` — Pending / unverified
+- ⬜ `FoundationModels guided generation tools and streaming` — Pending / unverified
+- ⬜ `FoundationModels multimodal sessions and dynamic profiles` — Pending / unverified
+- ⬜ `ImagePlayground model and presentation availability` — Pending / unverified
+- ⬜ `NaturalLanguage tokenization language and embeddings` — Pending / unverified
+- ⬜ `Private Cloud Compute account service and attestation dependency` — Pending / unverified
+- ⬜ `SensitiveContentAnalysis consent and classification` — Pending / unverified
+- ⬜ `Speech recognition local and server authorization` — Pending / unverified
+- ⬜ `Translation sessions language packs and availability` — Pending / unverified
+- ⬜ `Vision OCR barcodes detection tracking and requests` — Pending / unverified
+- ⬜ `VisionKit document scanner and data scanner` — Pending / unverified
+
+</details>
+
 <details><summary><b>App capabilities</b> — 0 verified, 0 partial, 8 pending / 8 total</summary>
 
 - ⬜ `Background tasks and scheduling` — Pending / unverified
@@ -386,6 +455,42 @@ The percentages below count only explicitly inventoried candidate API exports an
 - ⬜ `Push notifications / APNs` — Pending / unverified
 - ⬜ `Universal links and URL handlers` — Pending / unverified
 - ⬜ `WidgetKit and app extensions` — Pending / unverified
+
+</details>
+
+<details><summary><b>App evidence versioning and unknown dependencies</b> — 0 verified, 0 partial, 16 pending / 16 total</summary>
+
+- ⬜ `App backend retired services and region-dependent behavior` — Pending / unverified
+- ⬜ `Deprecated frameworks legacy behavior and compatibility modes` — Pending / unverified
+- ⬜ `Device-only feature availability errors and fallback testing` — Pending / unverified
+- ⬜ `Dynamic imports selectors and reflection coverage` — Pending / unverified
+- ⬜ `Input encryption DRM and lawful unavailable status` — Pending / unverified
+- ⬜ `Missing-feature graceful error vs fabricated success distinction` — Pending / unverified
+- ⬜ `Multi-app original render input persistence and network scenarios` — Pending / unverified
+- ⬜ `Per-app iOS version device entitlement and backend matrix` — Pending / unverified
+- ⬜ `Performance memory battery and frame-latency acceptance` — Pending / unverified
+- ⬜ `Private undocumented imports explicitly tracked from lawful binaries` — Pending / unverified
+- ⬜ `SDK deployment-target availability and weak-link audit` — Pending / unverified
+- ⬜ `Signed assets anti-tamper checks and unmodified-input provenance` — Pending / unverified
+- ⬜ `Unknown API discovery and inventory expansion policy` — Pending / unverified
+- ⬜ `Versioned Swift ABI symbol metadata and interface extraction` — Pending / unverified
+- ⬜ `Versioned public framework symbol and Objective-C selector extraction` — Pending / unverified
+- ⬜ `Windows x64 and native ARM64 parity evidence` — Pending / unverified
+
+</details>
+
+<details><summary><b>AR and spatial experiences</b> — 0 verified, 0 partial, 10 pending / 10 total</summary>
+
+- ⬜ `ARKit face tracking TrueDepth dependency` — Pending / unverified
+- ⬜ `ARKit scene reconstruction LiDAR dependency` — Pending / unverified
+- ⬜ `ARKit world tracking anchors and session errors` — Pending / unverified
+- ⬜ `Camera calibration depth maps and occlusion` — Pending / unverified
+- ⬜ `Host adapter or explicit unavailable spatial hardware` — Pending / unverified
+- ⬜ `Object capture model availability and device restrictions` — Pending / unverified
+- ⬜ `RealityKit entity component system and animation` — Pending / unverified
+- ⬜ `RealityKit materials physics and rendering` — Pending / unverified
+- ⬜ `RoomPlan capture and room model output` — Pending / unverified
+- ⬜ `Spatial transforms coordinates and unit conventions` — Pending / unverified
 
 </details>
 
@@ -413,6 +518,67 @@ The percentages below count only explicitly inventoried candidate API exports an
 - ⬜ `Hardware volume and Bluetooth behavior` — Pending / unverified
 - ⬜ `Microphone capture and permission mapping` — Pending / unverified
 - ⬜ `WAV/MP3/AAC/ALAC decoding` — Pending / unverified
+
+</details>
+
+<details><summary><b>C++ Blocks and unwind</b> — 0 verified, 0 partial, 12 pending / 12 total</summary>
+
+- ⬜ `Block copy dispose and byref promotion` — Pending / unverified
+- ⬜ `Block descriptors signatures and capture layouts` — Pending / unverified
+- ⬜ `C++ RTTI cross-dylib identity` — Pending / unverified
+- ⬜ `Compact unwind and DWARF CFI` — Pending / unverified
+- ⬜ `Compiler builtins and math edge cases` — Pending / unverified
+- ⬜ `Guest callback lifetime after async cancellation` — Pending / unverified
+- ⬜ `Objective-C exception interoperability` — Pending / unverified
+- ⬜ `Personality routines and landing pads` — Pending / unverified
+- ⬜ `Thread-local C++ destruction` — Pending / unverified
+- ⬜ `libc++ containers and allocator ABI` — Pending / unverified
+- ⬜ `libc++abi exception objects and type matching` — Pending / unverified
+- ⬜ `setjmp longjmp saved machine state` — Pending / unverified
+
+</details>
+
+<details><summary><b>Commerce identity and restricted services</b> — 0 verified, 0 partial, 19 pending / 19 total</summary>
+
+- ⬜ `APNs device-token issuance transport and provider trust` — Pending / unverified
+- ⬜ `AdvancedCommerce subscription API service requirements` — Pending / unverified
+- ⬜ `AppAttest hardware-backed keys attestation and assertions` — Pending / unverified
+- ⬜ `AppLicenseDeliverySDK protected distribution requirements` — Pending / unverified
+- ⬜ `AppStore server notifications and account integration` — Pending / unverified
+- ⬜ `ApplePay merchant validation token generation and payment authorization` — Pending / unverified
+- ⬜ `DeviceCheck server tokens and per-device state` — Pending / unverified
+- ⬜ `External purchases and regional commerce restrictions` — Pending / unverified
+- ⬜ `GameCenter real account authentication and matchmaking` — Pending / unverified
+- ⬜ `IdentityDocumentServices document provider and verifier trust` — Pending / unverified
+- ⬜ `ManagedAppDistribution organization and license services` — Pending / unverified
+- ⬜ `MarketplaceKit installation license and regional entitlement constraints` — Pending / unverified
+- ⬜ `ProximityReader Tap to Pay certified-device requirements` — Pending / unverified
+- ⬜ `SecureElementCredential provisioning and contactless transactions` — Pending / unverified
+- ⬜ `SignInWithApple identity tokens nonce and service validation` — Pending / unverified
+- ⬜ `StoreKit 1 observer queues product requests and receipts` — Pending / unverified
+- ⬜ `StoreKit 2 signed transactions renewals and verification` — Pending / unverified
+- ⬜ `Wallet orders tracking and service dependencies` — Pending / unverified
+- ⬜ `Wallet passes signing updates and presentation` — Pending / unverified
+
+</details>
+
+<details><summary><b>Communication continuity and vehicles</b> — 0 verified, 0 partial, 15 pending / 15 total</summary>
+
+- ⬜ `AccessoryLiveActivities forwarding and permission state` — Pending / unverified
+- ⬜ `AccessoryNotifications privacy-filtered forwarding` — Pending / unverified
+- ⬜ `CallKit incoming outgoing calls and audio coordination` — Pending / unverified
+- ⬜ `CarKey credential hardware and provisioning dependency` — Pending / unverified
+- ⬜ `CarPlay templates audio navigation and entitlement validation` — Pending / unverified
+- ⬜ `GroupActivities SharePlay sessions and synchronization` — Pending / unverified
+- ⬜ `Handoff NSUserActivity continuity and universal links` — Pending / unverified
+- ⬜ `LiveCommunicationKit default-calling capability` — Pending / unverified
+- ⬜ `MessageUI mail SMS composer result handling` — Pending / unverified
+- ⬜ `Messages iMessage extensions stickers and conversations` — Pending / unverified
+- ⬜ `PushToTalk sessions transmission and background behavior` — Pending / unverified
+- ⬜ `SharedWithYou content attribution and collaboration` — Pending / unverified
+- ⬜ `TelephonyMessagingKit carrier and default-messaging constraints` — Pending / unverified
+- ⬜ `VideoSubscriberAccount provider authentication and SSO` — Pending / unverified
+- ⬜ `WatchConnectivity paired-watch message and file delivery` — Pending / unverified
 
 </details>
 
@@ -451,6 +617,42 @@ The percentages below count only explicitly inventoried candidate API exports an
 - ⬜ `Color spaces and alpha blending` — Pending / unverified
 - ⬜ `Font shaping, text glyphs and CoreText` — Pending / unverified
 - ⬜ `Paths, clipping, transforms and strokes` — Pending / unverified
+
+</details>
+
+<details><summary><b>CPU correctness and host isolation</b> — 0 verified, 0 partial, 12 pending / 12 total</summary>
+
+- ⬜ `A64 instruction fault semantics` — Pending / unverified
+- ⬜ `BTI landing-pad and indirect branch behavior` — Pending / unverified
+- ⬜ `Exclusive monitor and LL/SC contention` — Pending / unverified
+- ⬜ `Floating-point FPCR FPSR rounding and NaNs` — Pending / unverified
+- ⬜ `Guest fault delivery without host-process termination` — Pending / unverified
+- ⬜ `Guest page-size 4K and 16K assumptions` — Pending / unverified
+- ⬜ `Host register preservation and stack alignment` — Pending / unverified
+- ⬜ `JIT code invalidation across threads` — Pending / unverified
+- ⬜ `LSE atomics and memory barriers` — Pending / unverified
+- ⬜ `Native instruction trap recovery` — Pending / unverified
+- ⬜ `PAC authenticated branches and data pointers` — Pending / unverified
+- ⬜ `Unaligned and endian-sensitive accesses` — Pending / unverified
+
+</details>
+
+<details><summary><b>Darwin kernel contracts</b> — 0 verified, 0 partial, 14 pending / 14 total</summary>
+
+- ⬜ `Bootstrap namespace service lookup` — Pending / unverified
+- ⬜ `Darwin notify tokens and coalescing` — Pending / unverified
+- ⬜ `Mach continuous and absolute timebases` — Pending / unverified
+- ⬜ `Mach exception ports and delivery` — Pending / unverified
+- ⬜ `Mach ports rights transfer and lifetime` — Pending / unverified
+- ⬜ `Mach task and thread queries` — Pending / unverified
+- ⬜ `Memory pressure and jetsam callbacks` — Pending / unverified
+- ⬜ `POSIX signals masks and alternate stacks` — Pending / unverified
+- ⬜ `Sandbox-extension token and scoped-access semantics` — Pending / unverified
+- ⬜ `Thread QoS priority inheritance` — Pending / unverified
+- ⬜ `XPC serialization and connection interruption` — Pending / unverified
+- ⬜ `kqueue kevent filters and cancellation` — Pending / unverified
+- ⬜ `mach_msg serialization and out-of-line memory` — Pending / unverified
+- ⬜ `sysctl versioned device queries` — Pending / unverified
 
 </details>
 
@@ -542,6 +744,25 @@ The percentages below count only explicitly inventoried candidate API exports an
 
 </details>
 
+<details><summary><b>Games and third-party runtimes</b> — 0 verified, 0 partial, 14 pending / 14 total</summary>
+
+- ⬜ `Embedded scripting Lua Python and WebAssembly` — Pending / unverified
+- ⬜ `Flutter Dart AOT engine and platform channels` — Pending / unverified
+- ⬜ `GameController touch virtual controllers and remapping` — Pending / unverified
+- ⬜ `GameSave account and cloud persistence` — Pending / unverified
+- ⬜ `GameplayKit pathfinding state machines random sources` — Pending / unverified
+- ⬜ `Godot Cocos SDL and custom engine dependencies` — Pending / unverified
+- ⬜ `Kotlin Native runtime and coroutine integration` — Pending / unverified
+- ⬜ `Multiplayer anti-cheat and server platform restrictions` — Pending / unverified
+- ⬜ `React Native Hermes JSC bridge and native modules` — Pending / unverified
+- ⬜ `Third-party SDK dynamic selectors and service dependencies` — Pending / unverified
+- ⬜ `TouchController on-screen interaction contracts` — Pending / unverified
+- ⬜ `Unity IL2CPP generated C++ ABI and callbacks` — Pending / unverified
+- ⬜ `Unity native plugins and Metal backend` — Pending / unverified
+- ⬜ `Unreal packaged shaders assets and platform calls` — Pending / unverified
+
+</details>
+
 <details><summary><b>Guest memory / sandbox</b> — 1 verified, 1 partial, 7 pending / 9 total</summary>
 
 - ✅ `Input-binary validation and refusal of protected code` — Verified
@@ -579,6 +800,25 @@ The percentages below count only explicitly inventoried candidate API exports an
 
 </details>
 
+<details><summary><b>Loader and binary version coverage</b> — 0 verified, 0 partial, 14 pending / 14 total</summary>
+
+- ⬜ `Authenticated chained-pointer formats` — Pending / unverified
+- ⬜ `Code signature and entitlement metadata parsing` — Pending / unverified
+- ⬜ `Initializer dependency graph and rollback` — Pending / unverified
+- ⬜ `LC_BUILD_VERSION and deployment-target compatibility` — Pending / unverified
+- ⬜ `Lazy symbol binding under concurrency` — Pending / unverified
+- ⬜ `Legacy LC_VERSION_MIN_IPHONEOS handling` — Pending / unverified
+- ⬜ `Objective-C image registration and +load ordering` — Pending / unverified
+- ⬜ `Reexports and symbol resolvers` — Pending / unverified
+- ⬜ `Resource-only bundles and asset packs` — Pending / unverified
+- ⬜ `Swift image metadata registration` — Pending / unverified
+- ⬜ `Two-level namespaces and interposition` — Pending / unverified
+- ⬜ `Weak imports and missing optional frameworks` — Pending / unverified
+- ⬜ `dlopen dlclose image lifetime` — Pending / unverified
+- ⬜ `dyld image callbacks and enumeration` — Pending / unverified
+
+</details>
+
 <details><summary><b>Mach-O formats</b> — 2 verified, 0 partial, 6 pending / 8 total</summary>
 
 - ✅ `Fat/FAT64 universal slice selection` — Verified
@@ -606,6 +846,29 @@ The percentages below count only explicitly inventoried candidate API exports an
 
 </details>
 
+<details><summary><b>Network and browser completeness</b> — 0 verified, 0 partial, 18 pending / 18 total</summary>
+
+- ⬜ `App-bound domains ATS policies and certificate pinning` — Pending / unverified
+- ⬜ `AuthenticationServices passkeys credential providers and OAuth` — Pending / unverified
+- ⬜ `BrowserEngineCore process security contracts` — Pending / unverified
+- ⬜ `BrowserEngineKit engine extensions and restricted privileges` — Pending / unverified
+- ⬜ `BrowserKit default-browser and data exchange requirements` — Pending / unverified
+- ⬜ `IPv6 NAT64 Happy Eyeballs and local-network consent` — Pending / unverified
+- ⬜ `MultipeerConnectivity session discovery encryption` — Pending / unverified
+- ⬜ `NEHotspotConfiguration setup and restricted helpers` — Pending / unverified
+- ⬜ `NWPathMonitor interfaces constrained and expensive paths` — Pending / unverified
+- ⬜ `Network.framework TCP UDP TLS QUIC connections` — Pending / unverified
+- ⬜ `NetworkExtension VPN packet tunnels and filters` — Pending / unverified
+- ⬜ `SafariServices authentication and browser presentation` — Pending / unverified
+- ⬜ `WebKit WebGL WebGPU and GPU integration` — Pending / unverified
+- ⬜ `WebKit WebRTC camera microphone and codecs` — Pending / unverified
+- ⬜ `WebKit navigation process pools and content worlds` — Pending / unverified
+- ⬜ `WebKit service workers IndexedDB and caches` — Pending / unverified
+- ⬜ `Wi-Fi Aware peer discovery pairing and transport` — Pending / unverified
+- ⬜ `Wi-Fi Infrastructure capability and entitlement audit` — Pending / unverified
+
+</details>
+
 <details><summary><b>Networking / services</b> — 0 verified, 0 partial, 8 pending / 8 total</summary>
 
 - ⬜ `Bonjour/mDNS discovery and LAN permission` — Pending / unverified
@@ -616,6 +879,23 @@ The percentages below count only explicitly inventoried candidate API exports an
 - ⬜ `POSIX sockets and DNS resolver` — Pending / unverified
 - ⬜ `TLS certificate validation and pinning` — Pending / unverified
 - ⬜ `WebSockets, background transfers and proxies` — Pending / unverified
+
+</details>
+
+<details><summary><b>Objective-C complete behavior</b> — 0 verified, 0 partial, 12 pending / 12 total</summary>
+
+- ⬜ `ARC optimized return-value conventions` — Pending / unverified
+- ⬜ `Associated objects and synchronization` — Pending / unverified
+- ⬜ `Autorelease pool nesting and exceptional teardown` — Pending / unverified
+- ⬜ `Class clusters and toll-free bridging` — Pending / unverified
+- ⬜ `Forwarding invocation and NSInvocation` — Pending / unverified
+- ⬜ `KVC KVO observation and notifications` — Pending / unverified
+- ⬜ `Method caches and dynamic method resolution` — Pending / unverified
+- ⬜ `Protocol property and ivar reflection` — Pending / unverified
+- ⬜ `Runtime class creation method exchange and swizzling` — Pending / unverified
+- ⬜ `Tagged pointers and nonpointer isa variants` — Pending / unverified
+- ⬜ `Weak table zeroing and object teardown` — Pending / unverified
+- ⬜ `objc_msgSendSuper and structure-return rules` — Pending / unverified
 
 </details>
 
@@ -630,6 +910,69 @@ The percentages below count only explicitly inventoried candidate API exports an
 - ⬜ `KVO, blocks and associated objects` — Pending / unverified
 - ⬜ `Runtime-generated class and method interop` — Pending / unverified
 - ⬜ `alloc/init/retain/release/weak references` — Pending / unverified
+
+</details>
+
+<details><summary><b>Persistence and file semantics</b> — 0 verified, 0 partial, 12 pending / 12 total</summary>
+
+- ⬜ `APFS observable case unicode and metadata semantics` — Pending / unverified
+- ⬜ `App group shared containers and preferences` — Pending / unverified
+- ⬜ `Atomic writes fsync and crash recovery` — Pending / unverified
+- ⬜ `CloudKit zones subscriptions sharing and errors` — Pending / unverified
+- ⬜ `Core Data persistent history and merge conflicts` — Pending / unverified
+- ⬜ `FileProvider domains enumeration and materialization` — Pending / unverified
+- ⬜ `NSFileCoordinator NSFilePresenter coordination` — Pending / unverified
+- ⬜ `NSPersistentCloudKitContainer synchronization` — Pending / unverified
+- ⬜ `NSUbiquitousKeyValueStore conflict handling` — Pending / unverified
+- ⬜ `Protected-file lock-state and availability callbacks` — Pending / unverified
+- ⬜ `Security-scoped bookmarks and sandbox grants` — Pending / unverified
+- ⬜ `SwiftData model schemas and migrations` — Pending / unverified
+
+</details>
+
+<details><summary><b>Personal data and domain services</b> — 0 verified, 0 partial, 16 pending / 16 total</summary>
+
+- ⬜ `CareKit care plans outcomes and data stores` — Pending / unverified
+- ⬜ `ClassKit student activity managed accounts and authorization` — Pending / unverified
+- ⬜ `Contacts containers change history and limited access` — Pending / unverified
+- ⬜ `DeclaredAgeRange consent and account-provided age category` — Pending / unverified
+- ⬜ `EnergyKit home-energy service and device prerequisites` — Pending / unverified
+- ⬜ `EventKit calendars reminders recurrence and permissions` — Pending / unverified
+- ⬜ `FinanceKit financial-data authorization and region restrictions` — Pending / unverified
+- ⬜ `GeoToolbox geospatial resolution and service dependencies` — Pending / unverified
+- ⬜ `HealthKit samples queries workouts sharing and authorization` — Pending / unverified
+- ⬜ `JournalingSuggestions system-selected personal data` — Pending / unverified
+- ⬜ `MapKit tiles annotations routing and search service` — Pending / unverified
+- ⬜ `PermissionKit parental approval and communication permissions` — Pending / unverified
+- ⬜ `ResearchKit study consent and task UI` — Pending / unverified
+- ⬜ `Schoolwork Assignables and assessment-mode constraints` — Pending / unverified
+- ⬜ `WeatherKit authorization attribution and service availability` — Pending / unverified
+- ⬜ `WorkoutKit plans scheduling and paired-device dependency` — Pending / unverified
+
+</details>
+
+<details><summary><b>Privacy security and managed devices</b> — 0 verified, 0 partial, 20 pending / 20 total</summary>
+
+- ⬜ `AdAttributionKit SKAdNetwork attribution and service trust` — Pending / unverified
+- ⬜ `AdServices attribution tokens and account constraints` — Pending / unverified
+- ⬜ `AppTrackingTransparency and advertising identifier policy` — Pending / unverified
+- ⬜ `CryptoKit algorithm key format and async contracts` — Pending / unverified
+- ⬜ `DataProtection classes device-lock state and key availability` — Pending / unverified
+- ⬜ `Entitlement identity provisioning and capability enforcement` — Pending / unverified
+- ⬜ `ExposureNotification restricted authorization and service lifecycle` — Pending / unverified
+- ⬜ `GSS enterprise authentication and credential delegation` — Pending / unverified
+- ⬜ `Keychain access groups synchronizable items and ACLs` — Pending / unverified
+- ⬜ `LocalAuthentication biometric enrollment and lockout semantics` — Pending / unverified
+- ⬜ `MDM managed-app configuration per-app VPN and restrictions` — Pending / unverified
+- ⬜ `ManagedApp organization credentials and policy` — Pending / unverified
+- ⬜ `ManagedDeviceAttestation authentic device trust dependency` — Pending / unverified
+- ⬜ `Passkey authenticator attestation and user verification` — Pending / unverified
+- ⬜ `Privacy manifests required-reason APIs and SDK signatures` — Pending / unverified
+- ⬜ `Protected content capture restrictions and secure presentation` — Pending / unverified
+- ⬜ `SafetyKit crash emergency detection and availability` — Pending / unverified
+- ⬜ `SecureEnclave key generation access control and non-exportability` — Pending / unverified
+- ⬜ `TCC-style permission categories denial and revocation` — Pending / unverified
+- ⬜ `TrustInsights trust assertions and platform prerequisites` — Pending / unverified
 
 </details>
 
@@ -657,6 +1000,25 @@ The percentages below count only explicitly inventoried candidate API exports an
 
 </details>
 
+<details><summary><b>Resources localization and text</b> — 0 verified, 0 partial, 14 pending / 14 total</summary>
+
+- ⬜ `Apple Archive and Compression formats` — Pending / unverified
+- ⬜ `Asset catalog CAR rendition decoding` — Pending / unverified
+- ⬜ `AttributedString and NSAttributedString bridging` — Pending / unverified
+- ⬜ `Bidirectional and complex-script shaping` — Pending / unverified
+- ⬜ `Data detectors links addresses and dates` — Pending / unverified
+- ⬜ `Emoji variation and fallback fonts` — Pending / unverified
+- ⬜ `ICU normalization collation and calendars` — Pending / unverified
+- ⬜ `Localized string catalogs plural rules and bundles` — Pending / unverified
+- ⬜ `NIB storyboard object graph versions` — Pending / unverified
+- ⬜ `On-demand resources and Background Assets` — Pending / unverified
+- ⬜ `PDF parsing annotation search and printing` — Pending / unverified
+- ⬜ `SF Symbols variable and animated symbols` — Pending / unverified
+- ⬜ `UTType conformance and file association` — Pending / unverified
+- ⬜ `Unicode grapheme cursor and editing boundaries` — Pending / unverified
+
+</details>
+
 <details><summary><b>Security / crypto</b> — 0 verified, 0 partial, 7 pending / 7 total</summary>
 
 - ⬜ `Biometric LocalAuthentication mapping` — Pending / unverified
@@ -666,6 +1028,29 @@ The percentages below count only explicitly inventoried candidate API exports an
 - ⬜ `Secure random values and key APIs` — Pending / unverified
 - ⬜ `Security.framework keychain APIs` — Pending / unverified
 - ⬜ `Trust stores, certificates and entitlement policy` — Pending / unverified
+
+</details>
+
+<details><summary><b>Sensors radios and accessories</b> — 0 verified, 0 partial, 18 pending / 18 total</summary>
+
+- ⬜ `Accessory transport security and data forwarding` — Pending / unverified
+- ⬜ `AccessorySetupKit Bluetooth Wi-Fi onboarding` — Pending / unverified
+- ⬜ `Apple Pencil hover pressure tilt and tool interactions` — Pending / unverified
+- ⬜ `Battery thermal low-power proximity and orientation state` — Pending / unverified
+- ⬜ `CoreBluetooth central peripheral restoration and GATT` — Pending / unverified
+- ⬜ `CoreLocation accuracy authorization geofences and heading` — Pending / unverified
+- ⬜ `CoreMotion accelerometer gyroscope magnetometer barometer` — Pending / unverified
+- ⬜ `CoreNFC tag sessions and unsupported-device results` — Pending / unverified
+- ⬜ `CoreTelephony carrier SIM and cellular-state queries` — Pending / unverified
+- ⬜ `DockKit motorized accessory tracking` — Pending / unverified
+- ⬜ `ExternalAccessory MFi sessions protocols and authentication` — Pending / unverified
+- ⬜ `HID device mapping and disconnect behavior` — Pending / unverified
+- ⬜ `HomeKit homes pairing encrypted control and invitations` — Pending / unverified
+- ⬜ `MatterSupport commissioning and ecosystem access` — Pending / unverified
+- ⬜ `NearbyInteraction UWB ranging and accessory tokens` — Pending / unverified
+- ⬜ `Satellite connectivity availability and entitlement restrictions` — Pending / unverified
+- ⬜ `SensorKit restricted research data authorization` — Pending / unverified
+- ⬜ `ThreadNetwork credentials and border-router availability` — Pending / unverified
 
 </details>
 
@@ -682,6 +1067,25 @@ The percentages below count only explicitly inventoried candidate API exports an
 
 </details>
 
+<details><summary><b>Swift complete behavior</b> — 0 verified, 0 partial, 14 pending / 14 total</summary>
+
+- ⬜ `Actors executor isolation and reentrancy` — Pending / unverified
+- ⬜ `Async function context and continuation ABI` — Pending / unverified
+- ⬜ `Concurrency back-deployment libraries` — Pending / unverified
+- ⬜ `Distributed actor transport requirements` — Pending / unverified
+- ⬜ `Dynamic replacement and reflection metadata` — Pending / unverified
+- ⬜ `Existential containers and protocol conformance` — Pending / unverified
+- ⬜ `Generic metadata instantiation and caching` — Pending / unverified
+- ⬜ `Ownership move-only and synchronization contracts` — Pending / unverified
+- ⬜ `Resilient field offsets and enum layouts` — Pending / unverified
+- ⬜ `Stable Swift calling convention swiftcall` — Pending / unverified
+- ⬜ `String storage and Foundation bridging` — Pending / unverified
+- ⬜ `Swift error and Objective-C NSError bridging` — Pending / unverified
+- ⬜ `Task groups cancellation priorities and locals` — Pending / unverified
+- ⬜ `Value witness tables copy destroy and layout` — Pending / unverified
+
+</details>
+
 <details><summary><b>Swift runtime</b> — 0 verified, 0 partial, 8 pending / 8 total</summary>
 
 - ⬜ `Generics, existential containers and bridging` — Pending / unverified
@@ -695,6 +1099,23 @@ The percentages below count only explicitly inventoried candidate API exports an
 
 </details>
 
+<details><summary><b>SwiftUI and reactive UI</b> — 0 verified, 0 partial, 12 pending / 12 total</summary>
+
+- ⬜ `Combine publishers subscribers demand and cancellation` — Pending / unverified
+- ⬜ `Navigation sheets popovers and presentations` — Pending / unverified
+- ⬜ `Observation dependency invalidation` — Pending / unverified
+- ⬜ `State Binding Environment and transactions` — Pending / unverified
+- ⬜ `Swift Charts axes marks and interactions` — Pending / unverified
+- ⬜ `SwiftUI accessibility and Dynamic Type` — Pending / unverified
+- ⬜ `SwiftUI animation gesture and focus systems` — Pending / unverified
+- ⬜ `SwiftUI documents scenes and restoration` — Pending / unverified
+- ⬜ `SwiftUI layout preferences and geometry` — Pending / unverified
+- ⬜ `SwiftUI view graph identity and diffing` — Pending / unverified
+- ⬜ `UIKit SwiftUI representable bridge` — Pending / unverified
+- ⬜ `Versioned Liquid Glass materials and controls` — Pending / unverified
+
+</details>
+
 <details><summary><b>System interoperability</b> — 0 verified, 1 partial, 7 pending / 8 total</summary>
 
 - 🟨 `Process startup and exit lifecycle` — Partial
@@ -705,6 +1126,31 @@ The percentages below count only explicitly inventoried candidate API exports an
 - ⬜ `Privacy prompts and permission persistence` — Pending / unverified
 - ⬜ `Time zones, locale and encoding` — Pending / unverified
 - ⬜ `XPC/Mach IPC and bootstrap services` — Pending / unverified
+
+</details>
+
+<details><summary><b>System UI intents and extensions</b> — 0 verified, 0 partial, 20 pending / 20 total</summary>
+
+- ⬜ `ActivityKit Live Activities push updates and lifetime` — Pending / unverified
+- ⬜ `AlarmKit alarms timers scheduling and authorization` — Pending / unverified
+- ⬜ `AppClip invocation size limits and ephemeral permission` — Pending / unverified
+- ⬜ `AppIntents entities queries intents and parameter resolution` — Pending / unverified
+- ⬜ `BackgroundTasks launch expiration and continued processing` — Pending / unverified
+- ⬜ `CoreSpotlight indexing search and semantic entities` — Pending / unverified
+- ⬜ `ExtensionFoundation registration activation and isolation` — Pending / unverified
+- ⬜ `ExtensionKit extension processes and UI hosting` — Pending / unverified
+- ⬜ `FamilyControls authorization and ManagedSettings shields` — Pending / unverified
+- ⬜ `LinkPresentation metadata fetching and preview rendering` — Pending / unverified
+- ⬜ `LockedCameraCapture extension storage and handoff` — Pending / unverified
+- ⬜ `Notification service and content extensions` — Pending / unverified
+- ⬜ `PushKit VoIP tokens and delivery requirements` — Pending / unverified
+- ⬜ `QuickLook preview thumbnails and extension callbacks` — Pending / unverified
+- ⬜ `ScreenTime DeviceActivity monitoring and reports` — Pending / unverified
+- ⬜ `Share action keyboard and document extensions` — Pending / unverified
+- ⬜ `SiriKit intent extension dispatch and system integration` — Pending / unverified
+- ⬜ `TipKit rules persistence and popover presentation` — Pending / unverified
+- ⬜ `UserNotifications local scheduling actions and attachments` — Pending / unverified
+- ⬜ `WidgetKit timelines configuration and interactive intents` — Pending / unverified
 
 </details>
 

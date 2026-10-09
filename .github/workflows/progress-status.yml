@@ -58,6 +58,7 @@ jobs:
             docs/progress.svg
             docs/progress.html
             docs/progress.md
+            docs/apple-technologies.md
             docs/badge-apis.svg
             docs/badge-runtime.svg
             docs/sneaky-sasquatch-intake.json
@@ -66,7 +67,7 @@ jobs:
       - name: Verify committed status is current on main
         if: github.ref == 'refs/heads/main'
         run: |
-          git diff --exit-code -- docs/progress.json docs/progress.svg docs/progress.html docs/progress.md docs/badge-apis.svg docs/badge-runtime.svg
+          git diff --exit-code -- docs/progress.json docs/progress.svg docs/progress.html docs/progress.md docs/apple-technologies.md docs/badge-apis.svg docs/badge-runtime.svg
 
   publish:
     needs: progress
@@ -87,7 +88,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/progress.json docs/progress.svg docs/progress.html docs/progress.md docs/badge-apis.svg docs/badge-runtime.svg docs/sneaky-sasquatch-intake.json
+          git add docs/progress.json docs/progress.svg docs/progress.html docs/progress.md docs/apple-technologies.md docs/badge-apis.svg docs/badge-runtime.svg docs/sneaky-sasquatch-intake.json
           if ! git diff --cached --quiet; then
             git commit -m 'docs(progress): publish exact tested coverage and unchanged-game intake'
             git push origin "HEAD:${GITHUB_REF_NAME}"

@@ -22,7 +22,7 @@ WIDTH = 1000
 PANEL_WIDTH = 495
 GAP = 10
 TOP = 34
-PANEL_HEIGHT = 300
+PANEL_HEIGHT = 650
 DARK = "#0d1117"
 SUCCESS = "#2ea043"
 PARTIAL = "#d29922"
@@ -106,7 +106,15 @@ def collect(root):
         })
     require(len(seen) >= 9 and len(seen_caps) >= 100,
             "incomplete inventory; do not report inflated percentages")
+    catalog_path = root / "tools" / "apple_technology_catalog.json"
+    catalog = json.loads(catalog_path.read_text(encoding="utf-8")) if catalog_path.exists() else None
+    if catalog:
+        require(catalog.get("schema") == 1, "invalid technology catalog schema")
+        entries = [item for group in catalog["groups"] for item in group["items"]]
+        require(len({item["url"] for item in entries}) == len(entries), "duplicate catalog technology URL")
+        require(all(item["status"] == "unassessed" for item in entries), "discovery catalog must not imply implementation")
     return {
+        "technology_catalog": catalog,
         "schema": 2,
         "notes": [
             "Percentages apply ONLY to explicitly tracked selected API exports and declared compatibility gates.",
@@ -208,13 +216,15 @@ def section_svg(section, heading, start):
         maximum = max(0, int((w - 8) / 6.8))
         if maximum >= 4 and h > 21:
             label = group["label"][:maximum]
-            parts.append(note(x + 4, y + min(h - 4, 15), label))
+            parts.append(f'<svg x="{x:.2f}" y="{y:.2f}" width="{w:.2f}" height="{h:.2f}" overflow="hidden">' + note(4, min(h - 4, 15), label) + "</svg>")
         parts.append("</g>")
     return parts
 
 
 def make_map(state):
-    canvas_height = TOP + PANEL_HEIGHT
+    catalog = state.get("technology_catalog")
+    catalog_height = 540 if catalog else 0
+    canvas_height = TOP + PANEL_HEIGHT + catalog_height + 38
     parts = [f'<svg xmlns="http://www.w3.org/2000/svg" '
              f'width="{WIDTH}" height="{canvas_height}" '
              f'viewBox="0 0 {WIDTH} {canvas_height}" role="img" '
@@ -222,6 +232,21 @@ def make_map(state):
              tile(0, 0, WIDTH, canvas_height, DARK, 0)]
     parts.extend(section_svg(state["libraries"], "iOS API exports*", 0))
     parts.extend(section_svg(state["runtime"], "Compatibility work gates*", PANEL_WIDTH + GAP))
+    parts.append(note(8, TOP + PANEL_HEIGHT + 23, "Green: narrow verified scope | Amber: partial | Gray: pending | Counts are not app compatibility", 12))
+    if catalog:
+        start_y = TOP + PANEL_HEIGHT + 52
+        total = sum(len(g["items"]) for g in catalog["groups"])
+        parts.append(note(8, start_y, f"Apple technology discovery: {total} entries / platform applicability unassessed", 15))
+        parts.append(note(8, start_y + 20, "Includes non-iOS tools and services for triage; not API exports, gates or implementation progress", 12))
+        groups = [{"name": g["name"], "total": len(g["items"]), "items": g["items"]} for g in catalog["groups"]]
+        for group, x, y, w, h in partition(groups, 0, start_y + 32, WIDTH, 440):
+            for item, (px, py, pw, ph) in zip(group["items"], subcells(group["total"], x+1, y+1, w-2, h-2)):
+                parts.append(f'<g><title>{escape(item["name"] + " — applicability unassessed — " + item["url"])}</title>')
+                parts.append(tile(px, py, pw, ph, "#36445a"))
+                parts.append('</g>')
+            maximum = max(0, int((w - 8) / 6.8))
+            if maximum >= 4 and h > 21:
+                parts.append(f'<svg x="{x:.2f}" y="{y:.2f}" width="{w:.2f}" height="{h:.2f}" overflow="hidden">' + note(4, 16, group["name"][:maximum], 12) + "</svg>")
     parts.append("</svg>")
     return "\n".join(parts) + "\n"
 
@@ -288,6 +313,7 @@ def make_html(state):
         '<span style="color:#2ea043">■</span> verified, '
         '<span style="color:#d29922">■</span> partial, '
         '<span style="color:#6e7681">■</span> pending/unverified.</p>',
+        '<p><a href="ios-requirements.md">Full iOS requirements and external blockers</a> · <a href="apple-technologies.md">Apple technology discovery catalog</a></p>',
         make_table("iOS ABI/API export candidates", state["libraries"]),
         make_table("Runtime, frameworks and Windows compatibility gates", state["runtime"]),
         '<p>Source: <a href="' + SOURCE + '/tools/progress.py">progress generator</a>, '
@@ -322,6 +348,15 @@ def make_markdown(state):
     lines += ['', 'Generated from [API exports](../tools/api_inventory.json), [API evidence](../tools/api_manifest.json), [runtime gates](../tools/compat_capabilities.json), and [counting rules](../_docs/PROGRESS.md).', '']
     return '\n'.join(lines)
 
+def make_catalog_markdown(catalog):
+    lines = ["# Apple technology discovery catalog", "", "Research date: 2026-10-09. Source: [Apple technology index](https://developer.apple.com/documentation/technologies).", "", "**Unassessed discovery entries, not compatibility claims.** Apple’s index covers multiple platforms, web/server services, tools and release notes. Each entry needs an iOS/iPadOS availability and version audit before becoming a concrete runtime requirement. No entry is counted as an implemented API or verified gate. Older, private and third-party dependencies require separate binary-led discovery.", ""]
+    for group in catalog["groups"]:
+        lines += ["## " + group["name"], "", "| Technology | Applicability / status |", "| --- | --- |"]
+        lines += [f'| [{i["name"]}]({i["url"]}) | Unassessed |' for i in group["items"]]
+        lines += [""]
+    return "\n".join(lines)
+
+
 def generate(root):
     state = collect(root)
     output = {
@@ -332,6 +367,8 @@ def generate(root):
         "progress.html": make_html(state),
         "progress.md": make_markdown(state),
     }
+    if state.get("technology_catalog"):
+        output["apple-technologies.md"] = make_catalog_markdown(state["technology_catalog"])
     return state, output
 
 

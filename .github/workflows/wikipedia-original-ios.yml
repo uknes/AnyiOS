@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate strict static exposure accounting and no false guest execution
         run: python3 -m unittest discover -s tests -p test_app_coverage.py -v
-      - name: Confirm 269 candidate API / 239 gate inventories remain scoped
+      - name: Confirm expandable candidate API / runtime gate inventories remain scoped
         run: python3 tools/progress.py docs --check
 
   upstream-iphoneos-build:
@@ -74,7 +74,7 @@ jobs:
           echo "Original pinned source unchanged; upstream build exit code $code"
           tail -n 80 "$GITHUB_WORKSPACE/compat-output/xcodebuild.log"
           exit 0
-      - name: Record exact outcome, binary hash and 269/239 static exposure
+      - name: Record exact outcome, binary hash and source-owned inventory exposure
         id: state
         shell: bash
         run: |
@@ -192,8 +192,12 @@ jobs:
           $binary = "compat-output/original/Wikipedia.app/Wikipedia"
           $report = Get-Content compat-output/wikipedia-report.json -Raw | ConvertFrom-Json
           $entry = @($report.binaries | Where-Object { $_.path -eq "Wikipedia" })
-          if ($report.target -ne "wikipedia-ios" -or $report.api_inventory_total -ne 269 -or
-              $report.runtime_gate_inventory_total -ne 239 -or
+          $apiInventory = Get-Content tools/api_inventory.json -Raw | ConvertFrom-Json
+          $gateInventory = Get-Content tools/compat_capabilities.json -Raw | ConvertFrom-Json
+          $expectedApis = @($apiInventory.groups | ForEach-Object { $_.symbols } | Sort-Object -Unique).Count
+          $expectedGates = @($gateInventory.groups | ForEach-Object { $_.items }).Count
+          if ($report.target -ne "wikipedia-ios" -or $report.api_inventory_total -ne $expectedApis -or
+              $report.runtime_gate_inventory_total -ne $expectedGates -or
               $entry.Count -ne 1 -or $entry[0].status -ne "static-inspected") {
             throw "Unverified original arm64 Mach-O analysis provenance"
           }

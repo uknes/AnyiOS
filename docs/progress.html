@@ -6,6 +6,7 @@
 <p><img src="badge-apis.svg" alt="Known API exports progress"> <img src="badge-runtime.svg" alt="Runtime subsystem progress"></p>
 <img src="progress.svg" alt="API and runtime capability treemap">
 <p><b>Scope:</b> only explicitly inventoried candidate API exports and compatibility gates. These are not complete Apple API inventories, and verified narrow functions do not imply app compatibility. <span style="color:#2ea043">■</span> verified, <span style="color:#d29922">■</span> partial, <span style="color:#6e7681">■</span> pending/unverified.</p>
+<p><a href="ios-requirements.md">Full iOS requirements and external blockers</a> · <a href="apple-technologies.md">Apple technology discovery catalog</a></p>
 <h2>iOS ABI/API export candidates</h2>
 <table>
 <thead><tr><th>Family / subsystem</th><th>Verified</th><th>Partial</th><th>Pending</th><th>Total</th></tr></thead><tbody>
@@ -320,6 +321,66 @@
 <h2>Runtime, frameworks and Windows compatibility gates</h2>
 <table>
 <thead><tr><th>Family / subsystem</th><th>Verified</th><th>Partial</th><th>Pending</th><th>Total</th></tr></thead><tbody>
+<tr><td><details><summary>Advanced GPU and imaging</summary><ul>
+<li>Pending: <code>Argument buffers bindless resources and residency</code></li>
+<li>Pending: <code>ColorSync ICC HDR EDR and wide-gamut output</code></li>
+<li>Pending: <code>CoreImage filters kernels RAW and HDR processing</code></li>
+<li>Pending: <code>IOSurface sharing and CoreVideo pixel buffers</code></li>
+<li>Pending: <code>ImageIO HEIF AVIF GIF TIFF and orientation</code></li>
+<li>Pending: <code>Metal 4 command and pipeline contracts</code></li>
+<li>Pending: <code>Metal GPU-family versioned feature sets</code></li>
+<li>Pending: <code>Metal Performance Shaders and MPSGraph</code></li>
+<li>Pending: <code>Metal binary metallib and AIR intake</code></li>
+<li>Pending: <code>Metal fences shared events and heap aliasing</code></li>
+<li>Pending: <code>MetalFX temporal spatial upscaling</code></li>
+<li>Pending: <code>ModelIO USD and texture mesh import</code></li>
+<li>Pending: <code>Ray tracing acceleration structures</code></li>
+<li>Pending: <code>Sparse textures compression and pixel formats</code></li>
+<li>Pending: <code>Tessellation mesh shaders and indirect command buffers</code></li>
+<li>Pending: <code>Tile shaders imageblocks and memoryless attachments</code></li>
+</ul></details></td><td>0</td><td>0</td><td>16</td><td>16</td></tr>
+<tr><td><details><summary>Advanced media and capture</summary><ul>
+<li>Pending: <code>AVCapture camera formats autofocus and exposure</code></li>
+<li>Pending: <code>AVFoundation composition export and seeking</code></li>
+<li>Pending: <code>AVKit picture-in-picture and presentation</code></li>
+<li>Pending: <code>AirPlay route discovery protected stream dependencies</code></li>
+<li>Pending: <code>AudioToolbox queues converters and codecs</code></li>
+<li>Pending: <code>AudioUnit v3 hosting presets and extensions</code></li>
+<li>Pending: <code>Cinematic depth metadata and capture</code></li>
+<li>Pending: <code>CoreMIDI MIDI protocols timestamps and endpoints</code></li>
+<li>Pending: <code>CoreMedia sample buffers clocks and time ranges</code></li>
+<li>Pending: <code>FairPlay encrypted media legitimate service dependency</code></li>
+<li>Pending: <code>HLS adaptive playback subtitles and offline assets</code></li>
+<li>Pending: <code>Live Photos paired media and resource access</code></li>
+<li>Pending: <code>MediaPlayer remote commands and now-playing state</code></li>
+<li>Pending: <code>Music Understanding on-device analysis</code></li>
+<li>Pending: <code>MusicKit catalog authorization and protected playback</code></li>
+<li>Pending: <code>Now Playing framework system presentation</code></li>
+<li>Pending: <code>PHASE spatial audio and acoustic models</code></li>
+<li>Pending: <code>PhotoKit limited-library authorization and edits</code></li>
+<li>Pending: <code>ReplayKit recording broadcast extensions and consent</code></li>
+<li>Pending: <code>ShazamKit recognition signature and service access</code></li>
+<li>Pending: <code>SoundAnalysis classification and streaming</code></li>
+<li>Pending: <code>VideoToolbox decode encode sessions and pixel formats</code></li>
+</ul></details></td><td>0</td><td>0</td><td>22</td><td>22</td></tr>
+<tr><td><details><summary>AI language and model availability</summary><ul>
+<li>Pending: <code>Accelerate vDSP BLAS LAPACK and vImage ABI</code></li>
+<li>Pending: <code>Apple model weights license device and availability restrictions</code></li>
+<li>Pending: <code>CoreAI model loading specialization and memory contracts</code></li>
+<li>Pending: <code>CoreML CPU GPU Neural Engine backend selection</code></li>
+<li>Pending: <code>CoreML model format loading specialization and prediction</code></li>
+<li>Pending: <code>Evaluations framework runtime vs developer-tool applicability</code></li>
+<li>Pending: <code>FoundationModels guided generation tools and streaming</code></li>
+<li>Pending: <code>FoundationModels multimodal sessions and dynamic profiles</code></li>
+<li>Pending: <code>ImagePlayground model and presentation availability</code></li>
+<li>Pending: <code>NaturalLanguage tokenization language and embeddings</code></li>
+<li>Pending: <code>Private Cloud Compute account service and attestation dependency</code></li>
+<li>Pending: <code>SensitiveContentAnalysis consent and classification</code></li>
+<li>Pending: <code>Speech recognition local and server authorization</code></li>
+<li>Pending: <code>Translation sessions language packs and availability</code></li>
+<li>Pending: <code>Vision OCR barcodes detection tracking and requests</code></li>
+<li>Pending: <code>VisionKit document scanner and data scanner</code></li>
+</ul></details></td><td>0</td><td>0</td><td>16</td><td>16</td></tr>
 <tr><td><details><summary>App capabilities</summary><ul>
 <li>Pending: <code>Background tasks and scheduling</code></li>
 <li>Pending: <code>Camera, photo library and media selection</code></li>
@@ -330,6 +391,36 @@
 <li>Pending: <code>Universal links and URL handlers</code></li>
 <li>Pending: <code>WidgetKit and app extensions</code></li>
 </ul></details></td><td>0</td><td>0</td><td>8</td><td>8</td></tr>
+<tr><td><details><summary>App evidence versioning and unknown dependencies</summary><ul>
+<li>Pending: <code>App backend retired services and region-dependent behavior</code></li>
+<li>Pending: <code>Deprecated frameworks legacy behavior and compatibility modes</code></li>
+<li>Pending: <code>Device-only feature availability errors and fallback testing</code></li>
+<li>Pending: <code>Dynamic imports selectors and reflection coverage</code></li>
+<li>Pending: <code>Input encryption DRM and lawful unavailable status</code></li>
+<li>Pending: <code>Missing-feature graceful error vs fabricated success distinction</code></li>
+<li>Pending: <code>Multi-app original render input persistence and network scenarios</code></li>
+<li>Pending: <code>Per-app iOS version device entitlement and backend matrix</code></li>
+<li>Pending: <code>Performance memory battery and frame-latency acceptance</code></li>
+<li>Pending: <code>Private undocumented imports explicitly tracked from lawful binaries</code></li>
+<li>Pending: <code>SDK deployment-target availability and weak-link audit</code></li>
+<li>Pending: <code>Signed assets anti-tamper checks and unmodified-input provenance</code></li>
+<li>Pending: <code>Unknown API discovery and inventory expansion policy</code></li>
+<li>Pending: <code>Versioned Swift ABI symbol metadata and interface extraction</code></li>
+<li>Pending: <code>Versioned public framework symbol and Objective-C selector extraction</code></li>
+<li>Pending: <code>Windows x64 and native ARM64 parity evidence</code></li>
+</ul></details></td><td>0</td><td>0</td><td>16</td><td>16</td></tr>
+<tr><td><details><summary>AR and spatial experiences</summary><ul>
+<li>Pending: <code>ARKit face tracking TrueDepth dependency</code></li>
+<li>Pending: <code>ARKit scene reconstruction LiDAR dependency</code></li>
+<li>Pending: <code>ARKit world tracking anchors and session errors</code></li>
+<li>Pending: <code>Camera calibration depth maps and occlusion</code></li>
+<li>Pending: <code>Host adapter or explicit unavailable spatial hardware</code></li>
+<li>Pending: <code>Object capture model availability and device restrictions</code></li>
+<li>Pending: <code>RealityKit entity component system and animation</code></li>
+<li>Pending: <code>RealityKit materials physics and rendering</code></li>
+<li>Pending: <code>RoomPlan capture and room model output</code></li>
+<li>Pending: <code>Spatial transforms coordinates and unit conventions</code></li>
+</ul></details></td><td>0</td><td>0</td><td>10</td><td>10</td></tr>
 <tr><td><details><summary>ARM64 CPU / ABI</summary><ul>
 <li>Verified: <code>Windows x86-64 Dynarmic owned ARM64 instructions</code></li>
 <li>Partial: <code>Darwin SVC trap and Mach syscall handling</code></li>
@@ -351,6 +442,58 @@
 <li>Pending: <code>Microphone capture and permission mapping</code></li>
 <li>Pending: <code>WAV/MP3/AAC/ALAC decoding</code></li>
 </ul></details></td><td>0</td><td>0</td><td>8</td><td>8</td></tr>
+<tr><td><details><summary>C++ Blocks and unwind</summary><ul>
+<li>Pending: <code>Block copy dispose and byref promotion</code></li>
+<li>Pending: <code>Block descriptors signatures and capture layouts</code></li>
+<li>Pending: <code>C++ RTTI cross-dylib identity</code></li>
+<li>Pending: <code>Compact unwind and DWARF CFI</code></li>
+<li>Pending: <code>Compiler builtins and math edge cases</code></li>
+<li>Pending: <code>Guest callback lifetime after async cancellation</code></li>
+<li>Pending: <code>Objective-C exception interoperability</code></li>
+<li>Pending: <code>Personality routines and landing pads</code></li>
+<li>Pending: <code>Thread-local C++ destruction</code></li>
+<li>Pending: <code>libc++ containers and allocator ABI</code></li>
+<li>Pending: <code>libc++abi exception objects and type matching</code></li>
+<li>Pending: <code>setjmp longjmp saved machine state</code></li>
+</ul></details></td><td>0</td><td>0</td><td>12</td><td>12</td></tr>
+<tr><td><details><summary>Commerce identity and restricted services</summary><ul>
+<li>Pending: <code>APNs device-token issuance transport and provider trust</code></li>
+<li>Pending: <code>AdvancedCommerce subscription API service requirements</code></li>
+<li>Pending: <code>AppAttest hardware-backed keys attestation and assertions</code></li>
+<li>Pending: <code>AppLicenseDeliverySDK protected distribution requirements</code></li>
+<li>Pending: <code>AppStore server notifications and account integration</code></li>
+<li>Pending: <code>ApplePay merchant validation token generation and payment authorization</code></li>
+<li>Pending: <code>DeviceCheck server tokens and per-device state</code></li>
+<li>Pending: <code>External purchases and regional commerce restrictions</code></li>
+<li>Pending: <code>GameCenter real account authentication and matchmaking</code></li>
+<li>Pending: <code>IdentityDocumentServices document provider and verifier trust</code></li>
+<li>Pending: <code>ManagedAppDistribution organization and license services</code></li>
+<li>Pending: <code>MarketplaceKit installation license and regional entitlement constraints</code></li>
+<li>Pending: <code>ProximityReader Tap to Pay certified-device requirements</code></li>
+<li>Pending: <code>SecureElementCredential provisioning and contactless transactions</code></li>
+<li>Pending: <code>SignInWithApple identity tokens nonce and service validation</code></li>
+<li>Pending: <code>StoreKit 1 observer queues product requests and receipts</code></li>
+<li>Pending: <code>StoreKit 2 signed transactions renewals and verification</code></li>
+<li>Pending: <code>Wallet orders tracking and service dependencies</code></li>
+<li>Pending: <code>Wallet passes signing updates and presentation</code></li>
+</ul></details></td><td>0</td><td>0</td><td>19</td><td>19</td></tr>
+<tr><td><details><summary>Communication continuity and vehicles</summary><ul>
+<li>Pending: <code>AccessoryLiveActivities forwarding and permission state</code></li>
+<li>Pending: <code>AccessoryNotifications privacy-filtered forwarding</code></li>
+<li>Pending: <code>CallKit incoming outgoing calls and audio coordination</code></li>
+<li>Pending: <code>CarKey credential hardware and provisioning dependency</code></li>
+<li>Pending: <code>CarPlay templates audio navigation and entitlement validation</code></li>
+<li>Pending: <code>GroupActivities SharePlay sessions and synchronization</code></li>
+<li>Pending: <code>Handoff NSUserActivity continuity and universal links</code></li>
+<li>Pending: <code>LiveCommunicationKit default-calling capability</code></li>
+<li>Pending: <code>MessageUI mail SMS composer result handling</code></li>
+<li>Pending: <code>Messages iMessage extensions stickers and conversations</code></li>
+<li>Pending: <code>PushToTalk sessions transmission and background behavior</code></li>
+<li>Pending: <code>SharedWithYou content attribution and collaboration</code></li>
+<li>Pending: <code>TelephonyMessagingKit carrier and default-messaging constraints</code></li>
+<li>Pending: <code>VideoSubscriberAccount provider authentication and SSO</code></li>
+<li>Pending: <code>WatchConnectivity paired-watch message and file delivery</code></li>
+</ul></details></td><td>0</td><td>0</td><td>15</td><td>15</td></tr>
 <tr><td><details><summary>Compatibility tooling</summary><ul>
 <li>Verified: <code>Strict Mach-O inspection and import-gap report</code></li>
 <li>Pending: <code>Crash trace attribution and deterministic reproduction</code></li>
@@ -380,6 +523,36 @@
 <li>Pending: <code>Font shaping, text glyphs and CoreText</code></li>
 <li>Pending: <code>Paths, clipping, transforms and strokes</code></li>
 </ul></details></td><td>0</td><td>0</td><td>7</td><td>7</td></tr>
+<tr><td><details><summary>CPU correctness and host isolation</summary><ul>
+<li>Pending: <code>A64 instruction fault semantics</code></li>
+<li>Pending: <code>BTI landing-pad and indirect branch behavior</code></li>
+<li>Pending: <code>Exclusive monitor and LL/SC contention</code></li>
+<li>Pending: <code>Floating-point FPCR FPSR rounding and NaNs</code></li>
+<li>Pending: <code>Guest fault delivery without host-process termination</code></li>
+<li>Pending: <code>Guest page-size 4K and 16K assumptions</code></li>
+<li>Pending: <code>Host register preservation and stack alignment</code></li>
+<li>Pending: <code>JIT code invalidation across threads</code></li>
+<li>Pending: <code>LSE atomics and memory barriers</code></li>
+<li>Pending: <code>Native instruction trap recovery</code></li>
+<li>Pending: <code>PAC authenticated branches and data pointers</code></li>
+<li>Pending: <code>Unaligned and endian-sensitive accesses</code></li>
+</ul></details></td><td>0</td><td>0</td><td>12</td><td>12</td></tr>
+<tr><td><details><summary>Darwin kernel contracts</summary><ul>
+<li>Pending: <code>Bootstrap namespace service lookup</code></li>
+<li>Pending: <code>Darwin notify tokens and coalescing</code></li>
+<li>Pending: <code>Mach continuous and absolute timebases</code></li>
+<li>Pending: <code>Mach exception ports and delivery</code></li>
+<li>Pending: <code>Mach ports rights transfer and lifetime</code></li>
+<li>Pending: <code>Mach task and thread queries</code></li>
+<li>Pending: <code>Memory pressure and jetsam callbacks</code></li>
+<li>Pending: <code>POSIX signals masks and alternate stacks</code></li>
+<li>Pending: <code>Sandbox-extension token and scoped-access semantics</code></li>
+<li>Pending: <code>Thread QoS priority inheritance</code></li>
+<li>Pending: <code>XPC serialization and connection interruption</code></li>
+<li>Pending: <code>kqueue kevent filters and cancellation</code></li>
+<li>Pending: <code>mach_msg serialization and out-of-line memory</code></li>
+<li>Pending: <code>sysctl versioned device queries</code></li>
+</ul></details></td><td>0</td><td>0</td><td>14</td><td>14</td></tr>
 <tr><td><details><summary>Darwin libSystem</summary><ul>
 <li>Partial: <code>malloc/write/exit guest C fixture ABI</code></li>
 <li>Partial: <code>process arguments/envp/apple arrays</code></li>
@@ -447,6 +620,22 @@
 <li>Pending: <code>Leaderboards, match and invites</code></li>
 <li>Pending: <code>Subscription and entitlement validation</code></li>
 </ul></details></td><td>0</td><td>0</td><td>6</td><td>6</td></tr>
+<tr><td><details><summary>Games and third-party runtimes</summary><ul>
+<li>Pending: <code>Embedded scripting Lua Python and WebAssembly</code></li>
+<li>Pending: <code>Flutter Dart AOT engine and platform channels</code></li>
+<li>Pending: <code>GameController touch virtual controllers and remapping</code></li>
+<li>Pending: <code>GameSave account and cloud persistence</code></li>
+<li>Pending: <code>GameplayKit pathfinding state machines random sources</code></li>
+<li>Pending: <code>Godot Cocos SDL and custom engine dependencies</code></li>
+<li>Pending: <code>Kotlin Native runtime and coroutine integration</code></li>
+<li>Pending: <code>Multiplayer anti-cheat and server platform restrictions</code></li>
+<li>Pending: <code>React Native Hermes JSC bridge and native modules</code></li>
+<li>Pending: <code>Third-party SDK dynamic selectors and service dependencies</code></li>
+<li>Pending: <code>TouchController on-screen interaction contracts</code></li>
+<li>Pending: <code>Unity IL2CPP generated C++ ABI and callbacks</code></li>
+<li>Pending: <code>Unity native plugins and Metal backend</code></li>
+<li>Pending: <code>Unreal packaged shaders assets and platform calls</code></li>
+</ul></details></td><td>0</td><td>0</td><td>14</td><td>14</td></tr>
 <tr><td><details><summary>Guest memory / sandbox</summary><ul>
 <li>Verified: <code>Input-binary validation and refusal of protected code</code></li>
 <li>Partial: <code>Bounded W^X guest memory ranges</code></li>
@@ -475,6 +664,22 @@
 <li>Pending: <code>Textures, renderbuffers and framebuffer objects</code></li>
 <li>Pending: <code>Uniforms, draws, blending and depth</code></li>
 </ul></details></td><td>0</td><td>0</td><td>6</td><td>6</td></tr>
+<tr><td><details><summary>Loader and binary version coverage</summary><ul>
+<li>Pending: <code>Authenticated chained-pointer formats</code></li>
+<li>Pending: <code>Code signature and entitlement metadata parsing</code></li>
+<li>Pending: <code>Initializer dependency graph and rollback</code></li>
+<li>Pending: <code>LC_BUILD_VERSION and deployment-target compatibility</code></li>
+<li>Pending: <code>Lazy symbol binding under concurrency</code></li>
+<li>Pending: <code>Legacy LC_VERSION_MIN_IPHONEOS handling</code></li>
+<li>Pending: <code>Objective-C image registration and +load ordering</code></li>
+<li>Pending: <code>Reexports and symbol resolvers</code></li>
+<li>Pending: <code>Resource-only bundles and asset packs</code></li>
+<li>Pending: <code>Swift image metadata registration</code></li>
+<li>Pending: <code>Two-level namespaces and interposition</code></li>
+<li>Pending: <code>Weak imports and missing optional frameworks</code></li>
+<li>Pending: <code>dlopen dlclose image lifetime</code></li>
+<li>Pending: <code>dyld image callbacks and enumeration</code></li>
+</ul></details></td><td>0</td><td>0</td><td>14</td><td>14</td></tr>
 <tr><td><details><summary>Mach-O formats</summary><ul>
 <li>Verified: <code>Fat/FAT64 universal slice selection</code></li>
 <li>Verified: <code>Thin ARM64 MH_EXECUTE and MH_DYLIB metadata</code></li>
@@ -496,6 +701,26 @@
 <li>Pending: <code>Render pass and pipeline states</code></li>
 <li>Pending: <code>Textures, buffers, heaps and resources</code></li>
 </ul></details></td><td>0</td><td>0</td><td>9</td><td>9</td></tr>
+<tr><td><details><summary>Network and browser completeness</summary><ul>
+<li>Pending: <code>App-bound domains ATS policies and certificate pinning</code></li>
+<li>Pending: <code>AuthenticationServices passkeys credential providers and OAuth</code></li>
+<li>Pending: <code>BrowserEngineCore process security contracts</code></li>
+<li>Pending: <code>BrowserEngineKit engine extensions and restricted privileges</code></li>
+<li>Pending: <code>BrowserKit default-browser and data exchange requirements</code></li>
+<li>Pending: <code>IPv6 NAT64 Happy Eyeballs and local-network consent</code></li>
+<li>Pending: <code>MultipeerConnectivity session discovery encryption</code></li>
+<li>Pending: <code>NEHotspotConfiguration setup and restricted helpers</code></li>
+<li>Pending: <code>NWPathMonitor interfaces constrained and expensive paths</code></li>
+<li>Pending: <code>Network.framework TCP UDP TLS QUIC connections</code></li>
+<li>Pending: <code>NetworkExtension VPN packet tunnels and filters</code></li>
+<li>Pending: <code>SafariServices authentication and browser presentation</code></li>
+<li>Pending: <code>WebKit WebGL WebGPU and GPU integration</code></li>
+<li>Pending: <code>WebKit WebRTC camera microphone and codecs</code></li>
+<li>Pending: <code>WebKit navigation process pools and content worlds</code></li>
+<li>Pending: <code>WebKit service workers IndexedDB and caches</code></li>
+<li>Pending: <code>Wi-Fi Aware peer discovery pairing and transport</code></li>
+<li>Pending: <code>Wi-Fi Infrastructure capability and entitlement audit</code></li>
+</ul></details></td><td>0</td><td>0</td><td>18</td><td>18</td></tr>
 <tr><td><details><summary>Networking / services</summary><ul>
 <li>Pending: <code>Bonjour/mDNS discovery and LAN permission</code></li>
 <li>Pending: <code>CFNetwork TCP/TLS streams</code></li>
@@ -506,6 +731,20 @@
 <li>Pending: <code>TLS certificate validation and pinning</code></li>
 <li>Pending: <code>WebSockets, background transfers and proxies</code></li>
 </ul></details></td><td>0</td><td>0</td><td>8</td><td>8</td></tr>
+<tr><td><details><summary>Objective-C complete behavior</summary><ul>
+<li>Pending: <code>ARC optimized return-value conventions</code></li>
+<li>Pending: <code>Associated objects and synchronization</code></li>
+<li>Pending: <code>Autorelease pool nesting and exceptional teardown</code></li>
+<li>Pending: <code>Class clusters and toll-free bridging</code></li>
+<li>Pending: <code>Forwarding invocation and NSInvocation</code></li>
+<li>Pending: <code>KVC KVO observation and notifications</code></li>
+<li>Pending: <code>Method caches and dynamic method resolution</code></li>
+<li>Pending: <code>Protocol property and ivar reflection</code></li>
+<li>Pending: <code>Runtime class creation method exchange and swizzling</code></li>
+<li>Pending: <code>Tagged pointers and nonpointer isa variants</code></li>
+<li>Pending: <code>Weak table zeroing and object teardown</code></li>
+<li>Pending: <code>objc_msgSendSuper and structure-return rules</code></li>
+</ul></details></td><td>0</td><td>0</td><td>12</td><td>12</td></tr>
 <tr><td><details><summary>Objective-C runtime</summary><ul>
 <li>Partial: <code>Class registry, metaclasses and inheritance</code></li>
 <li>Partial: <code>Classlist/selector metadata inspection</code></li>
@@ -517,6 +756,60 @@
 <li>Pending: <code>Runtime-generated class and method interop</code></li>
 <li>Pending: <code>alloc/init/retain/release/weak references</code></li>
 </ul></details></td><td>0</td><td>2</td><td>7</td><td>9</td></tr>
+<tr><td><details><summary>Persistence and file semantics</summary><ul>
+<li>Pending: <code>APFS observable case unicode and metadata semantics</code></li>
+<li>Pending: <code>App group shared containers and preferences</code></li>
+<li>Pending: <code>Atomic writes fsync and crash recovery</code></li>
+<li>Pending: <code>CloudKit zones subscriptions sharing and errors</code></li>
+<li>Pending: <code>Core Data persistent history and merge conflicts</code></li>
+<li>Pending: <code>FileProvider domains enumeration and materialization</code></li>
+<li>Pending: <code>NSFileCoordinator NSFilePresenter coordination</code></li>
+<li>Pending: <code>NSPersistentCloudKitContainer synchronization</code></li>
+<li>Pending: <code>NSUbiquitousKeyValueStore conflict handling</code></li>
+<li>Pending: <code>Protected-file lock-state and availability callbacks</code></li>
+<li>Pending: <code>Security-scoped bookmarks and sandbox grants</code></li>
+<li>Pending: <code>SwiftData model schemas and migrations</code></li>
+</ul></details></td><td>0</td><td>0</td><td>12</td><td>12</td></tr>
+<tr><td><details><summary>Personal data and domain services</summary><ul>
+<li>Pending: <code>CareKit care plans outcomes and data stores</code></li>
+<li>Pending: <code>ClassKit student activity managed accounts and authorization</code></li>
+<li>Pending: <code>Contacts containers change history and limited access</code></li>
+<li>Pending: <code>DeclaredAgeRange consent and account-provided age category</code></li>
+<li>Pending: <code>EnergyKit home-energy service and device prerequisites</code></li>
+<li>Pending: <code>EventKit calendars reminders recurrence and permissions</code></li>
+<li>Pending: <code>FinanceKit financial-data authorization and region restrictions</code></li>
+<li>Pending: <code>GeoToolbox geospatial resolution and service dependencies</code></li>
+<li>Pending: <code>HealthKit samples queries workouts sharing and authorization</code></li>
+<li>Pending: <code>JournalingSuggestions system-selected personal data</code></li>
+<li>Pending: <code>MapKit tiles annotations routing and search service</code></li>
+<li>Pending: <code>PermissionKit parental approval and communication permissions</code></li>
+<li>Pending: <code>ResearchKit study consent and task UI</code></li>
+<li>Pending: <code>Schoolwork Assignables and assessment-mode constraints</code></li>
+<li>Pending: <code>WeatherKit authorization attribution and service availability</code></li>
+<li>Pending: <code>WorkoutKit plans scheduling and paired-device dependency</code></li>
+</ul></details></td><td>0</td><td>0</td><td>16</td><td>16</td></tr>
+<tr><td><details><summary>Privacy security and managed devices</summary><ul>
+<li>Pending: <code>AdAttributionKit SKAdNetwork attribution and service trust</code></li>
+<li>Pending: <code>AdServices attribution tokens and account constraints</code></li>
+<li>Pending: <code>AppTrackingTransparency and advertising identifier policy</code></li>
+<li>Pending: <code>CryptoKit algorithm key format and async contracts</code></li>
+<li>Pending: <code>DataProtection classes device-lock state and key availability</code></li>
+<li>Pending: <code>Entitlement identity provisioning and capability enforcement</code></li>
+<li>Pending: <code>ExposureNotification restricted authorization and service lifecycle</code></li>
+<li>Pending: <code>GSS enterprise authentication and credential delegation</code></li>
+<li>Pending: <code>Keychain access groups synchronizable items and ACLs</code></li>
+<li>Pending: <code>LocalAuthentication biometric enrollment and lockout semantics</code></li>
+<li>Pending: <code>MDM managed-app configuration per-app VPN and restrictions</code></li>
+<li>Pending: <code>ManagedApp organization credentials and policy</code></li>
+<li>Pending: <code>ManagedDeviceAttestation authentic device trust dependency</code></li>
+<li>Pending: <code>Passkey authenticator attestation and user verification</code></li>
+<li>Pending: <code>Privacy manifests required-reason APIs and SDK signatures</code></li>
+<li>Pending: <code>Protected content capture restrictions and secure presentation</code></li>
+<li>Pending: <code>SafetyKit crash emergency detection and availability</code></li>
+<li>Pending: <code>SecureEnclave key generation access control and non-exportability</code></li>
+<li>Pending: <code>TCC-style permission categories denial and revocation</code></li>
+<li>Pending: <code>TrustInsights trust assertions and platform prerequisites</code></li>
+</ul></details></td><td>0</td><td>0</td><td>20</td><td>20</td></tr>
 <tr><td><details><summary>Pthreads and dispatch</summary><ul>
 <li>Partial: <code>Owned Darwin guest TLV sequential threads</code></li>
 <li>Pending: <code>Atomic callbacks across guest and host threads</code></li>
@@ -535,6 +828,22 @@
 <li>Pending: <code>Layer masks, opacity and blending</code></li>
 <li>Pending: <code>Offscreen layer rendering and filters</code></li>
 </ul></details></td><td>0</td><td>0</td><td>6</td><td>6</td></tr>
+<tr><td><details><summary>Resources localization and text</summary><ul>
+<li>Pending: <code>Apple Archive and Compression formats</code></li>
+<li>Pending: <code>Asset catalog CAR rendition decoding</code></li>
+<li>Pending: <code>AttributedString and NSAttributedString bridging</code></li>
+<li>Pending: <code>Bidirectional and complex-script shaping</code></li>
+<li>Pending: <code>Data detectors links addresses and dates</code></li>
+<li>Pending: <code>Emoji variation and fallback fonts</code></li>
+<li>Pending: <code>ICU normalization collation and calendars</code></li>
+<li>Pending: <code>Localized string catalogs plural rules and bundles</code></li>
+<li>Pending: <code>NIB storyboard object graph versions</code></li>
+<li>Pending: <code>On-demand resources and Background Assets</code></li>
+<li>Pending: <code>PDF parsing annotation search and printing</code></li>
+<li>Pending: <code>SF Symbols variable and animated symbols</code></li>
+<li>Pending: <code>UTType conformance and file association</code></li>
+<li>Pending: <code>Unicode grapheme cursor and editing boundaries</code></li>
+</ul></details></td><td>0</td><td>0</td><td>14</td><td>14</td></tr>
 <tr><td><details><summary>Security / crypto</summary><ul>
 <li>Pending: <code>Biometric LocalAuthentication mapping</code></li>
 <li>Pending: <code>Code signing identity vs runtime permissions</code></li>
@@ -544,6 +853,26 @@
 <li>Pending: <code>Security.framework keychain APIs</code></li>
 <li>Pending: <code>Trust stores, certificates and entitlement policy</code></li>
 </ul></details></td><td>0</td><td>0</td><td>7</td><td>7</td></tr>
+<tr><td><details><summary>Sensors radios and accessories</summary><ul>
+<li>Pending: <code>Accessory transport security and data forwarding</code></li>
+<li>Pending: <code>AccessorySetupKit Bluetooth Wi-Fi onboarding</code></li>
+<li>Pending: <code>Apple Pencil hover pressure tilt and tool interactions</code></li>
+<li>Pending: <code>Battery thermal low-power proximity and orientation state</code></li>
+<li>Pending: <code>CoreBluetooth central peripheral restoration and GATT</code></li>
+<li>Pending: <code>CoreLocation accuracy authorization geofences and heading</code></li>
+<li>Pending: <code>CoreMotion accelerometer gyroscope magnetometer barometer</code></li>
+<li>Pending: <code>CoreNFC tag sessions and unsupported-device results</code></li>
+<li>Pending: <code>CoreTelephony carrier SIM and cellular-state queries</code></li>
+<li>Pending: <code>DockKit motorized accessory tracking</code></li>
+<li>Pending: <code>ExternalAccessory MFi sessions protocols and authentication</code></li>
+<li>Pending: <code>HID device mapping and disconnect behavior</code></li>
+<li>Pending: <code>HomeKit homes pairing encrypted control and invitations</code></li>
+<li>Pending: <code>MatterSupport commissioning and ecosystem access</code></li>
+<li>Pending: <code>NearbyInteraction UWB ranging and accessory tokens</code></li>
+<li>Pending: <code>Satellite connectivity availability and entitlement restrictions</code></li>
+<li>Pending: <code>SensorKit restricted research data authorization</code></li>
+<li>Pending: <code>ThreadNetwork credentials and border-router availability</code></li>
+</ul></details></td><td>0</td><td>0</td><td>18</td><td>18</td></tr>
 <tr><td><details><summary>SpriteKit / SceneKit</summary><ul>
 <li>Pending: <code>SCNScene node graph and asset import</code></li>
 <li>Pending: <code>SKAction animations, scheduling and timing</code></li>
@@ -554,6 +883,22 @@
 <li>Pending: <code>SKView and SKScene lifecycle</code></li>
 <li>Pending: <code>SceneKit lighting, geometry and rendering</code></li>
 </ul></details></td><td>0</td><td>0</td><td>8</td><td>8</td></tr>
+<tr><td><details><summary>Swift complete behavior</summary><ul>
+<li>Pending: <code>Actors executor isolation and reentrancy</code></li>
+<li>Pending: <code>Async function context and continuation ABI</code></li>
+<li>Pending: <code>Concurrency back-deployment libraries</code></li>
+<li>Pending: <code>Distributed actor transport requirements</code></li>
+<li>Pending: <code>Dynamic replacement and reflection metadata</code></li>
+<li>Pending: <code>Existential containers and protocol conformance</code></li>
+<li>Pending: <code>Generic metadata instantiation and caching</code></li>
+<li>Pending: <code>Ownership move-only and synchronization contracts</code></li>
+<li>Pending: <code>Resilient field offsets and enum layouts</code></li>
+<li>Pending: <code>Stable Swift calling convention swiftcall</code></li>
+<li>Pending: <code>String storage and Foundation bridging</code></li>
+<li>Pending: <code>Swift error and Objective-C NSError bridging</code></li>
+<li>Pending: <code>Task groups cancellation priorities and locals</code></li>
+<li>Pending: <code>Value witness tables copy destroy and layout</code></li>
+</ul></details></td><td>0</td><td>0</td><td>14</td><td>14</td></tr>
 <tr><td><details><summary>Swift runtime</summary><ul>
 <li>Pending: <code>Generics, existential containers and bridging</code></li>
 <li>Pending: <code>Swift ABI-version compatibility</code></li>
@@ -564,6 +909,20 @@
 <li>Pending: <code>Swift/Objective-C mixed dispatch</code></li>
 <li>Pending: <code>Value witness and protocol witness tables</code></li>
 </ul></details></td><td>0</td><td>0</td><td>8</td><td>8</td></tr>
+<tr><td><details><summary>SwiftUI and reactive UI</summary><ul>
+<li>Pending: <code>Combine publishers subscribers demand and cancellation</code></li>
+<li>Pending: <code>Navigation sheets popovers and presentations</code></li>
+<li>Pending: <code>Observation dependency invalidation</code></li>
+<li>Pending: <code>State Binding Environment and transactions</code></li>
+<li>Pending: <code>Swift Charts axes marks and interactions</code></li>
+<li>Pending: <code>SwiftUI accessibility and Dynamic Type</code></li>
+<li>Pending: <code>SwiftUI animation gesture and focus systems</code></li>
+<li>Pending: <code>SwiftUI documents scenes and restoration</code></li>
+<li>Pending: <code>SwiftUI layout preferences and geometry</code></li>
+<li>Pending: <code>SwiftUI view graph identity and diffing</code></li>
+<li>Pending: <code>UIKit SwiftUI representable bridge</code></li>
+<li>Pending: <code>Versioned Liquid Glass materials and controls</code></li>
+</ul></details></td><td>0</td><td>0</td><td>12</td><td>12</td></tr>
 <tr><td><details><summary>System interoperability</summary><ul>
 <li>Partial: <code>Process startup and exit lifecycle</code></li>
 <li>Pending: <code>Accessibility tree and screen readers</code></li>
@@ -574,6 +933,28 @@
 <li>Pending: <code>Time zones, locale and encoding</code></li>
 <li>Pending: <code>XPC/Mach IPC and bootstrap services</code></li>
 </ul></details></td><td>0</td><td>1</td><td>7</td><td>8</td></tr>
+<tr><td><details><summary>System UI intents and extensions</summary><ul>
+<li>Pending: <code>ActivityKit Live Activities push updates and lifetime</code></li>
+<li>Pending: <code>AlarmKit alarms timers scheduling and authorization</code></li>
+<li>Pending: <code>AppClip invocation size limits and ephemeral permission</code></li>
+<li>Pending: <code>AppIntents entities queries intents and parameter resolution</code></li>
+<li>Pending: <code>BackgroundTasks launch expiration and continued processing</code></li>
+<li>Pending: <code>CoreSpotlight indexing search and semantic entities</code></li>
+<li>Pending: <code>ExtensionFoundation registration activation and isolation</code></li>
+<li>Pending: <code>ExtensionKit extension processes and UI hosting</code></li>
+<li>Pending: <code>FamilyControls authorization and ManagedSettings shields</code></li>
+<li>Pending: <code>LinkPresentation metadata fetching and preview rendering</code></li>
+<li>Pending: <code>LockedCameraCapture extension storage and handoff</code></li>
+<li>Pending: <code>Notification service and content extensions</code></li>
+<li>Pending: <code>PushKit VoIP tokens and delivery requirements</code></li>
+<li>Pending: <code>QuickLook preview thumbnails and extension callbacks</code></li>
+<li>Pending: <code>ScreenTime DeviceActivity monitoring and reports</code></li>
+<li>Pending: <code>Share action keyboard and document extensions</code></li>
+<li>Pending: <code>SiriKit intent extension dispatch and system integration</code></li>
+<li>Pending: <code>TipKit rules persistence and popover presentation</code></li>
+<li>Pending: <code>UserNotifications local scheduling actions and attachments</code></li>
+<li>Pending: <code>WidgetKit timelines configuration and interactive intents</code></li>
+</ul></details></td><td>0</td><td>0</td><td>20</td><td>20</td></tr>
 <tr><td><details><summary>UIKit app lifecycle</summary><ul>
 <li>Pending: <code>App foreground/background lifecycle</code></li>
 <li>Pending: <code>Root view controller and lifecycle callbacks</code></li>
@@ -621,6 +1002,6 @@
 <li>Pending: <code>Multi-window, swapchain and compositor resources</code></li>
 <li>Pending: <code>Presentation frame timing and resize</code></li>
 </ul></details></td><td>0</td><td>0</td><td>7</td><td>7</td></tr>
-</tbody><tfoot><tr><th>Total</th><th>6</th><th>11</th><th>222</th><th>239</th></tr></tfoot></table>
+</tbody><tfoot><tr><th>Total</th><th>6</th><th>11</th><th>558</th><th>575</th></tr></tfoot></table>
 <p>Source: <a href="https://github.com/uknes/AnyiOS/blob/main/tools/progress.py">progress generator</a>, <a href="https://github.com/uknes/AnyiOS/blob/main/tools/api_inventory.json">API inventory</a>, <a href="https://github.com/uknes/AnyiOS/blob/main/tools/compat_capabilities.json">capability catalog</a>, <a href="https://github.com/uknes/AnyiOS/blob/main/tools/api_manifest.json">API evidence</a>.</p>
 </body></html>

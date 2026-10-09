@@ -1,0 +1,2493 @@
+{
+  "schema": 1,
+  "retrieved": "2026-10-09",
+  "source": "https://developer.apple.com/tutorials/data/documentation/technologies.json",
+  "scope": "Discovery catalog only. Names from Apple public technology index; platform and SDK version must be audited individually. Never counted as implemented APIs or verified runtime gates.",
+  "groups": [
+    {
+      "name": "App Frameworks",
+      "items": [
+        {
+          "name": "Accessibility",
+          "url": "https://developer.apple.com/documentation/accessibility",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Accessory Notifications",
+          "url": "https://developer.apple.com/documentation/accessorynotifications",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Accessory Live Activities",
+          "url": "https://developer.apple.com/documentation/accessoryliveactivities",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Account Data Transfer",
+          "url": "https://developer.apple.com/documentation/accountdatatransfer",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ActivityKit",
+          "url": "https://developer.apple.com/documentation/activitykit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AlarmKit",
+          "url": "https://developer.apple.com/documentation/alarmkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "App Clips",
+          "url": "https://developer.apple.com/documentation/appclip",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "App Data Transfer",
+          "url": "https://developer.apple.com/documentation/appdatatransfer",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AppKit",
+          "url": "https://developer.apple.com/documentation/appkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "App License Delivery SDK",
+          "url": "https://developer.apple.com/documentation/applicensedeliverysdk",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Automatic Sign-In API",
+          "url": "https://developer.apple.com/documentation/automaticsigninapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Bundle Resources",
+          "url": "https://developer.apple.com/documentation/bundleresources",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Foundation",
+          "url": "https://developer.apple.com/documentation/corefoundation",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Declared Age Range",
+          "url": "https://developer.apple.com/documentation/declaredagerange",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Distributed",
+          "url": "https://developer.apple.com/documentation/distributed",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "EnergyKit",
+          "url": "https://developer.apple.com/documentation/energykit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Evaluations",
+          "url": "https://developer.apple.com/documentation/evaluations",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Foundation",
+          "url": "https://developer.apple.com/documentation/foundation",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Foundation Models",
+          "url": "https://developer.apple.com/documentation/foundationmodels",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "GeoToolbox",
+          "url": "https://developer.apple.com/documentation/geotoolbox",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "hvf",
+          "url": "https://developer.apple.com/documentation/hvf",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Mac Catalyst",
+          "url": "https://developer.apple.com/documentation/uikit/mac-catalyst",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ManagedApp",
+          "url": "https://developer.apple.com/documentation/managedapp",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Music Understanding",
+          "url": "https://developer.apple.com/documentation/musicunderstanding",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Objective-C Runtime",
+          "url": "https://developer.apple.com/documentation/objectivec",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Observation",
+          "url": "https://developer.apple.com/documentation/observation",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "PaperKit",
+          "url": "https://developer.apple.com/documentation/paperkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "PermissionKit",
+          "url": "https://developer.apple.com/documentation/permissionkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "RegexBuilder",
+          "url": "https://developer.apple.com/documentation/regexbuilder",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "RelevanceKit",
+          "url": "https://developer.apple.com/documentation/relevancekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Spatial Preview",
+          "url": "https://developer.apple.com/documentation/spatialpreview",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "StateReporting",
+          "url": "https://developer.apple.com/documentation/statereporting",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Swift",
+          "url": "https://developer.apple.com/documentation/swift",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SwiftData",
+          "url": "https://developer.apple.com/documentation/swiftdata",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SwiftUI",
+          "url": "https://developer.apple.com/documentation/swiftui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Symbols",
+          "url": "https://developer.apple.com/documentation/symbols",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "TranslationUIProvider",
+          "url": "https://developer.apple.com/documentation/translationuiprovider",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Trust Insights",
+          "url": "https://developer.apple.com/documentation/trustinsights",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "TVML",
+          "url": "https://developer.apple.com/documentation/tvml",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "TVMLKit JS",
+          "url": "https://developer.apple.com/documentation/tvmljs",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "TVMLKit",
+          "url": "https://developer.apple.com/documentation/tvmlkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "TVUIKit",
+          "url": "https://developer.apple.com/documentation/tvuikit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "UIKit",
+          "url": "https://developer.apple.com/documentation/uikit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "USDKit",
+          "url": "https://developer.apple.com/documentation/usdkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "visionOS",
+          "url": "https://developer.apple.com/documentation/visionos",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Visual Intelligence",
+          "url": "https://developer.apple.com/documentation/visualintelligence",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "WatchKit",
+          "url": "https://developer.apple.com/documentation/watchkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "watchOS apps",
+          "url": "https://developer.apple.com/documentation/watchos-apps",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Wi-Fi Aware",
+          "url": "https://developer.apple.com/documentation/wifiaware",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        }
+      ]
+    },
+    {
+      "name": "App Services",
+      "items": [
+        {
+          "name": "Accounts",
+          "url": "https://developer.apple.com/documentation/accounts",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AdAttributionKit",
+          "url": "https://developer.apple.com/documentation/adattributionkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Address Book",
+          "url": "https://developer.apple.com/documentation/addressbook",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Address Book UI",
+          "url": "https://developer.apple.com/documentation/addressbookui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AdServices",
+          "url": "https://developer.apple.com/documentation/adservices",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AdSupport",
+          "url": "https://developer.apple.com/documentation/adsupport",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Advanced Commerce API",
+          "url": "https://developer.apple.com/documentation/advancedcommerceapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple Maps Server API",
+          "url": "https://developer.apple.com/documentation/applemapsserverapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple Pencil",
+          "url": "https://developer.apple.com/documentation/applepencil",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Application Services",
+          "url": "https://developer.apple.com/documentation/applicationservices",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "App Intents",
+          "url": "https://developer.apple.com/documentation/appintents",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple School Manager and Apple Business APIs",
+          "url": "https://developer.apple.com/documentation/apple-school-and-business-manager-api",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AppMigrationKit",
+          "url": "https://developer.apple.com/documentation/appmigrationkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "App Store Receipts",
+          "url": "https://developer.apple.com/documentation/appstorereceipts",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "App Store Server API",
+          "url": "https://developer.apple.com/documentation/appstoreserverapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "App Store Server Notifications",
+          "url": "https://developer.apple.com/documentation/appstoreservernotifications",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Assignables",
+          "url": "https://developer.apple.com/documentation/assignables",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AudioAccessoryKit",
+          "url": "https://developer.apple.com/documentation/audioaccessorykit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Automatic Assessment Configuration",
+          "url": "https://developer.apple.com/documentation/automaticassessmentconfiguration",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Automated Device Enrollment",
+          "url": "https://developer.apple.com/documentation/automateddeviceenrollment",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Background Tasks",
+          "url": "https://developer.apple.com/documentation/backgroundtasks",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Background Assets",
+          "url": "https://developer.apple.com/documentation/backgroundassets",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "BrowserKit",
+          "url": "https://developer.apple.com/documentation/browserkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "CallKit",
+          "url": "https://developer.apple.com/documentation/callkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "CareKit",
+          "url": "https://developer.apple.comhttps://carekit-apple.github.io/CareKit/documentation/carekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "CarPlay",
+          "url": "https://developer.apple.com/documentation/carplay",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "CarKey",
+          "url": "https://developer.apple.com/documentation/carkey",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Swift Charts",
+          "url": "https://developer.apple.com/documentation/charts",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ClassKit",
+          "url": "https://developer.apple.com/documentation/classkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ClassKit Catalog API",
+          "url": "https://developer.apple.com/documentation/classkitcatalogapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ClassKit UI",
+          "url": "https://developer.apple.com/documentation/classkitui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ClockKit",
+          "url": "https://developer.apple.com/documentation/clockkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "CloudKit",
+          "url": "https://developer.apple.com/documentation/cloudkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Combine",
+          "url": "https://developer.apple.com/documentation/combine",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Contacts",
+          "url": "https://developer.apple.com/documentation/contacts",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ContactProvider",
+          "url": "https://developer.apple.com/documentation/contactprovider",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Contacts UI",
+          "url": "https://developer.apple.com/documentation/contactsui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core AI",
+          "url": "https://developer.apple.com/documentation/coreai",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Data",
+          "url": "https://developer.apple.com/documentation/coredata",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Location",
+          "url": "https://developer.apple.com/documentation/corelocation",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Location UI",
+          "url": "https://developer.apple.com/documentation/corelocationui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core ML",
+          "url": "https://developer.apple.com/documentation/coreml",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Motion",
+          "url": "https://developer.apple.com/documentation/coremotion",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Spotlight",
+          "url": "https://developer.apple.com/documentation/corespotlight",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Text",
+          "url": "https://developer.apple.com/documentation/coretext",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Transferable",
+          "url": "https://developer.apple.com/documentation/coretransferable",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "CrashReportExtension",
+          "url": "https://developer.apple.com/documentation/crashreportextension",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Create ML",
+          "url": "https://developer.apple.com/documentation/createml",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Create ML Components",
+          "url": "https://developer.apple.com/documentation/createmlcomponents",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "DataDetection",
+          "url": "https://developer.apple.com/documentation/datadetection",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Device Activity",
+          "url": "https://developer.apple.com/documentation/deviceactivity",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "DeviceCheck",
+          "url": "https://developer.apple.com/documentation/devicecheck",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "DockKit",
+          "url": "https://developer.apple.com/documentation/dockkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "EventKit",
+          "url": "https://developer.apple.com/documentation/eventkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "EventKit UI",
+          "url": "https://developer.apple.com/documentation/eventkitui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ExtensionFoundation",
+          "url": "https://developer.apple.com/documentation/extensionfoundation",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ExtensionKit",
+          "url": "https://developer.apple.com/documentation/extensionkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "External Purchase Server API",
+          "url": "https://developer.apple.com/documentation/externalpurchaseserverapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Family Controls",
+          "url": "https://developer.apple.com/documentation/familycontrols",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "File Provider",
+          "url": "https://developer.apple.com/documentation/fileprovider",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "File Provider UI",
+          "url": "https://developer.apple.com/documentation/fileproviderui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "FinanceKit",
+          "url": "https://developer.apple.com/documentation/financekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "FinanceKitUI",
+          "url": "https://developer.apple.com/documentation/financekitui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "HealthKit",
+          "url": "https://developer.apple.com/documentation/healthkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "HomeKit",
+          "url": "https://developer.apple.com/documentation/homekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "iAd",
+          "url": "https://developer.apple.com/documentation/iad",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "IdentityDocumentServices",
+          "url": "https://developer.apple.com/documentation/identitydocumentservices",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "IdentityDocumentServicesUI",
+          "url": "https://developer.apple.com/documentation/identitydocumentservicesui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "iWork Document Exporting API",
+          "url": "https://developer.apple.com/documentation/iworkdocumentexportingapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "JavaScriptCore",
+          "url": "https://developer.apple.com/documentation/javascriptcore",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Journaling Suggestions",
+          "url": "https://developer.apple.com/documentation/journalingsuggestions",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "LiveCommunicationKit",
+          "url": "https://developer.apple.com/documentation/livecommunicationkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "MailKit",
+          "url": "https://developer.apple.com/documentation/mailkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Managed Settings",
+          "url": "https://developer.apple.com/documentation/managedsettings",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Managed App Distribution",
+          "url": "https://developer.apple.com/documentation/managedappdistribution",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Managed Settings UI",
+          "url": "https://developer.apple.com/documentation/managedsettingsui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "MapKit",
+          "url": "https://developer.apple.com/documentation/mapkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "MarketplaceKit",
+          "url": "https://developer.apple.com/documentation/marketplacekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Matter",
+          "url": "https://developer.apple.com/documentation/matter",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "MatterSupport",
+          "url": "https://developer.apple.com/documentation/mattersupport",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Media Intents",
+          "url": "https://developer.apple.com/documentation/mediaintents",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Messages",
+          "url": "https://developer.apple.com/documentation/messages",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Message UI",
+          "url": "https://developer.apple.com/documentation/messageui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Multipeer Connectivity",
+          "url": "https://developer.apple.com/documentation/multipeerconnectivity",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Natural Language",
+          "url": "https://developer.apple.com/documentation/naturallanguage",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Notification Center",
+          "url": "https://developer.apple.com/documentation/notificationcenter",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "PassKit (Apple Pay and Wallet)",
+          "url": "https://developer.apple.com/documentation/passkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Preference Panes",
+          "url": "https://developer.apple.com/documentation/preferencepanes",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Private Cloud Compute Security Guide",
+          "url": "https://developer.apple.comhttps://security.apple.com/documentation/private-cloud-compute/",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ProximityReader",
+          "url": "https://developer.apple.com/documentation/proximityreader",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "PushKit",
+          "url": "https://developer.apple.com/documentation/pushkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Push to Talk",
+          "url": "https://developer.apple.com/documentation/pushtotalk",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Quick Look",
+          "url": "https://developer.apple.com/documentation/quicklook",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "QuickLook UI",
+          "url": "https://developer.apple.com/documentation/quicklookui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ResearchKit",
+          "url": "https://developer.apple.comhttps://github.com/ResearchKit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Retention Messaging API",
+          "url": "https://developer.apple.com/documentation/retentionmessaging",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Roster API",
+          "url": "https://developer.apple.com/documentation/rosterapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Safari Services",
+          "url": "https://developer.apple.com/documentation/safariservices",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SecureElementCredential",
+          "url": "https://developer.apple.com/documentation/secureelementcredential",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Sensitive Content Analysis",
+          "url": "https://developer.apple.com/documentation/sensitivecontentanalysis",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ServicesAccountLinking",
+          "url": "https://developer.apple.com/documentation/servicesaccountlinking",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Shared with You",
+          "url": "https://developer.apple.com/documentation/sharedwithyou",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SiriKit",
+          "url": "https://developer.apple.com/documentation/sirikit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SKAdNetwork for Web Ads",
+          "url": "https://developer.apple.com/documentation/skadnetworkforwebads",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SMS and Call Reporting",
+          "url": "https://developer.apple.com/documentation/identitylookup",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Social",
+          "url": "https://developer.apple.com/documentation/social",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Speech",
+          "url": "https://developer.apple.com/documentation/speech",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "StoreKit",
+          "url": "https://developer.apple.com/documentation/storekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Suggested Actions",
+          "url": "https://developer.apple.com/documentation/suggestedactions",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Tabular Data",
+          "url": "https://developer.apple.com/documentation/tabulardata",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "TelephonyMessagingKit",
+          "url": "https://developer.apple.com/documentation/telephonymessagingkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "TipKit",
+          "url": "https://developer.apple.com/documentation/tipkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Translation",
+          "url": "https://developer.apple.com/documentation/translation",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "TV Services",
+          "url": "https://developer.apple.com/documentation/tvservices",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "User Notifications",
+          "url": "https://developer.apple.com/documentation/usernotifications",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "User Notifications UI",
+          "url": "https://developer.apple.com/documentation/usernotificationsui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Wallet Orders",
+          "url": "https://developer.apple.com/documentation/walletorders",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Wallet Passes",
+          "url": "https://developer.apple.com/documentation/walletpasses",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Watch Connectivity",
+          "url": "https://developer.apple.com/documentation/watchconnectivity",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "WeatherKit",
+          "url": "https://developer.apple.com/documentation/weatherkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "WeatherKit REST API",
+          "url": "https://developer.apple.com/documentation/weatherkitrestapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "WebKit",
+          "url": "https://developer.apple.com/documentation/webkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "WidgetKit",
+          "url": "https://developer.apple.com/documentation/widgetkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "WirelessInsights",
+          "url": "https://developer.apple.com/documentation/wirelessinsights",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "WorkoutKit",
+          "url": "https://developer.apple.com/documentation/workoutkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Vision",
+          "url": "https://developer.apple.com/documentation/vision",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "VisionKit",
+          "url": "https://developer.apple.com/documentation/visionkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SafetyKit",
+          "url": "https://developer.apple.com/documentation/safetykit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        }
+      ]
+    },
+    {
+      "name": "Developer Tools",
+      "items": [
+        {
+          "name": "Analytics Reports",
+          "url": "https://developer.apple.com/documentation/analytics-reports",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "App Intents Testing",
+          "url": "https://developer.apple.com/documentation/appintentstesting",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Automator",
+          "url": "https://developer.apple.com/documentation/automator",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Developer Tools Support",
+          "url": "https://developer.apple.com/documentation/developertoolssupport",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "DocC",
+          "url": "https://developer.apple.comhttps://www.swift.org/documentation/docc",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Enterprise Program API",
+          "url": "https://developer.apple.com/documentation/enterpriseprogramapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Installer JS",
+          "url": "https://developer.apple.com/documentation/installer_js",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "PackageDescription",
+          "url": "https://developer.apple.com/documentation/packagedescription",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Playground Bluetooth",
+          "url": "https://developer.apple.com/documentation/playgroundbluetooth",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Playground Support",
+          "url": "https://developer.apple.com/documentation/playgroundsupport",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Reality Composer Pro",
+          "url": "https://developer.apple.com/documentation/realitycomposerpro",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Safari Developer Features",
+          "url": "https://developer.apple.com/documentation/safari-developer-tools",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Scripting Bridge",
+          "url": "https://developer.apple.com/documentation/scriptingbridge",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ShaderGraph",
+          "url": "https://developer.apple.com/documentation/shadergraph",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "StoreKit Test",
+          "url": "https://developer.apple.com/documentation/storekittest",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Swift Playgrounds",
+          "url": "https://developer.apple.com/documentation/swift-playgrounds",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Synchronization",
+          "url": "https://developer.apple.com/documentation/synchronization",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Technotes",
+          "url": "https://developer.apple.com/documentation/technotes",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Swift Testing",
+          "url": "https://developer.apple.com/documentation/testing",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Xcode",
+          "url": "https://developer.apple.com/documentation/xcode",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Swift packages",
+          "url": "https://developer.apple.com/documentation/xcode/swift-packages",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Xcode Cloud",
+          "url": "https://developer.apple.com/documentation/xcode/xcode-cloud",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "XcodeKit",
+          "url": "https://developer.apple.com/documentation/xcodekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "xcselect",
+          "url": "https://developer.apple.com/documentation/xcselect",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "XCTest",
+          "url": "https://developer.apple.com/documentation/xctest",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "XCUIAutomation",
+          "url": "https://developer.apple.com/documentation/xcuiautomation",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        }
+      ]
+    },
+    {
+      "name": "Graphics and Games",
+      "items": [
+        {
+          "name": "ARKit",
+          "url": "https://developer.apple.com/documentation/arkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ColorSync",
+          "url": "https://developer.apple.com/documentation/colorsync",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Compositor Services",
+          "url": "https://developer.apple.com/documentation/compositorservices",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Compute Graph",
+          "url": "https://developer.apple.com/documentation/computegraph",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Graphics",
+          "url": "https://developer.apple.com/documentation/coregraphics",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Image",
+          "url": "https://developer.apple.com/documentation/coreimage",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Foveated Streaming",
+          "url": "https://developer.apple.com/documentation/foveatedstreaming",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Game Controller",
+          "url": "https://developer.apple.com/documentation/gamecontroller",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "GameKit",
+          "url": "https://developer.apple.com/documentation/gamekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "GameplayKit",
+          "url": "https://developer.apple.com/documentation/gameplaykit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "GameSave",
+          "url": "https://developer.apple.com/documentation/gamesave",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "GLKit",
+          "url": "https://developer.apple.com/documentation/glkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Image I/O",
+          "url": "https://developer.apple.com/documentation/imageio",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Image Playground",
+          "url": "https://developer.apple.com/documentation/imageplayground",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Metal",
+          "url": "https://developer.apple.com/documentation/metal",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "MetalFX",
+          "url": "https://developer.apple.com/documentation/metalfx",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "MetalKit",
+          "url": "https://developer.apple.com/documentation/metalkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Metal Performance Shaders",
+          "url": "https://developer.apple.com/documentation/metalperformanceshaders",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Metal Performance Shaders Graph",
+          "url": "https://developer.apple.com/documentation/metalperformanceshadersgraph",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Model I/O",
+          "url": "https://developer.apple.com/documentation/modelio",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "OpenGL ES",
+          "url": "https://developer.apple.com/documentation/opengles",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "PDFKit",
+          "url": "https://developer.apple.com/documentation/pdfkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "PencilKit",
+          "url": "https://developer.apple.com/documentation/pencilkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Quartz",
+          "url": "https://developer.apple.com/documentation/quartz",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Animation",
+          "url": "https://developer.apple.com/documentation/quartzcore",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "QuickTime File Format",
+          "url": "https://developer.apple.com/documentation/quicktime-file-format",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "RealityKit",
+          "url": "https://developer.apple.com/documentation/realitykit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ReplayKit",
+          "url": "https://developer.apple.com/documentation/replaykit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "RoomPlan",
+          "url": "https://developer.apple.com/documentation/roomplan",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SceneKit",
+          "url": "https://developer.apple.com/documentation/scenekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Spatial",
+          "url": "https://developer.apple.com/documentation/spatial",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SpriteKit",
+          "url": "https://developer.apple.com/documentation/spritekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "TabletopKit",
+          "url": "https://developer.apple.com/documentation/tabletopkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Touch Controller",
+          "url": "https://developer.apple.com/documentation/touchcontroller",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "USD",
+          "url": "https://developer.apple.com/documentation/usd",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        }
+      ]
+    },
+    {
+      "name": "Media",
+      "items": [
+        {
+          "name": "Apple Ads",
+          "url": "https://developer.apple.com/documentation/apple_ads",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple Music Feed",
+          "url": "https://developer.apple.com/documentation/applemusicfeed",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple News",
+          "url": "https://developer.apple.com/documentation/applenews",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Assets Library",
+          "url": "https://developer.apple.com/documentation/assetslibrary",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Audio Toolbox",
+          "url": "https://developer.apple.com/documentation/audiotoolbox",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Audio Unit",
+          "url": "https://developer.apple.com/documentation/audiounit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AVFAudio",
+          "url": "https://developer.apple.com/documentation/avfaudio",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AVFoundation",
+          "url": "https://developer.apple.com/documentation/avfoundation",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AVKit",
+          "url": "https://developer.apple.com/documentation/avkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AVRouting",
+          "url": "https://developer.apple.com/documentation/avrouting",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AVSystemRouting",
+          "url": "https://developer.apple.com/documentation/avsystemrouting",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Cinematic",
+          "url": "https://developer.apple.com/documentation/cinematic",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Audio",
+          "url": "https://developer.apple.com/documentation/coreaudio",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "CoreAudioKit",
+          "url": "https://developer.apple.com/documentation/coreaudiokit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Audio Types",
+          "url": "https://developer.apple.com/documentation/coreaudiotypes",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Haptics",
+          "url": "https://developer.apple.com/documentation/corehaptics",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Media",
+          "url": "https://developer.apple.com/documentation/coremedia",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Media I/O",
+          "url": "https://developer.apple.com/documentation/coremediaio",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core MIDI",
+          "url": "https://developer.apple.com/documentation/coremidi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Video",
+          "url": "https://developer.apple.com/documentation/corevideo",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "DeviceDiscoveryExtension",
+          "url": "https://developer.apple.com/documentation/devicediscoveryextension",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Group Activities",
+          "url": "https://developer.apple.com/documentation/groupactivities",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "HTTP Live Streaming",
+          "url": "https://developer.apple.com/documentation/http-live-streaming",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ImageCaptureCore",
+          "url": "https://developer.apple.com/documentation/imagecapturecore",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Immersive Media Support",
+          "url": "https://developer.apple.com/documentation/immersivemediasupport",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "iTunes Library",
+          "url": "https://developer.apple.com/documentation/ituneslibrary",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "LockedCameraCapture",
+          "url": "https://developer.apple.com/documentation/lockedcameracapture",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Media Accessibility",
+          "url": "https://developer.apple.com/documentation/mediaaccessibility",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Media Device",
+          "url": "https://developer.apple.com/documentation/mediadevice",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "MediaExtension",
+          "url": "https://developer.apple.com/documentation/mediaextension",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Media Intelligence",
+          "url": "https://developer.apple.com/documentation/mediaintelligence",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Media Library",
+          "url": "https://developer.apple.com/documentation/medialibrary",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Media Player",
+          "url": "https://developer.apple.com/documentation/mediaplayer",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Media Setup",
+          "url": "https://developer.apple.com/documentation/mediasetup",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Media Toolbox",
+          "url": "https://developer.apple.com/documentation/mediatoolbox",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "MusicKit",
+          "url": "https://developer.apple.com/documentation/musickit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "MusicKitJS",
+          "url": "https://developer.apple.comhttps://developer.apple.com/musickit/web/",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Now Playing",
+          "url": "https://developer.apple.com/documentation/nowplaying",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "PHASE",
+          "url": "https://developer.apple.com/documentation/phase",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "PhotoKit",
+          "url": "https://developer.apple.com/documentation/photokit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Professional Video Applications",
+          "url": "https://developer.apple.com/documentation/professional_video_applications",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Quick Look Thumbnailing",
+          "url": "https://developer.apple.com/documentation/quicklookthumbnailing",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ScreenCaptureKit",
+          "url": "https://developer.apple.com/documentation/screencapturekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Screen Saver",
+          "url": "https://developer.apple.com/documentation/screensaver",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ShazamKit",
+          "url": "https://developer.apple.com/documentation/shazamkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SiriKit Cloud Media",
+          "url": "https://developer.apple.com/documentation/sirikitcloudmedia",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Sound Analysis",
+          "url": "https://developer.apple.com/documentation/soundanalysis",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Video Toolbox",
+          "url": "https://developer.apple.com/documentation/videotoolbox",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Video Subscriber Account",
+          "url": "https://developer.apple.com/documentation/videosubscriberaccount",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        }
+      ]
+    },
+    {
+      "name": "Release Notes",
+      "items": [
+        {
+          "name": "iOS & iPadOS Release Notes",
+          "url": "https://developer.apple.com/documentation/ios-ipados-release-notes",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "macOS Release Notes",
+          "url": "https://developer.apple.com/documentation/macos-release-notes",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Safari Release Notes",
+          "url": "https://developer.apple.com/documentation/safari-release-notes",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "tvOS Release Notes",
+          "url": "https://developer.apple.com/documentation/tvos-release-notes",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "visionOS Release Notes",
+          "url": "https://developer.apple.com/documentation/visionos-release-notes",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "watchOS Release Notes",
+          "url": "https://developer.apple.com/documentation/watchos-release-notes",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Xcode Release Notes",
+          "url": "https://developer.apple.com/documentation/xcode-release-notes",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        }
+      ]
+    },
+    {
+      "name": "System",
+      "items": [
+        {
+          "name": "Accelerate",
+          "url": "https://developer.apple.com/documentation/accelerate",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Accessory Access",
+          "url": "https://developer.apple.com/documentation/accessoryaccess",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AccessorySetupKit",
+          "url": "https://developer.apple.com/documentation/accessorysetupkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Accessory Transport Extension",
+          "url": "https://developer.apple.com/documentation/accessorytransportextension",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Account & Organizational Data Sharing",
+          "url": "https://developer.apple.com/documentation/accountorganizationaldatasharing",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple silicon",
+          "url": "https://developer.apple.com/documentation/apple-silicon",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple Archive",
+          "url": "https://developer.apple.com/documentation/applearchive",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "App Tracking Transparency",
+          "url": "https://developer.apple.com/documentation/apptrackingtransparency",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "AudioDriverKit",
+          "url": "https://developer.apple.com/documentation/audiodriverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Authentication Services",
+          "url": "https://developer.apple.com/documentation/authenticationservices",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "BlockStorageDeviceDriverKit",
+          "url": "https://developer.apple.com/documentation/blockstoragedevicedriverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "CFNetwork",
+          "url": "https://developer.apple.com/documentation/cfnetwork",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Collaboration",
+          "url": "https://developer.apple.com/documentation/collaboration",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Compression",
+          "url": "https://developer.apple.com/documentation/compression",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Bluetooth",
+          "url": "https://developer.apple.com/documentation/corebluetooth",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core HID",
+          "url": "https://developer.apple.com/documentation/corehid",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core NFC",
+          "url": "https://developer.apple.com/documentation/corenfc",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Services",
+          "url": "https://developer.apple.com/documentation/coreservices",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core Telephony",
+          "url": "https://developer.apple.com/documentation/coretelephony",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Core WLAN",
+          "url": "https://developer.apple.com/documentation/corewlan",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple CryptoKit",
+          "url": "https://developer.apple.com/documentation/cryptokit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "CryptoTokenKit",
+          "url": "https://developer.apple.com/documentation/cryptotokenkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Darwin Notify",
+          "url": "https://developer.apple.com/documentation/darwinnotify",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "DeviceDiscoveryUI",
+          "url": "https://developer.apple.com/documentation/devicediscoveryui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Device Management",
+          "url": "https://developer.apple.com/documentation/devicemanagement",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Disk Arbitration",
+          "url": "https://developer.apple.com/documentation/diskarbitration",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "DiskImageKit",
+          "url": "https://developer.apple.com/documentation/diskimagekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Dispatch",
+          "url": "https://developer.apple.com/documentation/dispatch",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "dnssd",
+          "url": "https://developer.apple.com/documentation/dnssd",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "DriverKit",
+          "url": "https://developer.apple.com/documentation/driverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Endpoint Security",
+          "url": "https://developer.apple.com/documentation/endpointsecurity",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Exception Handling",
+          "url": "https://developer.apple.com/documentation/exceptionhandling",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Execution Policy",
+          "url": "https://developer.apple.com/documentation/executionpolicy",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Exposure Notification",
+          "url": "https://developer.apple.com/documentation/exposurenotification",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "External Accessory",
+          "url": "https://developer.apple.com/documentation/externalaccessory",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Finder Sync",
+          "url": "https://developer.apple.com/documentation/findersync",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Force Feedback",
+          "url": "https://developer.apple.com/documentation/forcefeedback",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "FSKit",
+          "url": "https://developer.apple.com/documentation/fskit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "GSS",
+          "url": "https://developer.apple.com/documentation/gss",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "HIDDriverKit",
+          "url": "https://developer.apple.com/documentation/hiddriverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Hypervisor",
+          "url": "https://developer.apple.com/documentation/hypervisor",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "InputMethodKit",
+          "url": "https://developer.apple.com/documentation/inputmethodkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "IOBluetooth",
+          "url": "https://developer.apple.com/documentation/iobluetooth",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "IOBluetooth UI",
+          "url": "https://developer.apple.com/documentation/iobluetoothui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "IOKit",
+          "url": "https://developer.apple.com/documentation/iokit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "IOSurface",
+          "url": "https://developer.apple.com/documentation/iosurface",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "IOUSBHost",
+          "url": "https://developer.apple.com/documentation/iousbhost",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Kernel",
+          "url": "https://developer.apple.com/documentation/kernel",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Latent Semantic Mapping",
+          "url": "https://developer.apple.com/documentation/latentsemanticmapping",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "LightweightCodeRequirements",
+          "url": "https://developer.apple.com/documentation/lightweightcoderequirements",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Local Authentication",
+          "url": "https://developer.apple.com/documentation/localauthentication",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Local Authentication Embedded UI",
+          "url": "https://developer.apple.com/documentation/localauthenticationembeddedui",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "MetricKit",
+          "url": "https://developer.apple.com/documentation/metrickit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "MIDIDriverKit",
+          "url": "https://developer.apple.com/documentation/mididriverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "ML Compute",
+          "url": "https://developer.apple.com/documentation/mlcompute",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Nearby Interaction",
+          "url": "https://developer.apple.com/documentation/nearbyinteraction",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Network",
+          "url": "https://developer.apple.com/documentation/network",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Network Extension",
+          "url": "https://developer.apple.com/documentation/networkextension",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "NetworkingDriverKit",
+          "url": "https://developer.apple.com/documentation/networkingdriverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Open Directory",
+          "url": "https://developer.apple.com/documentation/opendirectory",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "os",
+          "url": "https://developer.apple.com/documentation/os",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "OSLog",
+          "url": "https://developer.apple.com/documentation/oslog",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Paravirtualized Graphics",
+          "url": "https://developer.apple.com/documentation/paravirtualizedgraphics",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "PCIDriverKit",
+          "url": "https://developer.apple.com/documentation/pcidriverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SCSIPeripheralsDriverKit",
+          "url": "https://developer.apple.com/documentation/scsiperipheralsdriverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SCSIControllerDriverKit",
+          "url": "https://developer.apple.com/documentation/scsicontrollerdriverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Security",
+          "url": "https://developer.apple.com/documentation/security",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Security Foundation",
+          "url": "https://developer.apple.com/documentation/securityfoundation",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Security Interface",
+          "url": "https://developer.apple.com/documentation/securityinterface",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SensorKit",
+          "url": "https://developer.apple.com/documentation/sensorkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "SerialDriverKit",
+          "url": "https://developer.apple.com/documentation/serialdriverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Service Management",
+          "url": "https://developer.apple.com/documentation/servicemanagement",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "simd",
+          "url": "https://developer.apple.com/documentation/accelerate/simd-library",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "System",
+          "url": "https://developer.apple.com/documentation/system",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "System Configuration",
+          "url": "https://developer.apple.com/documentation/systemconfiguration",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "System Extensions",
+          "url": "https://developer.apple.com/documentation/systemextensions",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Thread Network",
+          "url": "https://developer.apple.com/documentation/threadnetwork",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Uniform Type Identifiers",
+          "url": "https://developer.apple.com/documentation/uniformtypeidentifiers",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "USBDriverKit",
+          "url": "https://developer.apple.com/documentation/usbdriverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "USBSerialDriverKit",
+          "url": "https://developer.apple.com/documentation/usbserialdriverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "VideoDriverKit",
+          "url": "https://developer.apple.com/documentation/videodriverkit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Virtualization",
+          "url": "https://developer.apple.com/documentation/virtualization",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "vmnet",
+          "url": "https://developer.apple.com/documentation/vmnet",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Wi-Fi Infrastructure",
+          "url": "https://developer.apple.com/documentation/wifiinfrastructure",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "XPC",
+          "url": "https://developer.apple.com/documentation/xpc",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        }
+      ]
+    },
+    {
+      "name": "Web",
+      "items": [
+        {
+          "name": "Apple Ads Platform API",
+          "url": "https://developer.apple.com/documentation/apple-ads-platform-api",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple Music API",
+          "url": "https://developer.apple.com/documentation/applemusicapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple Pay on the Web",
+          "url": "https://developer.apple.com/documentation/applepayontheweb",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple Pay Web Merchant Registration API",
+          "url": "https://developer.apple.com/documentation/applepaywebmerchantregistrationapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple Pay Merchant Token Usage Information API",
+          "url": "https://developer.apple.com/documentation/applepaymerchanttokenusageinformation",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple TV Feed",
+          "url": "https://developer.apple.com/documentation/appletvfeed",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "App Store Connect API",
+          "url": "https://developer.apple.com/documentation/appstoreconnectapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "BrowserEngineCore",
+          "url": "https://developer.apple.com/documentation/browserenginecore",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "BrowserEngineKit",
+          "url": "https://developer.apple.com/documentation/browserenginekit",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "CloudKit JS",
+          "url": "https://developer.apple.com/documentation/cloudkitjs",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "CKTool JS",
+          "url": "https://developer.apple.com/documentation/cktooljs",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Link Presentation",
+          "url": "https://developer.apple.com/documentation/linkpresentation",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "LivePhotosKit JS",
+          "url": "https://developer.apple.com/documentation/livephotoskitjs",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "MapKit JS",
+          "url": "https://developer.apple.com/documentation/mapkitjs",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Apple Pay Merchant Token Management API",
+          "url": "https://developer.apple.com/documentation/merchanttokennotificationservices",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Notary API",
+          "url": "https://developer.apple.com/documentation/notaryapi",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Safari app extensions",
+          "url": "https://developer.apple.com/documentation/safariservices/safari-app-extensions",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Screen Time",
+          "url": "https://developer.apple.com/documentation/screentime",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Sign in with Apple",
+          "url": "https://developer.apple.com/documentation/signinwithapple",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Siri Event Suggestions Markup",
+          "url": "https://developer.apple.com/documentation/sirieventsuggestionsmarkup",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Maps Web Snapshots",
+          "url": "https://developer.apple.com/documentation/snapshots",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "Updates",
+          "url": "https://developer.apple.com/documentation/updates",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        },
+        {
+          "name": "WebKit JS",
+          "url": "https://developer.apple.com/documentation/webkitjs",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        }
+      ]
+    },
+    {
+      "name": "Design",
+      "items": [
+        {
+          "name": "Human Interface Guidelines",
+          "url": "https://developer.apple.com/design/human-interface-guidelines",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        }
+      ]
+    },
+    {
+      "name": "Technology Overviews",
+      "items": [
+        {
+          "name": "Technology Overviews",
+          "url": "https://developer.apple.com/documentation/technologyoverviews",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        }
+      ]
+    },
+    {
+      "name": "Sample Code",
+      "items": [
+        {
+          "name": "Sample Code Library",
+          "url": "https://developer.apple.com/documentation/samplecode",
+          "status": "unassessed",
+          "ios_applicability": "unassessed; catalog includes other platforms, web services, release notes and developer tools"
+        }
+      ]
+    }
+  ]
+}

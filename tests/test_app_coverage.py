@@ -109,12 +109,13 @@ class AppCoverageTests(unittest.TestCase):
             app_coverage.inventory_symbols({"schema": 1, "groups": [
                 {"symbols": ["_foo", "_foo"]}]})
 
-    def test_source_inventory_counts_unchanged(self):
+    def test_source_inventory_counts_expand_without_false_coverage(self):
         import json
         apis = json.loads((ROOT / "tools/api_inventory.json").read_text())
         gates = json.loads((ROOT / "tools/compat_capabilities.json").read_text())
         self.assertEqual(len(app_coverage.inventory_symbols(apis)), 269)
-        self.assertEqual(len(app_coverage.runtime_gate_rows(gates)), 239)
+        self.assertEqual(len(app_coverage.runtime_gate_rows(gates)), sum(len(g["items"]) for g in gates["groups"]))
+        self.assertGreater(len(app_coverage.runtime_gate_rows(gates)), 239)
 
 
 if __name__ == "__main__":

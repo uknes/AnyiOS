@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "scope": "Explicitly tracked iOS compatibility work gates, not every OS feature, Apple API, or app requirement. Mark completed only to the exact narrow test scope.",
+  "scope": "Expandable cross-app iOS requirements inventory: tested narrow gates plus pending framework, behavior, host-adapter, hardware, restricted-service and unknown-dependency contracts. Not an exhaustive SDK symbol list or proof of universal compatibility.",
   "completion_rules": "Verified means CI-backed narrow gate, not full framework. Partial never adds to completed percentage. Pending means not verified, not proof of impossibility.",
   "groups": [
     {
@@ -1131,6 +1131,1907 @@
           "status": "pending"
         }
       ]
+    },
+    {
+      "name": "CPU correctness and host isolation",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "A64 instruction fault semantics",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Exclusive monitor and LL/SC contention",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "LSE atomics and memory barriers",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Floating-point FPCR FPSR rounding and NaNs",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Unaligned and endian-sensitive accesses",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "PAC authenticated branches and data pointers",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "BTI landing-pad and indirect branch behavior",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Guest page-size 4K and 16K assumptions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "JIT code invalidation across threads",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Host register preservation and stack alignment",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Native instruction trap recovery",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Guest fault delivery without host-process termination",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Loader and binary version coverage",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "LC_BUILD_VERSION and deployment-target compatibility",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Legacy LC_VERSION_MIN_IPHONEOS handling",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Authenticated chained-pointer formats",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Reexports and symbol resolvers",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Two-level namespaces and interposition",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "dlopen dlclose image lifetime",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "dyld image callbacks and enumeration",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Lazy symbol binding under concurrency",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Weak imports and missing optional frameworks",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Objective-C image registration and +load ordering",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Swift image metadata registration",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Initializer dependency graph and rollback",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Code signature and entitlement metadata parsing",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Resource-only bundles and asset packs",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Darwin kernel contracts",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "Mach ports rights transfer and lifetime",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "mach_msg serialization and out-of-line memory",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Bootstrap namespace service lookup",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Mach task and thread queries",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Mach exception ports and delivery",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "kqueue kevent filters and cancellation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Darwin notify tokens and coalescing",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "POSIX signals masks and alternate stacks",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Thread QoS priority inheritance",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Mach continuous and absolute timebases",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "sysctl versioned device queries",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Memory pressure and jetsam callbacks",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "XPC serialization and connection interruption",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Sandbox-extension token and scoped-access semantics",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "C++ Blocks and unwind",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "libc++ containers and allocator ABI",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "libc++abi exception objects and type matching",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Compact unwind and DWARF CFI",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Personality routines and landing pads",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "setjmp longjmp saved machine state",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "C++ RTTI cross-dylib identity",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Block descriptors signatures and capture layouts",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Block copy dispose and byref promotion",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Objective-C exception interoperability",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Thread-local C++ destruction",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Compiler builtins and math edge cases",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Guest callback lifetime after async cancellation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Objective-C complete behavior",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "Tagged pointers and nonpointer isa variants",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Method caches and dynamic method resolution",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "objc_msgSendSuper and structure-return rules",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Forwarding invocation and NSInvocation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Weak table zeroing and object teardown",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Associated objects and synchronization",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "KVC KVO observation and notifications",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Runtime class creation method exchange and swizzling",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ARC optimized return-value conventions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Protocol property and ivar reflection",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Class clusters and toll-free bridging",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Autorelease pool nesting and exceptional teardown",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Swift complete behavior",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "Stable Swift calling convention swiftcall",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Value witness tables copy destroy and layout",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Generic metadata instantiation and caching",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Resilient field offsets and enum layouts",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Existential containers and protocol conformance",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Async function context and continuation ABI",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Actors executor isolation and reentrancy",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Task groups cancellation priorities and locals",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Distributed actor transport requirements",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Swift error and Objective-C NSError bridging",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "String storage and Foundation bridging",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Dynamic replacement and reflection metadata",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Concurrency back-deployment libraries",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Ownership move-only and synchronization contracts",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "SwiftUI and reactive UI",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "SwiftUI view graph identity and diffing",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "State Binding Environment and transactions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Observation dependency invalidation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Combine publishers subscribers demand and cancellation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SwiftUI layout preferences and geometry",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Navigation sheets popovers and presentations",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "UIKit SwiftUI representable bridge",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SwiftUI animation gesture and focus systems",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SwiftUI accessibility and Dynamic Type",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Swift Charts axes marks and interactions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SwiftUI documents scenes and restoration",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Versioned Liquid Glass materials and controls",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Resources localization and text",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "Asset catalog CAR rendition decoding",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "On-demand resources and Background Assets",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "NIB storyboard object graph versions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Localized string catalogs plural rules and bundles",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ICU normalization collation and calendars",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Bidirectional and complex-script shaping",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Emoji variation and fallback fonts",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SF Symbols variable and animated symbols",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AttributedString and NSAttributedString bridging",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Unicode grapheme cursor and editing boundaries",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Data detectors links addresses and dates",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "UTType conformance and file association",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "PDF parsing annotation search and printing",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Apple Archive and Compression formats",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Persistence and file semantics",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "SwiftData model schemas and migrations",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Core Data persistent history and merge conflicts",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "NSFileCoordinator NSFilePresenter coordination",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Security-scoped bookmarks and sandbox grants",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "FileProvider domains enumeration and materialization",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "App group shared containers and preferences",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "APFS observable case unicode and metadata semantics",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "NSUbiquitousKeyValueStore conflict handling",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CloudKit zones subscriptions sharing and errors",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Protected-file lock-state and availability callbacks",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Atomic writes fsync and crash recovery",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "NSPersistentCloudKitContainer synchronization",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Advanced GPU and imaging",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "Metal binary metallib and AIR intake",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Metal GPU-family versioned feature sets",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Argument buffers bindless resources and residency",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Tile shaders imageblocks and memoryless attachments",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Tessellation mesh shaders and indirect command buffers",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Ray tracing acceleration structures",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Sparse textures compression and pixel formats",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Metal fences shared events and heap aliasing",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Metal 4 command and pipeline contracts",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "MetalFX temporal spatial upscaling",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Metal Performance Shaders and MPSGraph",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "IOSurface sharing and CoreVideo pixel buffers",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CoreImage filters kernels RAW and HDR processing",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ImageIO HEIF AVIF GIF TIFF and orientation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ColorSync ICC HDR EDR and wide-gamut output",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ModelIO USD and texture mesh import",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "AR and spatial experiences",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "ARKit world tracking anchors and session errors",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ARKit face tracking TrueDepth dependency",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ARKit scene reconstruction LiDAR dependency",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "RealityKit entity component system and animation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "RealityKit materials physics and rendering",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "RoomPlan capture and room model output",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Spatial transforms coordinates and unit conventions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Object capture model availability and device restrictions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Camera calibration depth maps and occlusion",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Host adapter or explicit unavailable spatial hardware",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Games and third-party runtimes",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "GameplayKit pathfinding state machines random sources",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "GameSave account and cloud persistence",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "GameController touch virtual controllers and remapping",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "TouchController on-screen interaction contracts",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Unity IL2CPP generated C++ ABI and callbacks",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Unity native plugins and Metal backend",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Unreal packaged shaders assets and platform calls",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Godot Cocos SDL and custom engine dependencies",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Flutter Dart AOT engine and platform channels",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "React Native Hermes JSC bridge and native modules",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Kotlin Native runtime and coroutine integration",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Embedded scripting Lua Python and WebAssembly",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Third-party SDK dynamic selectors and service dependencies",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Multiplayer anti-cheat and server platform restrictions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Advanced media and capture",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "CoreMedia sample buffers clocks and time ranges",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "VideoToolbox decode encode sessions and pixel formats",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "HLS adaptive playback subtitles and offline assets",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AVFoundation composition export and seeking",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AVKit picture-in-picture and presentation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "FairPlay encrypted media legitimate service dependency",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AVCapture camera formats autofocus and exposure",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Cinematic depth metadata and capture",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "PhotoKit limited-library authorization and edits",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Live Photos paired media and resource access",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ReplayKit recording broadcast extensions and consent",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AudioToolbox queues converters and codecs",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CoreMIDI MIDI protocols timestamps and endpoints",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AudioUnit v3 hosting presets and extensions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "PHASE spatial audio and acoustic models",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "MediaPlayer remote commands and now-playing state",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Now Playing framework system presentation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Music Understanding on-device analysis",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SoundAnalysis classification and streaming",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ShazamKit recognition signature and service access",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "MusicKit catalog authorization and protected playback",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AirPlay route discovery protected stream dependencies",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Network and browser completeness",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "Network.framework TCP UDP TLS QUIC connections",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "NWPathMonitor interfaces constrained and expensive paths",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "IPv6 NAT64 Happy Eyeballs and local-network consent",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "NetworkExtension VPN packet tunnels and filters",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Wi-Fi Aware peer discovery pairing and transport",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Wi-Fi Infrastructure capability and entitlement audit",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "NEHotspotConfiguration setup and restricted helpers",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "MultipeerConnectivity session discovery encryption",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "WebKit navigation process pools and content worlds",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "WebKit service workers IndexedDB and caches",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "WebKit WebRTC camera microphone and codecs",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "WebKit WebGL WebGPU and GPU integration",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SafariServices authentication and browser presentation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "BrowserEngineKit engine extensions and restricted privileges",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "BrowserEngineCore process security contracts",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "BrowserKit default-browser and data exchange requirements",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AuthenticationServices passkeys credential providers and OAuth",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "App-bound domains ATS policies and certificate pinning",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Sensors radios and accessories",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "CoreLocation accuracy authorization geofences and heading",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CoreMotion accelerometer gyroscope magnetometer barometer",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SensorKit restricted research data authorization",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CoreBluetooth central peripheral restoration and GATT",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CoreNFC tag sessions and unsupported-device results",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "NearbyInteraction UWB ranging and accessory tokens",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ExternalAccessory MFi sessions protocols and authentication",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AccessorySetupKit Bluetooth Wi-Fi onboarding",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Accessory transport security and data forwarding",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "DockKit motorized accessory tracking",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ThreadNetwork credentials and border-router availability",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "MatterSupport commissioning and ecosystem access",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "HomeKit homes pairing encrypted control and invitations",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CoreTelephony carrier SIM and cellular-state queries",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Satellite connectivity availability and entitlement restrictions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Apple Pencil hover pressure tilt and tool interactions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "HID device mapping and disconnect behavior",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Battery thermal low-power proximity and orientation state",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "AI language and model availability",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "CoreML model format loading specialization and prediction",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CoreML CPU GPU Neural Engine backend selection",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CoreAI model loading specialization and memory contracts",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Accelerate vDSP BLAS LAPACK and vImage ABI",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "NaturalLanguage tokenization language and embeddings",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Vision OCR barcodes detection tracking and requests",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "VisionKit document scanner and data scanner",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Speech recognition local and server authorization",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Translation sessions language packs and availability",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "FoundationModels guided generation tools and streaming",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "FoundationModels multimodal sessions and dynamic profiles",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Apple model weights license device and availability restrictions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Private Cloud Compute account service and attestation dependency",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ImagePlayground model and presentation availability",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SensitiveContentAnalysis consent and classification",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Evaluations framework runtime vs developer-tool applicability",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Personal data and domain services",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "Contacts containers change history and limited access",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "EventKit calendars reminders recurrence and permissions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "HealthKit samples queries workouts sharing and authorization",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "WorkoutKit plans scheduling and paired-device dependency",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ResearchKit study consent and task UI",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CareKit care plans outcomes and data stores",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "MapKit tiles annotations routing and search service",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "GeoToolbox geospatial resolution and service dependencies",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "WeatherKit authorization attribution and service availability",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "FinanceKit financial-data authorization and region restrictions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "JournalingSuggestions system-selected personal data",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "EnergyKit home-energy service and device prerequisites",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ClassKit student activity managed accounts and authorization",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Schoolwork Assignables and assessment-mode constraints",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "DeclaredAgeRange consent and account-provided age category",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "PermissionKit parental approval and communication permissions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "System UI intents and extensions",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "AppIntents entities queries intents and parameter resolution",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SiriKit intent extension dispatch and system integration",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CoreSpotlight indexing search and semantic entities",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "WidgetKit timelines configuration and interactive intents",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ActivityKit Live Activities push updates and lifetime",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AlarmKit alarms timers scheduling and authorization",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "TipKit rules persistence and popover presentation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ExtensionFoundation registration activation and isolation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ExtensionKit extension processes and UI hosting",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Share action keyboard and document extensions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Notification service and content extensions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "LockedCameraCapture extension storage and handoff",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AppClip invocation size limits and ephemeral permission",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "QuickLook preview thumbnails and extension callbacks",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "LinkPresentation metadata fetching and preview rendering",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "UserNotifications local scheduling actions and attachments",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "PushKit VoIP tokens and delivery requirements",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "BackgroundTasks launch expiration and continued processing",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ScreenTime DeviceActivity monitoring and reports",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "FamilyControls authorization and ManagedSettings shields",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Communication continuity and vehicles",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "CallKit incoming outgoing calls and audio coordination",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "LiveCommunicationKit default-calling capability",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "PushToTalk sessions transmission and background behavior",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "TelephonyMessagingKit carrier and default-messaging constraints",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Messages iMessage extensions stickers and conversations",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "MessageUI mail SMS composer result handling",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "GroupActivities SharePlay sessions and synchronization",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SharedWithYou content attribution and collaboration",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "WatchConnectivity paired-watch message and file delivery",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Handoff NSUserActivity continuity and universal links",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CarPlay templates audio navigation and entitlement validation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CarKey credential hardware and provisioning dependency",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AccessoryNotifications privacy-filtered forwarding",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AccessoryLiveActivities forwarding and permission state",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "VideoSubscriberAccount provider authentication and SSO",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Commerce identity and restricted services",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "StoreKit 1 observer queues product requests and receipts",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "StoreKit 2 signed transactions renewals and verification",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AppStore server notifications and account integration",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AdvancedCommerce subscription API service requirements",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ApplePay merchant validation token generation and payment authorization",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Wallet passes signing updates and presentation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Wallet orders tracking and service dependencies",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ProximityReader Tap to Pay certified-device requirements",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SecureElementCredential provisioning and contactless transactions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "IdentityDocumentServices document provider and verifier trust",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "DeviceCheck server tokens and per-device state",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AppAttest hardware-backed keys attestation and assertions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SignInWithApple identity tokens nonce and service validation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "GameCenter real account authentication and matchmaking",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "MarketplaceKit installation license and regional entitlement constraints",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ManagedAppDistribution organization and license services",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AppLicenseDeliverySDK protected distribution requirements",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "External purchases and regional commerce restrictions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "APNs device-token issuance transport and provider trust",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "Privacy security and managed devices",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "TCC-style permission categories denial and revocation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Privacy manifests required-reason APIs and SDK signatures",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AppTrackingTransparency and advertising identifier policy",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AdAttributionKit SKAdNetwork attribution and service trust",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "AdServices attribution tokens and account constraints",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "CryptoKit algorithm key format and async contracts",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SecureEnclave key generation access control and non-exportability",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "LocalAuthentication biometric enrollment and lockout semantics",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Passkey authenticator attestation and user verification",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Keychain access groups synchronizable items and ACLs",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "DataProtection classes device-lock state and key availability",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Entitlement identity provisioning and capability enforcement",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "MDM managed-app configuration per-app VPN and restrictions",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ManagedDeviceAttestation authentic device trust dependency",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ManagedApp organization credentials and policy",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "GSS enterprise authentication and credential delegation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "ExposureNotification restricted authorization and service lifecycle",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SafetyKit crash emergency detection and availability",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "TrustInsights trust assertions and platform prerequisites",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Protected content capture restrictions and secure presentation",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
+    },
+    {
+      "name": "App evidence versioning and unknown dependencies",
+      "sources": [
+        "https://developer.apple.com/documentation/technologyoverviews",
+        "https://developer.apple.com/documentation/technologies",
+        "https://support.apple.com/guide/security/welcome/web"
+      ],
+      "items": [
+        {
+          "name": "Versioned public framework symbol and Objective-C selector extraction",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Versioned Swift ABI symbol metadata and interface extraction",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "SDK deployment-target availability and weak-link audit",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Deprecated frameworks legacy behavior and compatibility modes",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Private undocumented imports explicitly tracked from lawful binaries",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Dynamic imports selectors and reflection coverage",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "App backend retired services and region-dependent behavior",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Signed assets anti-tamper checks and unmodified-input provenance",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Input encryption DRM and lawful unavailable status",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Performance memory battery and frame-latency acceptance",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Multi-app original render input persistence and network scenarios",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Windows x64 and native ARM64 parity evidence",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Missing-feature graceful error vs fabricated success distinction",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Unknown API discovery and inventory expansion policy",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Device-only feature availability errors and fallback testing",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        },
+        {
+          "name": "Per-app iOS version device entitlement and backend matrix",
+          "status": "pending",
+          "scope": "Planning contract; no implementation or compatibility evidence claimed."
+        }
+      ]
     }
-  ]
+  ],
+  "research_as_of": "2026-10-09"
 }
