@@ -1,5 +1,7 @@
 #include <anyios/guest_memory.hpp>
 #include <anyios/linked_image.hpp>
+#include <anyios/legacy_rebase.hpp>
+#include <anyios/legacy_bind.hpp>
 #include <anyios/macho.hpp>
 
 #include <cstddef>
@@ -9,6 +11,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 // Never execute an untrusted external application's instructions.
 // This tool stages relocation metadata against non-executable, unresolved
@@ -48,6 +51,29 @@ int main(int argc, char** argv) {
                       << (legacy.lazy_bind ? legacy.lazy_bind->file_size : 0) << "\n"
                       << "LEGACY_WEAK_BIND_BYTES="
                       << (legacy.weak_bind ? legacy.weak_bind->file_size : 0) << "\n";
+        }
+        if (info.legacy_dyld) {
+            try {
+                const auto sites = anyios::dyld::inspect_legacy_rebase_sites(data, info);
+                std::cout << "LEGACY_REBASE_SITES=" << sites.size() << "\n";
+            } catch (const anyios::macho::FormatError& error) {
+                // A decoded report is NOT a permit to execute; preserve the
+                // authentic first unsupported legacy rebase opcode.
+                std::cout << "LEGACY_REBASE_DECODER_BLOCKER=" << error.what() << "\n";
+            }
+            try {
+                const auto binds = anyios::dyld::inspect_legacy_eager_bind_sites(data, info);
+                std::cout << "LEGACY_EAGER_BIND_SITES=" << binds.size() << "\n";
+                std::unordered_set<std::string> emitted;
+                for (const auto& bind : binds) {
+                    if (emitted.size() >= 64) break;
+                    if (emitted.insert(bind.symbol).second) {
+                        std::cout << "LEGACY_EAGER_BIND_SYMBOL=" << bind.symbol << "\n";
+                    }
+                }
+            } catch (const anyios::macho::FormatError& error) {
+                std::cout << "LEGACY_BIND_DECODER_BLOCKER=" << error.what() << "\n";
+            }
         }
         if (info.has_unixthread) {
             std::cout << "LEGACY_UNIXTHREAD=present-not-executable\n";
