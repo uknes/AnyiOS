@@ -6,6 +6,7 @@
 #include <anyios/objc_identity.hpp>
 #include <anyios/objc_objects.hpp>
 #include <anyios/objc_registry.hpp>
+#include <anyios/objc_dispatch.hpp>
 #include <anyios/objc_signature.hpp>
 #include <anyios/objc_selectors.hpp>
 #include <anyios/process_bootstrap.hpp>
@@ -255,12 +256,15 @@ int main(int argc, char** argv) {
                 }
                 std::cout << "GUEST_DELEGATE_INSTANCE=allocated-from-class-ro"
                           << "\nGUEST_DELEGATE_ISA=original-guest-class\n";
-                const std::array<std::uint64_t, 4> params{
-                    *delegate, did_launch->selector, 0, 0
-                };
-                const auto result = anyios::abi::invoke_guest_callback(
-                    *cpu, did_launch->entry, params, kReturn, 4096);
-                std::cout << "APP_DELEGATE_GUEST_IMP=executed"
+                const auto dispatched = anyios::darwin::invoke_owned_bool_launch(
+                    *cpu, objc, registry, selectors, instances,
+                    *delegate, did_launch->selector, kReturn, 4096);
+                if (!dispatched) {
+                    throw std::runtime_error("owned guest ObjC method dispatch refused");
+                }
+                const auto result = *dispatched;
+                std::cout << "OBJC_GUEST_MESSAGE_DISPATCH=validated-owned-ISA-original-IMP\n"
+                          << "APP_DELEGATE_GUEST_IMP=executed"
                           << "\nAPP_DELEGATE_METHOD=application:didFinishLaunchingWithOptions:"
                           << "\nAPP_DELEGATE_CALLBACK_RESULT=" << result
                           << "\nCALLBACK_SCOPE=diagnostic-only-no-UIKit-lifecycle\n";

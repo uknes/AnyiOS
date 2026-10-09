@@ -31,7 +31,7 @@ std::optional<std::uint64_t> GuestObjcObjectArena::allocate(
         return std::nullopt;
     }
     // Commit the allocation only after all guest-memory operations succeed.
-    instances_.emplace(address, Instance{aligned, 1});
+    instances_.emplace(address, Instance{aligned, 1, guest_class});
     used_ += aligned;
     return address;
 }
@@ -65,6 +65,15 @@ bool GuestObjcObjectArena::release(std::uint64_t guest_instance) {
 
 bool GuestObjcObjectArena::is_live(std::uint64_t guest_instance) const {
     return instances_.contains(guest_instance);
+}
+
+std::optional<std::uint64_t> GuestObjcObjectArena::class_of(
+    std::uint64_t guest_instance) const {
+    const auto it = instances_.find(guest_instance);
+    if (it == instances_.end()) return std::nullopt;
+    const auto isa = memory_.read(guest_instance, 8);
+    if (!isa || *isa != it->second.guest_class) return std::nullopt;
+    return isa;
 }
 
 } // namespace anyios::darwin
