@@ -144,6 +144,23 @@ int main(int argc, char** argv) {
                               << "ENV_SCOPE=original-guest-process-envp-only\n";
                     continue;
                 }
+                if (symbol == "_os_log_type_enabled") {
+                    const auto enabled = os_logs.type_enabled(at.x[0], at.x[1]);
+                    if (!enabled) {
+                        std::cout << "FIRST_RUNTIME_BLOCKER=_os_log_type_enabled\n"
+                                  << "REASON=unknown-guest-log-token-or-type\n"
+                                  << "LOG_TYPE_RAW=" << at.x[1] << "\n";
+                        return 0;
+                    }
+                    auto resumed = at;
+                    resumed.x[0] = *enabled ? 1U : 0U;
+                    cpu->set_state(resumed);
+                    std::cout << "SUPPORTED_NARROW_IMPORT=_os_log_type_enabled\n"
+                              << "LOG_TYPE_RAW=" << at.x[1] << "\n"
+                              << "ENABLED=" << (*enabled ? 1 : 0) << "\n"
+                              << "OS_LOG_POLICY=deterministic-guest-default\n";
+                    continue;
+                }
                 if (symbol == "_os_log_create") {
                     const auto guest_log = os_logs.create(at.x[0], at.x[1]);
                     if (!guest_log) {

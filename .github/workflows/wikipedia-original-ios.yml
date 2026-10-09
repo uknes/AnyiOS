@@ -238,10 +238,12 @@ jobs:
               $trace -match "GUEST_STEPS=[1-9][0-9]*" -and
               $trace -match "SUPPORTED_NARROW_IMPORT=_os_log_create" -and
               $trace -match "SUPPORTED_NARROW_IMPORT=_getenv" -and
+              $trace -match "SUPPORTED_NARROW_IMPORT=_os_log_type_enabled" -and
               $trace -match "FIRST_RUNTIME_BLOCKER=" -and
               -not ($trace -match "FIRST_RUNTIME_BLOCKER=_os_log_create") -and
-              -not ($trace -match "FIRST_RUNTIME_BLOCKER=_getenv")) {
-            Write-Output "RESULT=original-wikipedia-past-guest-envp-getenv"
+              -not ($trace -match "FIRST_RUNTIME_BLOCKER=_getenv") -and
+              -not ($trace -match "FIRST_RUNTIME_BLOCKER=_os_log_type_enabled")) {
+            Write-Output "RESULT=original-wikipedia-past-guest-os-log-type-enabled"
           } elseif ($code -eq 3 -and
                     $trace -match "ENTRY_PROBE=not-started" -and
                     $trace -match "FIRST_LOADER_BLOCKER=") {

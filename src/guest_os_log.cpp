@@ -36,6 +36,24 @@ std::optional<std::uint64_t> GuestOsLogRegistry::create(std::uint64_t a, std::ui
     entries_.push_back({*subsystem, *category});
     return token;
 }
+std::optional<bool> GuestOsLogRegistry::type_enabled(
+    std::uint64_t guest_log, std::uint64_t raw_type) const noexcept {
+    if (!owns(guest_log) || raw_type > 255) return std::nullopt;
+    // Explicit deterministic research-runtime policy; OSLog configuration is
+    // NOT inherited from Windows host or private Apple daemons.
+    // Actual os_log_type_t values come from Apple XNU's public log.h.
+    switch (raw_type) {
+        case 0x00: // DEFAULT
+        case 0x10: // ERROR
+        case 0x11: // FAULT
+            return true;
+        case 0x01: // INFO
+        case 0x02: // DEBUG
+            return false; // opt-in levels disabled until guest config exists
+        default:
+            return std::nullopt;
+    }
+}
 bool GuestOsLogRegistry::owns(std::uint64_t token) const noexcept {
     if (token < base_) return false;
     const auto offset = token - base_;

@@ -37,6 +37,19 @@ void test() {
     check(put(mem, 0x13000, std::string(256, 'x')) &&
           !logs.create(0x10000, 0x13000),
           "unterminated/beyond-limit guest string accepted");
+    check(logs.type_enabled(*a, 0x00) == true &&
+          logs.type_enabled(*a, 0x10) == true &&
+          logs.type_enabled(*a, 0x11) == true &&
+          logs.type_enabled(*a, 0x01) == false &&
+          logs.type_enabled(*a, 0x02) == false,
+          "guest policy must implement all five Apple log types");
+    check(!logs.type_enabled(*a + 1, 0x00) &&
+          !logs.type_enabled(0, 0x00) &&
+          !logs.type_enabled(0x10000, 0x10) &&
+          !logs.type_enabled(*a, 0x03) &&
+          !logs.type_enabled(*a, 0x100) &&
+          !logs.type_enabled(UINT64_MAX, 0),
+          "unrecognized or forged log and type were allowed");
     check(mem.write(0x11000, 10, 1) &&
           !logs.create(0x10000, 0x11000),
           "control byte string accepted");
