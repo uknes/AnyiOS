@@ -48,7 +48,7 @@ jobs:
       - name: Configure guest runtime test
         run: cmake -S . -B build-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
       - name: Build guest runtime and portable ObjC identity contract
-        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests anyios-objc-objects-tests anyios-objc-registry-tests anyios-objc-selector-tests anyios-objc-signature-tests anyios-objc-dispatch-tests --parallel 2
+        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests anyios-objc-objects-tests anyios-objc-registry-tests anyios-objc-selector-tests anyios-objc-signature-tests anyios-objc-dispatch-tests anyios-general-entry-probe --parallel 2
       - name: Validate local guest ObjC class identity contract
         shell: pwsh
         run: |
@@ -79,6 +79,19 @@ jobs:
         run: |
           & ./build-guest/Release/anyios-objc-dispatch-tests.exe
           if ($LASTEXITCODE -ne 0) { throw "Owned guest Objective-C BOOL dispatch contract failed" }
+      - name: Test general ARM64 guest first original missing import (no UIKit emulation)
+        shell: pwsh
+        run: |
+          $trace = & ./build-guest/Release/anyios-general-entry-probe.exe compat-output/external/BitriseSimpleObjC 2>&1
+          $code = $LASTEXITCODE
+          $trace | ForEach-Object { Write-Output $_ }
+          if ($code -ne 0 -or
+              -not ($trace -match "ENTRY_PROBE=original-unchanged-arm64-instructions") -or
+              -not ($trace -match "FIRST_RUNTIME_BLOCKER=_objc_autoreleasePoolPush") -or
+              -not ($trace -match "GUEST_STEPS=[1-9][0-9]*") -or
+              -not ($trace -match "WINDOW=not-created")) {
+            throw "General unchanged ARM64 entry did not reach genuine first missing import"
+          }
       - name: Execute pinned third-party iOS app until next genuine blocker
         shell: pwsh
         run: |
