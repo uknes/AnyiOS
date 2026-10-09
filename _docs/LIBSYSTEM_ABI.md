@@ -1,6 +1,6 @@
 # Owned libSystem ABI contracts (limited compatibility)
 
-Status: **implemented on feature branch, CI pending**. No general Darwin libc, POSIX, pthread or Objective-C compatibility is claimed.
+Status: **bounded research contracts implemented**. Verified owned execution and original executable probe evidence are recorded below. No general Darwin libc, POSIX, pthread or Objective-C compatibility is claimed.
 
 ## Host/guest boundary
 
@@ -62,3 +62,39 @@ implement Darwin module scope/handles. Next needs a validated guest module
 registry, Darwin dlsym handle/name rules, loaded original dependent image
 exports, dlerror state and initializer order. No host dlsym/GetProcAddress is
 used to answer this guest call.
+
+## Original UIKitCatalog dynamic lookup boundary
+
+Memory head 84aac9aed799e6f01059604c11d6842eb4c113b3 passed UIKitCatalog
+workflow 37932339285. Windows x64 job 113826783128 verified the executable
+SHA against the same-run original source build and executed 212 ARM64
+instructions, including 24-byte and 31-byte guest memcpy calls. Next call:
+
+```text
+DLSYM_GUEST_HANDLE_RAW=18446744073709551614
+DLSYM_REQUESTED_SYMBOL=__previews_injection_jit_link_entrypoint
+FIRST_RUNTIME_BLOCKER=_dlsym
+WINDOW=not-created
+```
+
+The handle is Darwin RTLD_DEFAULT (-2). No guest module registry or complete
+loaded-image scope exists in this probe. It stops instead of fabricating a
+missing-symbol NULL or querying host symbols. Proper missing-symbol handling
+also requires guest dlerror state. Dependent dylibs and initializers were not
+executed. Native Windows ARM64 job 113826783163 passed metadata staging only.
+
+Both intake workflows use Xcode Debug. Apple's documented debug-dylib layout
+places application code in NAME.debug.dylib and uses a main stub executor
+that reaches the dylib entry or an early Previews interposition. Thus this
+trace is original executable startup, not evidence that the application's
+code, UIKit lifecycle, rendering, or callbacks ran. Load and bind the original
+bundle's images; do not change its build layout to skip this boundary.
+
+The native Windows ARM64 CI job now also builds and runs
+minimal-libsystem-host-contract, including full-range validation and failure
+atomicity. Those are native host contract tests, not native original-app
+execution. Inventory counts remain unchanged.
+
+Public references:
+- https://developer.apple.com/documentation/xcode/understanding-build-product-layout-changes
+- https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/dlsym.3.html
