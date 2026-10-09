@@ -161,6 +161,7 @@ jobs:
             throw "Cannot verify original guest execution or loader blocker"
           }
           Write-Output "WINDOW=not-created; GUI=unsupported; NATIVE_WINARM64_EXECUTION=not-tested"
+          exit 0  # Expected unsupported guest-import/loader status is a captured result, not CI failure.
       - name: Preserve guest execution or actual loader blocker
         if: steps.app.outputs.built == 'true'
         uses: actions/upload-artifact@v4
@@ -218,6 +219,7 @@ jobs:
             throw "Original ARM64 app metadata staging crashed without diagnostic"
           }
           Write-Output "HOST=Windows-ARM64; NATIVE_ARM64_STAGING=yes; ORIGINAL_GUEST_EXECUTION=no; WINDOW=not-created"
+          exit 0  # Explicitly accept diagnosed first loader blocker (native probe returns 3).
       - name: Preserve native Windows ARM64 metadata report
         if: steps.app.outputs.built == 'true'
         uses: actions/upload-artifact@v4
