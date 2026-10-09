@@ -4,6 +4,7 @@
 #include <anyios/guest_environ.hpp>
 #include <anyios/linked_image.hpp>
 #include <anyios/macho.hpp>
+#include <anyios/legacy_bind.hpp>
 #include <anyios/process_bootstrap.hpp>
 
 #include <array>
@@ -61,12 +62,21 @@ int main(int argc, char** argv) {
         if (image.file_type != 2 || image.is_encrypted) {
             throw std::runtime_error("only unprotected ARM64 MH_EXECUTE accepted");
         }
-        if (image.chained_imports.empty() || image.chained_imports.size() > kMaxImports) {
-            throw std::runtime_error("unsupported external app chained import count");
+        auto import_names=image.chained_imports;
+        if(image.legacy_dyld) {
+            if(image.has_chained_fixups)
+                throw std::runtime_error("mixed legacy and chained fixups unsupported");
+            for(const auto& site:anyios::dyld::inspect_legacy_eager_bind_sites(data,image))
+                import_names.push_back(site.symbol);
+            for(const auto& site:anyios::dyld::inspect_legacy_lazy_bind_sites(data,image))
+                import_names.push_back(site.symbol);
+        }
+        if (import_names.empty() || import_names.size() > kMaxImports) {
+            throw std::runtime_error("unsupported external app import site count");
         }
         std::vector<std::uint64_t> imports;
-        imports.reserve(image.chained_imports.size());
-        for (std::size_t i = 0; i < image.chained_imports.size(); ++i) {
+        imports.reserve(import_names.size());
+        for (std::size_t i = 0; i < import_names.size(); ++i) {
             imports.push_back(kStub + static_cast<std::uint64_t>(i * 16));
         }
 
@@ -75,7 +85,7 @@ int main(int argc, char** argv) {
         anyios::cpu::GuestMemory memory(0x10000, 384U * 1024U * 1024U);
         const auto loaded = anyios::loader::stage_linked_image(
             data, memory, 0x10000, imports,
-            anyios::loader::LinkedImageOptions{true, nullptr});
+            anyios::loader::LinkedImageOptions{true, nullptr, image.legacy_dyld.has_value()});
         const auto rx = anyios::cpu::bits(anyios::cpu::Access::read) |
                         anyios::cpu::bits(anyios::cpu::Access::execute);
         if (!memory.map_ios(kStub, kStubBytes, rx)) {
@@ -115,6 +125,8 @@ int main(int argc, char** argv) {
         cpu->set_state(state);
         std::cout << "ENTRY_PROBE=original-unchanged-arm64-instructions\n"
                   << "ENGINE=Dynarmic-x86-64\n"
+                  << "IMPORT_TARGETS=unresolved-guest-diagnostic-traps\n"
+                  << "LEGACY_LAZY_POLICY=eager-diagnostic-prebinding\n"
                   << "DEPENDENT_DYLIBS=not-executed\n"
                   << "INITIALIZERS=not-executed\n"
                   << "WINDOW=not-created\n";
@@ -128,7 +140,7 @@ int main(int argc, char** argv) {
             if (event.kind == anyios::cpu::CpuEventKind::svc &&
                 event.svc_immediate == 0x80 && at.x[16] < imports.size() &&
                 at.pc == imports[static_cast<std::size_t>(at.x[16])] + 8) {
-                const auto& symbol = image.chained_imports[
+                const auto& symbol = import_names[
                     static_cast<std::size_t>(at.x[16])];
                 if (symbol == "_getenv") {
                     const auto result = guest_environ.lookup(at.x[0]);

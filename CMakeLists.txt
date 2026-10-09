@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(anyios_macho STATIC src/macho.cpp src/universal.cpp src/linkedit.cpp src/symbols.cpp src/fixup_plan.cpp src/import_resolver.cpp src/legacy_rebase.cpp src/legacy_bind.cpp)
+add_library(anyios_macho STATIC src/macho.cpp src/universal.cpp src/linkedit.cpp src/symbols.cpp src/fixup_plan.cpp src/import_resolver.cpp src/legacy_rebase.cpp src/legacy_bind.cpp src/legacy_fixups.cpp)
 target_include_directories(anyios_macho PUBLIC include)
 target_compile_features(anyios_macho PUBLIC cxx_std_20)
 if(MSVC)

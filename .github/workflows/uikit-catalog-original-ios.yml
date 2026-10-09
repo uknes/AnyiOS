@@ -10,6 +10,10 @@ on:
       - '_docs/UIKIT_CATALOG_TARGET.md'
       - 'tools/app_stage_probe.cpp'
       - 'src/legacy_bind.cpp'
+      - 'src/legacy_fixups.cpp'
+      - 'src/linked_image.cpp'
+      - 'tools/app_general_entry_probe.cpp'
+      - 'tests/linked_image_tests.cpp'
       - 'src/legacy_rebase.cpp'
       - 'include/anyios/legacy_bind.hpp'
       - 'include/anyios/legacy_rebase.hpp'
@@ -144,12 +148,14 @@ jobs:
         run: |
           cmake -S . -B build-catalog-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
           if ($LASTEXITCODE -ne 0) { throw "Dynarmic compiler configuration failed" }
-          cmake --build build-catalog-guest --config Release --target anyios-general-entry-probe anyios-app-stage-probe anyios-legacy-bind-tests --parallel 2
+          cmake --build build-catalog-guest --config Release --target anyios-general-entry-probe anyios-app-stage-probe anyios-legacy-bind-tests anyios-linked-image-tests --parallel 2
           if ($LASTEXITCODE -ne 0) { throw "Dynarmic executable build failed" }
       - name: Check weak and lazy decode against unchanged original executable
         if: steps.app.outputs.built == 'true'
         shell: pwsh
         run: |
+          & ./build-catalog-guest/Release/anyios-linked-image-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Transactional legacy relocation regression failed" }
           & ./build-catalog-guest/Release/anyios-legacy-bind-tests.exe
           if ($LASTEXITCODE -ne 0) { throw "Legacy bind regression failed" }
           $output = & ./build-catalog-guest/Release/anyios-app-stage-probe.exe original-catalog/recovered/UIKitCatalog.app/UIKitCatalog 2>&1
