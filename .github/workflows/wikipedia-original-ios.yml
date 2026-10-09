@@ -163,3 +163,83 @@ jobs:
           path: compat-output/stage-${{ matrix.architecture }}.txt
           retention-days: 7
           if-no-files-found: error
+
+  windows-x64-original-arm64-entry:
+    needs: upstream-iphoneos-build
+    if: needs.upstream-iphoneos-build.outputs.built == 'true'
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: wikipedia-original-ios-intake
+          path: compat-output
+      - name: Rehydrate original unchanged iOS bundle and verify compiler hash
+        shell: pwsh
+        run: |
+          if (-not (Test-Path compat-output/wikipedia-original-bundle.tar.gz)) {
+            throw "Original source-verified Wikipedia app bundle missing; no synthetic fallback"
+          }
+          mkdir -Force compat-output/original | Out-Null
+          tar -xzf compat-output/wikipedia-original-bundle.tar.gz -C compat-output/original
+          if ($LASTEXITCODE -ne 0) { throw "Original app extraction failed" }
+          $binary = "compat-output/original/Wikipedia.app/Wikipedia"
+          $report = Get-Content compat-output/wikipedia-report.json -Raw | ConvertFrom-Json
+          $entry = @($report.binaries | Where-Object { $_.path -eq "Wikipedia" })
+          if ($report.target -ne "wikipedia-ios" -or $report.api_inventory_total -ne 269 -or
+              $report.runtime_gate_inventory_total -ne 239 -or
+              $entry.Count -ne 1 -or $entry[0].status -ne "static-inspected") {
+            throw "Unverified original arm64 Mach-O analysis provenance"
+          }
+          $actual = (Get-FileHash -Algorithm SHA256 $binary).Hash.ToLowerInvariant()
+          if ($actual -ne $entry[0].sha256) {
+            throw "Original ARM64 Wikipedia executable hash changed after source build"
+          }
+          Write-Output "ORIGINAL_ARM64_BINARY=hash-verified-from-same-run"
+      - name: Install vetted Dynarmic source-translation prerequisites
+        shell: pwsh
+        run: |
+          nuget install boost -Version 1.87.0 -OutputDirectory "$env:RUNNER_TEMP\anyios-deps" -ExcludeVersion -NonInteractive
+          if ($LASTEXITCODE -ne 0) { throw "Boost dependency not installed" }
+          $found = Get-ChildItem -Path "$env:RUNNER_TEMP\anyios-deps\boost" -Filter version.hpp -Recurse | Where-Object { $_.Directory.Name -eq 'boost' } | Select-Object -First 1
+          if (-not $found) { throw "vetted Boost version.hpp unavailable" }
+          $include = Split-Path -Parent $found.Directory.FullName
+          "BOOST_INCLUDEDIR=$include" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Configure and build general ARM64 original instruction probe
+        shell: pwsh
+        run: |
+          cmake -S . -B build-wikipedia-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=OFF -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
+          if ($LASTEXITCODE -ne 0) { throw "Could not configure Dynarmic runtime" }
+          cmake --build build-wikipedia-guest --config Release --target anyios-general-entry-probe --parallel 2
+          if ($LASTEXITCODE -ne 0) { throw "Could not compile general ARM64 guest probe" }
+      - name: Execute ORIGINAL Wikipedia ARM64 entry to first actual ABI failure
+        shell: pwsh
+        run: |
+          $binary = "compat-output/original/Wikipedia.app/Wikipedia"
+          $trace = & ./build-wikipedia-guest/Release/anyios-general-entry-probe.exe $binary 2>&1
+          $code = $LASTEXITCODE
+          $trace | Out-File compat-output/wikipedia-guest-x64-trace.txt
+          $trace | ForEach-Object { Write-Output $_ }
+          if ($code -ne 0 -and $code -ne 3) {
+            throw "Unexpected original ARM64 guest execution process crash: $code"
+          }
+          if ($trace -match "ENTRY_PROBE=original-unchanged-arm64-instructions" -and
+              $trace -match "GUEST_STEPS=[1-9][0-9]*" -and
+              $trace -match "FIRST_RUNTIME_BLOCKER=") {
+            Write-Output "RESULT=bounded-original-arm64-entry-reached-first-actual-runtime-blocker"
+          } elseif ($code -eq 3 -and
+                    $trace -match "ENTRY_PROBE=not-started" -and
+                    $trace -match "FIRST_LOADER_BLOCKER=") {
+            Write-Output "RESULT=blocked-original-wikipedia-MachO-loader-before-execution"
+          } else {
+            throw "Missing original ARM64 guest trace or explicit loader blocker"
+          }
+          Write-Output "WINDOW=not-created; GUEST_UI=not-supported; INPUT=not-supported; COUNTS_PROMOTED=0"
+      - name: Publish bounded original ARM64 instruction trace (NOT a UIKit app window)
+        uses: actions/upload-artifact@v4
+        with:
+          name: wikipedia-original-arm64-dynarmic-first-fault
+          path: compat-output/wikipedia-guest-x64-trace.txt
+          if-no-files-found: error
+          retention-days: 7
