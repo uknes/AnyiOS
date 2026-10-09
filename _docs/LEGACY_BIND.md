@@ -24,3 +24,7 @@ patches with slide, then try exact unchanged original UIKitCatalog
 Apple ARM64 Mach-O under Windows x64 Dynarmic.
 
 Public dyld source: https://github.com/apple-oss-distributions/dyld/blob/main/common/MachOAnalyzer.cpp
+
+## Exact unchanged original iPhoneOS UIKitCatalog opcode inventory regression
+
+The original native Windows ARM64 metadata stage now performs a **read-only**, bounded parse of the same Xcode-built original UIKitCatalog ARM64 binary's legacy rebase and eager-bind streams, with its SHA-256 separately verified. It records `LEGACY_REBASE_SITES` / `LEGACY_EAGER_BIND_SITES` and the first 64 distinct binding symbol names; unsupported real-world opcodes or invalid ranges are reported as `LEGACY_REBASE_DECODER_BLOCKER` / `LEGACY_BIND_DECODER_BLOCKER`. A completed metadata report is still followed by the loader's required legacy dyld refusal; there is no patching, importing private Apple frameworks, ARM64 guest instruction execution or original UIKit pixels. The original-app CI checks that each present stream produced either an actual bounded site count or a specific fail-closed decoder diagnostic.

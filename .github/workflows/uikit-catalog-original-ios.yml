@@ -8,6 +8,12 @@ on:
       - 'tools/app_coverage.py'
       - 'tests/test_app_coverage.py'
       - '_docs/UIKIT_CATALOG_TARGET.md'
+      - 'tools/app_stage_probe.cpp'
+      - 'src/legacy_bind.cpp'
+      - 'src/legacy_rebase.cpp'
+      - 'include/anyios/legacy_bind.hpp'
+      - 'include/anyios/legacy_rebase.hpp'
+      - 'tests/legacy_bind_tests.cpp'
 permissions:
   contents: read
 jobs:
@@ -217,6 +223,12 @@ jobs:
           if (($code -ne 0 -and $code -ne 3) -or
               -not ($output -match "STAGING=passed-metadata-only|STAGING=blocked")) {
             throw "Original ARM64 app metadata staging crashed without diagnostic"
+          }
+          if ($output -match "LEGACY_DYLD_INFO=present" -and
+              -not ($output -match "LEGACY_REBASE_SITES=|LEGACY_REBASE_DECODER_BLOCKER=") -or
+              $output -match "LEGACY_DYLD_INFO=present" -and
+              -not ($output -match "LEGACY_EAGER_BIND_SITES=|LEGACY_BIND_DECODER_BLOCKER=")) {
+            throw "Original UIKitCatalog dyld scan did not report checked rebase/bind sites or first opcode boundary"
           }
           Write-Output "HOST=Windows-ARM64; NATIVE_ARM64_STAGING=yes; ORIGINAL_GUEST_EXECUTION=no; WINDOW=not-created"
           exit 0  # Explicitly accept diagnosed first loader blocker (native probe returns 3).
