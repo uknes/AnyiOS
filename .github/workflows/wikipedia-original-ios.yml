@@ -43,6 +43,11 @@ jobs:
           test "$(git -C "$RUNNER_TEMP/wikipedia-ios" rev-parse HEAD)" = d2b887fc8cefc42a4c06a1f9c82c6b1ac056d76c
           grep -q 'MIT License' "$RUNNER_TEMP/wikipedia-ios/LICENSE.txt"
           test -z "$(git -C "$RUNNER_TEMP/wikipedia-ios" status --porcelain --untracked-files=no)"
+          # Upstream's own CI setup creates its gitignored OpenSourceDebug.xcconfig.
+          # It does not edit application source, Xcode project, or resources.
+          ( cd "$RUNNER_TEMP/wikipedia-ios" && bash scripts/setup_bundle_id ci )
+          test -f "$RUNNER_TEMP/wikipedia-ios/Configurations/OpenSourceDebug.xcconfig"
+          test -z "$(git -C "$RUNNER_TEMP/wikipedia-ios" status --porcelain --untracked-files=no)"
           xcodebuild -version
           swift --version
       - name: Build ORIGINAL Wikipedia iOS device app without signing or project edits
