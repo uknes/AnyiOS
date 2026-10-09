@@ -63,7 +63,7 @@ std::string expand(std::string_view value,
         return join(directory(executable), value.substr(17));
     }
     if (value.starts_with("@") || value.starts_with('/')) {
-        throw macho::FormatError("unsupported dyld install-name prefix");
+        throw macho::FormatError("unsupported dyld install-name prefix: " + std::string(value));
     }
     return normalize(value);
 }
@@ -93,6 +93,7 @@ DependencyDiscovery walk(std::vector<Module> modules, std::string_view executabl
     std::unordered_set<std::string> absent;
     LoadPlan plan;
     std::vector<UnresolvedDependency> unresolved;
+    std::vector<ExternalRunpath> external_runpaths;
     std::size_t edges = 0, reads = 0;
     auto locate = [&](const std::string& candidate) -> std::optional<std::size_t> {
         if (const auto found = index.find(candidate); found != index.end()) return found->second;
@@ -121,6 +122,15 @@ DependencyDiscovery walk(std::vector<Module> modules, std::string_view executabl
         const auto dependencies = modules[current].image.dependencies;
         std::vector<std::string> runpaths;
         for (const auto& runpath : modules[current].image.rpaths) {
+            if (runpath.size() > 4096) throw macho::FormatError("dyld runpath length limit exceeded");
+            if (reader && runpath.starts_with('/')) {
+                if (external_runpaths.size() >= 4096)
+                    throw macho::FormatError("dyld external runpath limit exceeded");
+                // An external guest search directory is an unknown prerequisite.
+                // Never resolve it against the host or claim ordered search completion.
+                external_runpaths.push_back({owner, "/" + normalize(std::string_view(runpath).substr(1))});
+                continue;
+            }
             if (runpath.starts_with("@rpath/")) {
                 throw macho::FormatError("nested @rpath is unsupported");
             }
@@ -166,7 +176,7 @@ DependencyDiscovery walk(std::vector<Module> modules, std::string_view executabl
         plan.load_order.push_back(owner);
     };
     visit(root_index, {}, 0);
-    return {std::move(modules), std::move(plan), std::move(unresolved)};
+    return {std::move(modules), std::move(plan), std::move(unresolved), std::move(external_runpaths)};
 }
 }
 

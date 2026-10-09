@@ -126,6 +126,21 @@ void test_discovery() {
         });
     require(first_reads == 1 && second_reads == 0 && absent_reads == 2 && graph.unresolved.size() == 2,
             "rpath precedence or missing-candidate cache wrong");
+    simple.image.rpaths.insert(simple.image.rpaths.begin(), "/usr/lib/swift");
+    requested.clear();
+    graph = anyios::dyld::discover_dependencies(simple.path,
+        [&](std::string_view path) -> std::optional<anyios::macho::Image> {
+            requested.emplace_back(path);
+            if (path == simple.path) return simple.image;
+            if (path == "Payload/App.app/First/Choice.dylib") return module(std::string(path), 6).image;
+            return std::nullopt;
+        });
+    require(graph.external_runpaths.size()==1 && graph.external_runpaths[0].loader==simple.path &&
+            graph.external_runpaths[0].path=="/usr/lib/swift" && graph.modules.size()==2,
+            "external guest runpath prevented real bundle metadata intake or lost prerequisite");
+    for (const auto& path : requested) require(!path.starts_with('/'), "external runpath reached host reader");
+    auto strict_modules = std::vector<Module>{simple, module("Payload/App.app/First/Choice.dylib",6)};
+    fails(strict_modules,"unsupported dyld install-name prefix: /usr/lib/swift");
     auto rejects = [&](const anyios::dyld::ModuleReader& read, std::string_view reason) {
         bool rejected = false;
         try { (void)anyios::dyld::discover_dependencies(simple.path, read); }
@@ -136,6 +151,16 @@ void test_discovery() {
     };
     rejects({}, "missing dyld module reader");
     rejects([](std::string_view) -> std::optional<anyios::macho::Image> { return std::nullopt; }, "main dyld");
+    simple.image.rpaths = {"/" + std::string(4096, 'x')};
+    rejects([&](std::string_view) { return simple.image; }, "runpath length limit");
+    simple.image.rpaths = {"/../outside"};
+    rejects([&](std::string_view) { return simple.image; }, "escapes module registry");
+    simple.image.rpaths = {std::string("/usr/\0lib",9)};
+    rejects([&](std::string_view) { return simple.image; }, "invalid bundle-relative path");
+    simple.image.rpaths = {"@unsupported/value"};
+    rejects([&](std::string_view) { return simple.image; }, "unsupported dyld install-name prefix: @unsupported/value");
+    simple.image.rpaths.assign(4097,"/usr/lib/swift");
+    rejects([&](std::string_view) { return simple.image; }, "external runpath limit");
     simple.image.rpaths.assign(513, "@executable_path");
     rejects([&](std::string_view) { return simple.image; }, "runpath limit");
     simple.image.rpaths = {"@executable_path"};

@@ -32,10 +32,16 @@ struct UnresolvedDependency {
     bool weak;
 };
 
+struct ExternalRunpath {
+    std::string loader;
+    std::string path;
+};
+
 struct DependencyDiscovery {
     std::vector<Module> modules;
     LoadPlan plan;
     std::vector<UnresolvedDependency> unresolved;
+    std::vector<ExternalRunpath> external_runpaths;
 };
 
 // The reader accepts canonical paths relative to a caller-owned bundle root.

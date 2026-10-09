@@ -18,7 +18,12 @@ metadata and records every absent strong, weak and system dependency with
 its importing image. Absolute system install names are requirements; they
 are never passed to a host filesystem reader or replaced with empty modules.
 Malformed input and reader errors propagate. Cycles, bare install names,
-nested/absolute runpaths and unsupported path forms fail explicitly.
+nested runpaths and unsupported path forms fail explicitly. Discovery records
+absolute guest runpaths as external prerequisites without calling a host reader.
+It can inspect bundle candidates from other runpaths, but cannot certify
+ordered search completion while external search directories are unknown.
+The reported closure remains incomplete even if all bundle dependencies have
+a candidate. Strict `plan_dependencies` still rejects absolute runpaths.
 
 `plan_dependencies` retains its strict behavior: mandatory missing images and
 system paths are errors. The returned dependency-first order is a metadata

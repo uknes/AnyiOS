@@ -22,7 +22,7 @@ def main(probe):
         root.mkdir()
         main_file = root / "App"
         dylib = root / "App.debug.dylib"
-        main_file.write_bytes(macho(2, [(0x8000001c, "@executable_path"), (0xc, "@rpath/App.debug.dylib")]))
+        main_file.write_bytes(macho(2, [(0x8000001c, "/usr/lib/swift"), (0x8000001c, "@executable_path"), (0xc, "@rpath/App.debug.dylib")]))
         dylib.write_bytes(macho(6, [(0xd, "@rpath/App.debug.dylib"), (0xc, "/System/Library/Frameworks/UIKit.framework/UIKit")]))
         before = [hashlib.sha256(path.read_bytes()).hexdigest() for path in (main_file, dylib)]
 
@@ -31,6 +31,8 @@ def main(probe):
 
         result = run()
         assert result.returncode == 0, result.stderr
+        assert "BUNDLE_EXTERNAL_RPATH=/usr/lib/swift" in result.stdout
+        assert "BUNDLE_MODULE_RPATH=/usr/lib/swift" in result.stdout
         assert "BUNDLE_MODULE_COUNT=2" in result.stdout
         assert "BUNDLE_UNRESOLVED_LOADER=Bundle/App.debug.dylib" in result.stdout
         assert "BUNDLE_DEPENDENCY_CLOSURE=incomplete" in result.stdout
