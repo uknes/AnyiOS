@@ -82,6 +82,7 @@ struct Image {
     std::vector<Segment> segments;
     std::vector<Section> sections;
     std::vector<Symbol> symbols;
+    bool has_symbol_table = false;
     std::uint32_t indirect_symbol_count = 0;
     std::vector<std::string> libraries;
     std::vector<Dependency> dependencies;
@@ -106,6 +107,7 @@ struct Image {
 };
 
 Image inspect(std::span<const std::byte> bytes);
+bool is_defined_external_symbol(const Symbol& symbol);
 std::string version_string(std::uint32_t encoded);
 
 }

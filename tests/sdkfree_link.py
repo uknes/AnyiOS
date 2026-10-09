@@ -44,7 +44,7 @@ def main():
             "current-version: 1.0\n"
             "exports:\n"
             "  - targets: [ arm64-ios ]\n"
-            "    symbols: [ '_malloc', '_write', '_exit', '__tlv_bootstrap', '_memcpy', '_memset', '_strlen', '_strcmp' ]\n"
+            "    symbols: [ '_malloc', '_write', '_exit', '__tlv_bootstrap', '_memcpy', '_memset', '_strlen', '_strcmp', '_dlsym', '_dlerror' ]\n"
             "...\n", encoding="utf-8"
         )
         clang_flags = [
@@ -103,6 +103,16 @@ def main():
         for expected in ("_memcpy", "_memset", "_strlen", "_strcmp"):
             if f"Import: {expected}" not in strings_info:
                 raise AssertionError("Clang owned C ABI fixture lacks " + expected + ":\\n" + strings_info)
+        dynamic_obj = work / "DynamicLookupApp.o"
+        dynamic_app = work / "DynamicLookupApp"
+        run(clang_flags + ["-fno-stack-protector", str(fixtures / "arm64_dlsym_app.c"),
+                           "-o", str(dynamic_obj)])
+        run(link + ["-execute", str(dynamic_obj), "-e", "_main", "-export_dynamic",
+                    "-L", str(work), "-lRuntimeWidget", "-lSystem", "-o", str(dynamic_app)])
+        dynamic_info = run([str(inspector), str(dynamic_app)])
+        for expected in ("Import: _dlsym", "Import: _dlerror", "Export: _owned_value", "Export: _guest_counter"):
+            if expected not in dynamic_info:
+                raise AssertionError("Clang dynamic lookup fixture lacks " + expected + ":\\n" + dynamic_info)
         tlv_obj = work / "TlvProcess.o"
         tlv_app = work / "TlvProcess"
         run(clang_flags + ["-O1", str(fixtures / "arm64_tlv_process.c"), "-o", str(tlv_obj)])
@@ -151,6 +161,7 @@ def main():
             shutil.copyfile(hello_app, output / "HelloProcess")
             shutil.copyfile(tlv_app, output / "TlvProcess")
             shutil.copyfile(strings_app, output / "MemoryStringApp")
+            shutil.copyfile(dynamic_app, output / "DynamicLookupApp")
             shutil.copyfile(dylib, output / "libRuntimeWidget.dylib")
         print("SDK-free LLVM linked project-owned iPhoneOS executable and dylib")
         print("Metadata-only libSystem stub does not provide executable OS services")

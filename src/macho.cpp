@@ -255,6 +255,7 @@ Image inspect_thin(std::span<const std::byte> bytes) {
         image.indirect_symbol_count = indirect->second;
     }
     if (symtab) {
+        image.has_symbol_table = true;
         image.symbols = parse_symbols(bytes, symtab->symbols_offset, symtab->count,
                                       symtab->strings_offset, symtab->strings_size);
     }
@@ -262,6 +263,12 @@ Image inspect_thin(std::span<const std::byte> bytes) {
         image.has_chained_fixups = true;
         image.chained_fixups_range = chained;
         image.chained_imports = parse_chained_imports(bytes, chained->file_offset, chained->file_size);
+    }
+    if (image.legacy_dyld && image.legacy_dyld->exports) {
+        const auto legacy = *image.legacy_dyld->exports;
+        if (exports && (exports->file_offset != legacy.file_offset || exports->file_size != legacy.file_size))
+            throw FormatError("conflicting legacy and modern export tries");
+        exports = legacy;
     }
     if (exports) {
         image.has_export_trie = true;

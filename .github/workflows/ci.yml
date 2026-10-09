@@ -127,6 +127,11 @@ jobs:
         run: |
           & ./build-jit/Release/anyios-a64-smoke.exe --memory-strings sdkfree-images/MemoryStringApp
           if ($LASTEXITCODE -ne 0) { throw 'Owned memory/string libc fixture failed on Windows x64' }
+      - name: Execute owned Clang iOS dynamic lookup and cross-dylib callback
+        shell: pwsh
+        run: |
+          & ./build-jit/Release/anyios-a64-smoke.exe --dlsym sdkfree-images/DynamicLookupApp sdkfree-images/libRuntimeWidget.dylib
+          if ($LASTEXITCODE -ne 0) { throw 'Owned ARM64 guest dynamic lookup failed' }
       - name: Execute owned Clang iOS TLV process in two guest threads
         shell: pwsh
         run: |
@@ -204,6 +209,10 @@ jobs:
         run: cmake --build build-native --target anyios-native-a64-smoke --parallel 2
       - name: Run native ARM64 fixture tests
         run: ctest --test-dir build-native -R "^native-arm64-owned$" --output-on-failure
+      - name: Build guest dynamic lookup contract on Linux ARM64
+        run: cmake --build build-native --target anyios-dlfcn-tests --parallel 2
+      - name: Test guest module scope and thread errors on Linux ARM64
+        run: ctest --test-dir build-native -R "^guest-dlfcn-scope-and-errors$" --output-on-failure
       - name: Compile owned iOS-target ARM64 Mach-O
         run: clang --target=arm64-apple-ios13.0 -O2 -ffreestanding -c tests/fixtures/arm64_sample.c -o build-native/owned-arm64.o
       - name: Execute compiled Mach-O function on ARM64 Linux
@@ -240,6 +249,10 @@ jobs:
         run: cmake --build build-native --config Release --target anyios-os-log-tests --parallel 2
       - name: Test bounded OSLog guest token ABI on Windows ARM64
         run: ctest --test-dir build-native --build-config Release -R "^guest-os-log-create-contract$" --output-on-failure
+      - name: Build guest dynamic lookup contract on native Windows ARM64
+        run: cmake --build build-native --config Release --target anyios-dlfcn-tests --parallel 2
+      - name: Test guest module scope and thread errors on native Windows ARM64
+        run: ctest --test-dir build-native --build-config Release -R "^guest-dlfcn-scope-and-errors$" --output-on-failure
       - name: Build bounded guest memory ABI on native Windows ARM64
         run: cmake --build build-native --config Release --target anyios-libsystem-tests --parallel 2
       - name: Validate guest memory bounds and failure atomicity on native Windows ARM64

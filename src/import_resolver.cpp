@@ -28,18 +28,6 @@ std::uint64_t slide(std::uint64_t base, std::uint64_t offset) {
     }
     return base + offset;
 }
-bool exported(const macho::Symbol& symbol) {
-    constexpr std::uint8_t n_stab = 0xe0;
-    constexpr std::uint8_t n_private = 0x10;
-    constexpr std::uint8_t n_ext = 0x01;
-    constexpr std::uint8_t n_type = 0x0e;
-    constexpr std::uint8_t n_sect = 0x0e;
-    constexpr std::uint8_t n_abs = 0x02;
-    if (symbol.name.empty() || (symbol.type & (n_stab | n_private)) != 0 ||
-        (symbol.type & n_ext) == 0) return false;
-    const auto kind = symbol.type & n_type;
-    return (kind == n_sect && symbol.section_index != 0) || kind == n_abs;
-}
 }
 
 std::vector<std::uint64_t> resolve_chained_import_targets(
@@ -105,7 +93,7 @@ std::vector<std::uint64_t> resolve_chained_import_targets(
         bool matched = false;
         std::uint64_t target = 0;
         for (const auto& symbol : library.image->symbols) {
-            if (symbol.name != importer.chained_imports[index] || !exported(symbol)) continue;
+            if (symbol.name != importer.chained_imports[index] || !macho::is_defined_external_symbol(symbol)) continue;
             if (matched) throw macho::FormatError("ambiguous chained exported symbol");
             matched = true;
             const bool absolute = (symbol.type & 0x0e) == 0x02;

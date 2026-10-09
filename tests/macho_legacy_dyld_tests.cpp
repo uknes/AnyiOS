@@ -48,6 +48,24 @@ void run() {
            "legacy thread metadata not recognized");
     bad=data;put(bad,20,96);put(bad,16,2);
     put(bad,80,0x22);put(bad,84,48);rejected(bad);
+    auto exported=data;
+    exported.resize(200);
+    put(exported,72,144);put(exported,76,15);
+    const std::uint8_t trie[]{0,1,'_','v','a','l','u','e',0,10,3,0,0x80,2,0};
+    for(std::size_t i=0;i<sizeof(trie);++i)exported[144+i]=std::byte{trie[i]};
+    info=anyios::macho::inspect(exported);
+    expect(info.has_export_trie && info.exports.size()==1 &&
+           info.exports[0].name=="_value" && info.exports[0].address==256,
+           "legacy export trie was not decoded");
+    bad=exported;bad[144+9]=std::byte{0};rejected(bad);
+    bad=exported;put(bad,76,14);rejected(bad);
+    auto aliased=exported;put(aliased,20,64);put(aliased,16,2);
+    put(aliased,80,0x80000033);put(aliased,84,16);
+    put(aliased,88,144);put(aliased,92,15);
+    expect(anyios::macho::inspect(aliased).exports.size()==1,
+           "identical legacy and modern export range rejected");
+    bad=aliased;put(bad,88,160);rejected(bad);
+    bad=aliased;put(bad,92,16);rejected(bad);
 }
 }
 int main() {

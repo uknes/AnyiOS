@@ -211,7 +211,7 @@ jobs:
         run: |
           cmake -S . -B build-wikipedia-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
           if ($LASTEXITCODE -ne 0) { throw "Could not configure Dynarmic runtime" }
-          cmake --build build-wikipedia-guest --config Release --target anyios-general-entry-probe anyios-os-log-tests anyios-getenv-tests anyios-libsystem-tests --parallel 2
+          cmake --build build-wikipedia-guest --config Release --target anyios-general-entry-probe anyios-os-log-tests anyios-getenv-tests anyios-libsystem-tests anyios-dlfcn-tests --parallel 2
           if ($LASTEXITCODE -ne 0) { throw "Could not compile general ARM64 guest probe" }
       - name: Validate bounded guest logging create ABI
         shell: pwsh
@@ -228,6 +228,11 @@ jobs:
         run: |
           & ./build-wikipedia-guest/Release/anyios-libsystem-tests.exe
           if ($LASTEXITCODE -ne 0) { throw "Bounded libSystem contract failed" }
+      - name: Validate guest dynamic lookup ownership and thread errors
+        shell: pwsh
+        run: |
+          & ./build-wikipedia-guest/Release/anyios-dlfcn-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Guest dynamic lookup contract failed" }
       - name: Execute ORIGINAL Wikipedia ARM64 entry to first actual ABI failure
         shell: pwsh
         run: |

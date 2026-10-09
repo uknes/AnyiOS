@@ -1,3 +1,4 @@
+#include <anyios/guest_dlfcn.hpp>
 #include <anyios/guest_memory.hpp>
 #include <anyios/guest_tls.hpp>
 #include <anyios/cpu_backend.hpp>
@@ -85,6 +86,79 @@ std::vector<std::byte> read_owned_binary(const char* path) {
         throw std::runtime_error("could not read owned linked Mach-O image");
     }
     return bytes;
+}
+
+void verify_owned_dynamic_lookup(const std::vector<std::byte>& file,
+                                 const std::vector<std::byte>& library) {
+    constexpr std::uint64_t stub_base = 0x80000;
+    constexpr std::uint64_t sentinel = 0x400000;
+    GuestMemory memory(0x10000, 4 * 1024 * 1024);
+    const auto image = anyios::macho::inspect(file);
+    const auto dylib = anyios::macho::inspect(library);
+    std::vector<std::uint64_t> targets;
+    for (const auto& name : image.chained_imports) {
+        if (name == "_dlsym") targets.push_back(stub_base);
+        else if (name == "_dlerror") targets.push_back(stub_base + 16);
+        else throw std::runtime_error("unknown owned dynamic lookup import");
+    }
+    if (targets.size() != 2 || !dylib.chained_imports.empty())
+        throw std::runtime_error("unexpected owned dynamic lookup import table");
+    const auto loaded = anyios::loader::stage_linked_image(
+        file, memory, 0x10000, targets, anyios::loader::LinkedImageOptions{true, nullptr});
+    (void)anyios::loader::stage_linked_image(
+        library, memory, 0x100000, {}, anyios::loader::LinkedImageOptions{true, nullptr});
+    const auto rx = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::execute);
+    const auto rw = anyios::cpu::bits(Access::read) | anyios::cpu::bits(Access::write);
+    if (!memory.map_ios(stub_base, 0x4000, rx) || !memory.map_ios(0x300000, 0x10000, rw))
+        throw std::runtime_error("owned dynamic lookup stack/traps unavailable");
+    std::array<std::byte, 32> traps{};
+    for (unsigned service = 1; service <= 2; ++service) {
+        const std::array<std::uint32_t, 3> words{0xd2800010U | (service << 5), 0xd4001001U, 0xd65f03c0U};
+        for (std::size_t i = 0; i < words.size(); ++i)
+            for (unsigned b = 0; b < 4; ++b)
+                traps[(service - 1) * 16 + i * 4 + b] = std::byte((words[i] >> (b * 8)) & 255);
+    }
+    if (!memory.load(stub_base, traps)) throw std::runtime_error("owned dlsym trap install failed");
+    anyios::dyld::GuestModuleRegistry modules(memory);
+    modules.add_image(image, loaded.guest_base, true);
+    modules.add_image(dylib, 0x100000);
+    const std::array<anyios::dyld::RuntimeExport, 2> runtime{{
+        {"_dlsym", stub_base}, {"_dlerror", stub_base + 16}
+    }};
+    modules.add_runtime_module("/usr/lib/libSystem.B.dylib", runtime);
+    modules.seal();
+    anyios::dyld::GuestDlState dynamic(memory, modules, 0x200000);
+    auto cpu = anyios::cpu::make_dynarmic_backend(memory);
+    anyios::cpu::CpuState state{};
+    state.pc = loaded.guest_entry;
+    state.sp = 0x310000;
+    state.x[30] = sentinel;
+    state.guest_thread_id = 7;
+    cpu->set_state(state);
+    unsigned lookups = 0, errors = 0;
+    for (std::size_t i = 0; i < 10000; ++i) {
+        const auto event = cpu->step();
+        state = cpu->state();
+        if (event.kind == anyios::cpu::CpuEventKind::stepped) {
+            if (state.pc != sentinel) continue;
+            if (state.x[0] != 58 || lookups != 5 || errors != 5)
+                throw std::runtime_error("owned dynamic lookup guest returned wrong result/call count");
+            std::cout << "Owned Clang ARM64 guest dlsym function/data and cross-dylib call: 58\n";
+            return;
+        }
+        if (event.kind != anyios::cpu::CpuEventKind::svc || event.svc_immediate != 0x80 ||
+            state.x[16] < 1 || state.x[16] > 2 || state.pc != stub_base + (state.x[16] - 1) * 16 + 8)
+            throw std::runtime_error("owned dynamic lookup encountered unsupported guest event");
+        if (state.x[16] == 1) {
+            state.x[0] = dynamic.dlsym(state.guest_thread_id, state.x[0], state.x[1]);
+            ++lookups;
+        } else {
+            state.x[0] = dynamic.dlerror(state.guest_thread_id);
+            ++errors;
+        }
+        cpu->set_state(state);
+    }
+    throw std::runtime_error("owned dynamic lookup instruction budget exhausted");
 }
 
 void verify_real_linked_call(const std::vector<std::byte>& main_image,
@@ -597,6 +671,10 @@ int main(int argc, char** argv) {
         std::vector<std::byte> code;
         verify_unsupported_tls_registers();
         verify_guest_thread_tpidrro();
+        if (argc == 4 && std::string(argv[1]) == "--dlsym") {
+            verify_owned_dynamic_lookup(read_owned_binary(argv[2]), read_owned_binary(argv[3]));
+            return 0;
+        }
         if (argc == 3 && std::string(argv[1]) == "--memory-strings") {
             verify_owned_memory_string(read_owned_binary(argv[2]));
             return 0;
