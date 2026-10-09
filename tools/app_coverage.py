@@ -69,12 +69,14 @@ def runtime_gate_rows(data):
     return result
 
 
-def make_report(bundle, api_candidates, gate_inventory, manifest, binary_paths=None):
+def make_report(bundle, api_candidates, gate_inventory, manifest, binary_paths=None, *, target="wikipedia-ios"):
+    if target not in ("wikipedia-ios", "appium-uicatalog"):
+        raise ValueError("unknown unmodified original iOS coverage target")
     candidates = inventory_symbols(api_candidates)
     gate_rows = runtime_gate_rows(gate_inventory)
     paths = binary_paths if binary_paths is not None else app_binary_paths(bundle)
     report = {
-        "schema": 1, "target": "wikipedia-ios",
+        "schema": 1, "target": target,
         "original_sources_edited": False, "binary_modified": False,
         "execution_attempted": False, "windows_x64_window": False,
         "windows_arm64_window": False, "input_verified": False,
@@ -126,13 +128,15 @@ def main():
     root = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("bundle", type=Path)
+    parser.add_argument("--target", choices=("wikipedia-ios", "appium-uicatalog"),
+                        default="wikipedia-ios")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     try:
         api = json.loads((root / "tools/api_inventory.json").read_text("utf-8"))
         gates = json.loads((root / "tools/compat_capabilities.json").read_text("utf-8"))
         manifest = json.loads((root / "tools/api_manifest.json").read_text("utf-8"))
-        result = make_report(args.bundle, api, gates, manifest)
+        result = make_report(args.bundle, api, gates, manifest, target=args.target)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(result, sort_keys=True, indent=2) + "\n",
                                encoding="utf-8")

@@ -35,6 +35,26 @@ class AppCoverageTests(unittest.TestCase):
             self.assertFalse(report["windows_arm64_window"])
             self.assertFalse(report["input_verified"])
 
+    def test_two_real_app_targets_are_explicitly_scoped(self):
+        with tempfile.TemporaryDirectory() as temp:
+            bundle = Path(temp) / "UIKitCatalog.app"
+            bundle.mkdir()
+            (bundle / "UIKitCatalog").write_bytes(bytes(valid_macho()))
+            api = {"schema": 1, "groups": [{"name": "ObjC", "symbols": ["_objc_msgSend"]}]}
+            gates = {"schema": 1, "groups": [{"name": "UIKit", "items": [
+                {"name": "Guest UIKit interactive button", "status": "pending"}]}]}
+            manifest = {"symbols": {}}
+            report = app_coverage.make_report(bundle, api, gates, manifest,
+                                               target="appium-uicatalog")
+            self.assertEqual(report["target"], "appium-uicatalog")
+            self.assertEqual(report["static_candidate_import_count"], 1)
+            self.assertEqual(report["runtime_gates_exercised_by_app"], 0)
+            self.assertFalse(report["windows_arm64_window"])
+            self.assertFalse(report["windows_x64_window"])
+            self.assertFalse(report["input_verified"])
+            with self.assertRaisesRegex(ValueError, "unknown unmodified"):
+                app_coverage.make_report(bundle, api, gates, manifest, target="fake-app")
+
     def test_unknown_import_retained_outside_candidate_set(self):
         with tempfile.TemporaryDirectory() as temp:
             bundle = Path(temp) / "Other.app"
