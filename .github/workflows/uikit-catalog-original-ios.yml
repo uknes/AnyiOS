@@ -1,0 +1,88 @@
+name: Appium UIKitCatalog original ARM64 device intake
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/uikit-catalog-original-ios.yml'
+      - 'compatibility/targets/appium-uicatalog.json'
+      - 'tools/app_coverage.py'
+      - 'tests/test_app_coverage.py'
+      - '_docs/UIKIT_CATALOG_TARGET.md'
+permissions:
+  contents: read
+jobs:
+  catalog-static-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm unmodified app static inventory cannot count guest UI
+        run: python3 -m unittest discover -s tests -p test_app_coverage.py -v
+      - name: Verify compatibility counts remain truthful
+        run: python3 tools/progress.py docs --check
+  original-arm64-device-build:
+    needs: catalog-static-tests
+    runs-on: macos-26
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clone exact original Appium UIKitCatalog project and Apache license
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --filter=blob:none https://github.com/appium/ios-uicatalog.git "$RUNNER_TEMP/appium-uicatalog"
+          git -C "$RUNNER_TEMP/appium-uicatalog" checkout --detach 5855a3e05ec047c796514c93ce4dd22490af1905
+          test "$(git -C "$RUNNER_TEMP/appium-uicatalog" rev-parse HEAD)" = 5855a3e05ec047c796514c93ce4dd22490af1905
+          grep -q 'Apache License' "$RUNNER_TEMP/appium-uicatalog/LICENSE"
+          test -f "$RUNNER_TEMP/appium-uicatalog/UIKitCatalog/UIKitCatalog.xcodeproj/xcshareddata/xcschemes/UIKitCatalog.xcscheme"
+          test -z "$(git -C "$RUNNER_TEMP/appium-uicatalog" status --porcelain --untracked-files=no)"
+          xcodebuild -version
+      - name: Build unmodified Appium native UIKit iPhoneOS ARM64 app
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          mkdir -p original-catalog
+          xcodebuild -project "$RUNNER_TEMP/appium-uicatalog/UIKitCatalog/UIKitCatalog.xcodeproj" \
+            -scheme UIKitCatalog -configuration Debug -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/catalog-compile" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            build > original-catalog/xcodebuild.log 2>&1
+          code=$?
+          echo "UPSTREAM_BUILD_EXIT=$code" >> "$GITHUB_ENV"
+          echo "Original checked-in source Xcode build exit code: $code"
+          tail -n 85 original-catalog/xcodebuild.log
+          exit 0
+      - name: Capture original binary and static candidate APIs (not guest launch)
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP="$RUNNER_TEMP/catalog-compile/Build/Products/Debug-iphoneos/UIKitCatalog.app"
+          if [[ "$UPSTREAM_BUILD_EXIT" != 0 || ! -f "$APP/UIKitCatalog" ]]; then
+            python3 - <<'PY'
+          import json,pathlib,os
+          pathlib.Path("original-catalog/appium-report.json").write_text(json.dumps({
+            "schema": 1, "target": "appium-uicatalog", "status": "blocked-upstream-build",
+            "xcodebuild_exit": int(os.environ["UPSTREAM_BUILD_EXIT"]),
+            "original_app_executed": False, "windows_x64_window": False,
+            "windows_arm64_window": False, "runtime_gates_proven": 0
+          },indent=2)+"\n")
+          PY
+            echo "SOURCE-BUILD=blocked; no guest execution or GUI claims"
+            exit 0
+          fi
+          python3 tools/app_coverage.py "$APP" --target appium-uicatalog \
+            --output original-catalog/appium-report.json
+          shasum -a 256 "$APP/UIKitCatalog" > original-catalog/original-arm64-sha256.txt
+          tar -czf original-catalog/original-uicatalog-arm64-app.tar.gz \
+            -C "$(dirname "$APP")" UIKitCatalog.app
+          echo "ORIGINAL_UICATALOG_ARM64=source-built"
+          echo "WINDOW=not-created; GUEST_EXECUTION=not-attempted"
+      - name: Preserve original app provenance and reported build blockers
+        uses: actions/upload-artifact@v4
+        with:
+          name: appium-uicatalog-original-arm64-intake
+          path: original-catalog/
+          if-no-files-found: error
+          retention-days: 7
