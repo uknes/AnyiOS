@@ -250,3 +250,74 @@ jobs:
           path: compat-output/wikipedia-guest-x64-trace.txt
           if-no-files-found: error
           retention-days: 7
+      - name: Export identical Windows x64 Dynarmic executable for WinARM64 x64 emulation
+        uses: actions/upload-artifact@v4
+        with:
+          name: wikipedia-anyios-dynarmic-x64-host
+          path: build-wikipedia-guest/Release/anyios-general-entry-probe.exe
+          if-no-files-found: error
+          retention-days: 7
+
+  windows-arm64-x64-emulated-original-entry:
+    needs: [upstream-iphoneos-build, windows-x64-original-arm64-entry]
+    if: needs.upstream-iphoneos-build.outputs.built == 'true'
+    runs-on: windows-11-vs2026-arm
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: wikipedia-original-ios-intake
+          path: compat-output
+      - uses: actions/download-artifact@v4
+        with:
+          name: wikipedia-anyios-dynarmic-x64-host
+          path: x64-runtime
+      - name: Confirm Windows native host is ARM64 with x64 emulation
+        shell: pwsh
+        run: |
+          $platform = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
+          Write-Output "NATIVE_HOST_ARCH=$platform"
+          if ($platform -ne "Arm64") { throw "Not a Windows ARM64 runner" }
+          if (-not (Test-Path x64-runtime/anyios-general-entry-probe.exe)) {
+            throw "Previously verified source-built x64 Dynarmic runtime missing"
+          }
+      - name: Verify original source-built ARM64 Mach-O binary identity
+        shell: pwsh
+        run: |
+          mkdir -Force compat-output/original | Out-Null
+          tar -xzf compat-output/wikipedia-original-bundle.tar.gz -C compat-output/original
+          if ($LASTEXITCODE -ne 0) { throw "Cannot extract original Wikipedia arm64 app" }
+          $binary = "compat-output/original/Wikipedia.app/Wikipedia"
+          $report = Get-Content compat-output/wikipedia-report.json -Raw | ConvertFrom-Json
+          $original = @($report.binaries | Where-Object { $_.path -eq "Wikipedia" })
+          if ($report.target -ne "wikipedia-ios" -or $original.Count -ne 1) {
+            throw "Original source provenance unverifiable"
+          }
+          if ((Get-FileHash $binary -Algorithm SHA256).Hash.ToLowerInvariant() -ne $original[0].sha256) {
+            throw "Windows ARM64 saw a substituted or modified Wikipedia guest app"
+          }
+      - name: Execute unchanged Apple ARM64 guest through Windows x64 emulation plus Dynarmic
+        shell: pwsh
+        run: |
+          $output = & ./x64-runtime/anyios-general-entry-probe.exe compat-output/original/Wikipedia.app/Wikipedia 2>&1
+          $code = $LASTEXITCODE
+          $output | Out-File compat-output/wikipedia-winarm64-x64-emulation.txt
+          $output | ForEach-Object { Write-Output $_ }
+          if ($code -ne 0 -and $code -ne 3) { throw "WinARM64 x64-emu Dynarmic host crashed" }
+          if (-not ($output -match "ENTRY_PROBE=original-unchanged-arm64-instructions") -or
+              -not ($output -match "GUEST_STEPS=[1-9][0-9]*") -or
+              -not ($output -match "SUPPORTED_NARROW_IMPORT=_os_log_create") -or
+              -not ($output -match "FIRST_RUNTIME_BLOCKER=") -or
+              $output -match "FIRST_RUNTIME_BLOCKER=_os_log_create") {
+            throw "Original Wikipedia ARM64 guest did not progress beyond os_log_create through WinARM64 x64 emulation"
+          }
+          Write-Output "HOST=Windows-ARM64; X64-EMULATION=yes; GUEST=original-ARM64-via-Dynarmic"
+          Write-Output "NATIVE_APPLE_ARM64_EXECUTION=no; WINDOW=not-created; GUEST_UI=unsupported"
+      - name: Preserve real Windows ARM64 host guest-execution trace
+        uses: actions/upload-artifact@v4
+        with:
+          name: wikipedia-winarm64-x64-emulated-arm64-guest-trace
+          path: compat-output/wikipedia-winarm64-x64-emulation.txt
+          if-no-files-found: error
+          retention-days: 7
