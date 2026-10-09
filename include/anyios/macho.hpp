@@ -67,6 +67,14 @@ struct Export {
     std::uint64_t flags = 0;
 };
 
+struct LegacyDyldInfo {
+    std::optional<LinkeditRange> rebase;
+    std::optional<LinkeditRange> bind;
+    std::optional<LinkeditRange> weak_bind;
+    std::optional<LinkeditRange> lazy_bind;
+    std::optional<LinkeditRange> exports;
+};
+
 struct Image {
     std::uint32_t cpu_subtype = 0;
     std::uint32_t file_type = 0;
@@ -83,6 +91,8 @@ struct Image {
     std::vector<std::string> exported_symbols;
     std::vector<Export> exports;
     bool has_chained_fixups = false;
+    std::optional<LegacyDyldInfo> legacy_dyld;
+    bool has_unixthread = false;
     std::optional<LinkeditRange> chained_fixups_range;
     bool has_export_trie = false;
     std::vector<Version> versions;

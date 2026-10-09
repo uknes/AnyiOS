@@ -37,6 +37,21 @@ int main(int argc, char** argv) {
             throw std::runtime_error("requires unencrypted arm64 MH_EXECUTE");
         }
         std::cout << "STATIC_IMPORTS=" << info.chained_imports.size() << "\n";
+        if (info.legacy_dyld) {
+            const auto& legacy = *info.legacy_dyld;
+            std::cout << "LEGACY_DYLD_INFO=present\n"
+                      << "LEGACY_REBASE_BYTES="
+                      << (legacy.rebase ? legacy.rebase->file_size : 0) << "\n"
+                      << "LEGACY_BIND_BYTES="
+                      << (legacy.bind ? legacy.bind->file_size : 0) << "\n"
+                      << "LEGACY_LAZY_BIND_BYTES="
+                      << (legacy.lazy_bind ? legacy.lazy_bind->file_size : 0) << "\n"
+                      << "LEGACY_WEAK_BIND_BYTES="
+                      << (legacy.weak_bind ? legacy.weak_bind->file_size : 0) << "\n";
+        }
+        if (info.has_unixthread) {
+            std::cout << "LEGACY_UNIXTHREAD=present-not-executable\n";
+        }
         for (const auto& name : info.chained_imports) {
             std::cout << "MISSING_RUNTIME_IMPORT=" << name << "\n";
         }

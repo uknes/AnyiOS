@@ -210,7 +210,9 @@ void run() {
         auto bad = original;
         u32(bad, 224, 0x80000022);
         GuestMemory fresh(0x10000, 0x20000);
-        throws(bad, fresh, 0x10000, imports, "unsupported linked image legacy dyld");
+        // Replacing an 8-byte command with 48-byte LC_DYLD_INFO is malformed.
+        // The new bounded parser must reject before any relocation or mapping.
+        throws(bad, fresh, 0x10000, imports, "truncated LC_DYLD_INFO");
     }
     {
         GuestMemory fresh(0x10000, 0x20000);
