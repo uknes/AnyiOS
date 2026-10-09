@@ -1,4 +1,8 @@
 #include <anyios/linked_pair.hpp>
+#include <anyios/import_resolver.hpp>
+#include <anyios/initializer_plan.hpp>
+#include <anyios/linked_image.hpp>
+#include <anyios/process_bootstrap.hpp>
 #include <anyios/svc_scan.hpp>
 #include <anyios/guest_memory.hpp>
 #include <anyios/macho.hpp>
@@ -7,6 +11,7 @@
 #include <windows.h>
 
 #include <algorithm>
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -16,6 +21,7 @@
 #include <span>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #if !defined(_M_ARM64)
@@ -162,15 +168,94 @@ void verify(const std::vector<std::byte>& app, const std::vector<std::byte>& lib
     if (value != 42) throw std::runtime_error("real native ARM64 linked call returned wrong value");
     std::cout << "Windows ARM64 natively executed genuine owned iPhoneOS app -> dylib call: 42\n";
 }
+
+void verify_initializers(const std::vector<std::byte>& app_file,
+                         const std::vector<std::byte>& middle_file,
+                         const std::vector<std::byte>& leaf_file) {
+    // Trusted freestanding project-owned C only. These functions use the
+    // compatible fixed integer/pointer subset of the two ARM64 calling ABIs.
+    // They do not use Darwin SVC, Apple TLS, x18, threads or system frameworks.
+    HostArena arena;
+    anyios::cpu::GuestMemory staged(arena.base(), arena_size);
+    const auto app_base = arena.base() + 0x10000;
+    const auto middle_base = arena.base() + 0x80000;
+    const auto leaf_base = arena.base() + 0x100000;
+    const auto app = anyios::macho::inspect(app_file);
+    const auto middle = anyios::macho::inspect(middle_file);
+    const auto leaf = anyios::macho::inspect(leaf_file);
+    auto slide = [](const anyios::macho::Image& image, std::uint64_t base) {
+        const auto text = std::find_if(image.segments.begin(), image.segments.end(),
+            [](const anyios::macho::Segment& segment) { return segment.name == "__TEXT"; });
+        if (text == image.segments.end() || base < text->vm_address)
+            throw std::runtime_error("invalid native owned dylib slide");
+        return base - text->vm_address;
+    };
+    const std::array<anyios::dyld::LoadedDylib, 2> libraries{{
+        {&middle, slide(middle, middle_base)}, {&leaf, slide(leaf, leaf_base)}
+    }};
+    const auto app_imports = anyios::dyld::resolve_chained_import_targets(app_file, app, libraries);
+    const auto middle_imports = anyios::dyld::resolve_chained_import_targets(middle_file, middle, libraries);
+    const auto leaf_imports = anyios::dyld::resolve_chained_import_targets(leaf_file, leaf, libraries);
+    const std::array<anyios::loader::LinkedImageInput, 3> inputs{{
+        {app_file, app_base, app_imports}, {middle_file, middle_base, middle_imports},
+        {leaf_file, leaf_base, leaf_imports}
+    }};
+    const auto mapped = anyios::loader::stage_linked_images(inputs, staged, true);
+    const std::array<anyios::loader::MappedInitializerImage, 3> modules{{
+        {{"Bundle/InitializerChainApp", app}, app_base},
+        {{"Bundle/Frameworks/libInitMiddle.dylib", middle}, middle_base},
+        {{"Bundle/Frameworks/libInitLeaf.dylib", leaf}, leaf_base}
+    }};
+    const auto plan = anyios::loader::plan_owned_image_initializers(
+        modules, "Bundle/InitializerChainApp", staged);
+    if (plan.size() != 3 || plan[0].module_path != modules[2].module.path ||
+        plan[1].module_path != modules[1].module.path || plan[2].module_path != modules[0].module.path)
+        throw std::runtime_error("native owned constructor order invalid");
+    constexpr std::size_t argument_bytes = 0x10000;
+    const auto argument_base = arena.base() + 0x300000;
+    const std::array<std::string_view, 2> arguments{"initializer-chain", "guest"};
+    const std::array<std::string_view, 1> environment{"ANYIOS_TEST=1"};
+    const std::array<std::string_view, 1> apple{"executable_path=/AnyiOS/InitializerChainApp"};
+    const auto boot = anyios::loader::prepare_owned_process_stack(
+        staged, argument_base, argument_bytes, arguments, environment, apple);
+    publish_segment(leaf, leaf_base, staged);
+    publish_segment(middle, middle_base, staged);
+    publish_segment(app, app_base, staged);
+    std::array<std::byte, argument_bytes> frame{};
+    if (!staged.copy_from(argument_base, frame))
+        throw std::runtime_error("cannot read validated native argument frame");
+    auto* native_arguments = reinterpret_cast<void*>(static_cast<std::uintptr_t>(argument_base));
+    if (VirtualAlloc(native_arguments, argument_bytes, MEM_COMMIT, PAGE_READWRITE) != native_arguments)
+        throw std::runtime_error("native owned argument frame commit failed");
+    std::memcpy(native_arguments, frame.data(), frame.size());
+    using Initializer = void (*)(int, const char**, const char**, const char**);
+    for (const auto& call : plan) {
+        const auto function = reinterpret_cast<Initializer>(static_cast<std::uintptr_t>(call.guest_function));
+        function(static_cast<int>(boot.argc),
+                 reinterpret_cast<const char**>(static_cast<std::uintptr_t>(boot.argv)),
+                 reinterpret_cast<const char**>(static_cast<std::uintptr_t>(boot.envp)),
+                 reinterpret_cast<const char**>(static_cast<std::uintptr_t>(boot.apple)));
+        std::cout << "NATIVE_INITIALIZED_MODULE=" << call.module_path << "\n";
+    }
+    using OwnedMain = int (*)();
+    const auto main = reinterpret_cast<OwnedMain>(static_cast<std::uintptr_t>(mapped[0].guest_entry));
+    if (main() != 735) throw std::runtime_error("native ARM64 constructor chain returned wrong value");
+    std::cout << "HOST_EXECUTION=native-Windows-ARM64\n"
+              << "NATIVE_OWNED_CONSTRUCTOR_CHAIN_RESULT=735\n"
+              << "ORIGINAL_THIRD_PARTY_APP_EXECUTION=not-tested-by-this-fixture\n";
+}
 }
 
 int main(int argc, char** argv) {
-    if (argc != 3) {
-        std::cerr << "usage: anyios-native-linked-owned RuntimeApp libRuntimeWidget.dylib\n";
+    const bool initializers = argc == 5 && std::string_view(argv[1]) == "--initializers";
+    if (argc != 3 && !initializers) {
+        std::cerr << "usage: anyios-native-linked-owned RuntimeApp libRuntimeWidget.dylib\n"
+                  << "   or: anyios-native-linked-owned --initializers app middle.dylib leaf.dylib\n";
         return 2;
     }
     try {
-        verify(owned_image(argv[1]), owned_image(argv[2]));
+        if (initializers) verify_initializers(owned_image(argv[2]), owned_image(argv[3]), owned_image(argv[4]));
+        else verify(owned_image(argv[1]), owned_image(argv[2]));
         return 0;
     } catch (const std::exception& error) {
         std::cerr << "Native ARM64 linked fixture failed: " << error.what() << '\n';

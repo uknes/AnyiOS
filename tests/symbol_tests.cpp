@@ -56,7 +56,7 @@ void test_symtab() {
     auto parsed = anyios::macho::inspect(b);
     check(parsed.symbols.size() == 1 && parsed.symbols[0].name == "_symbol", "symbol name");
     check(parsed.symbols[0].value == 0x1234 && parsed.symbols[0].type == 0x0f, "symbol metadata");
-    w32(b, 44, 100001);
+    w32(b, 44, anyios::macho::max_symbol_table_entries + 1);
     rejects(b, "symbol count exceeds safety limit");
     b = fixture();
     w32(b, 40, 0xfffffff0);
@@ -76,6 +76,45 @@ void test_symtab() {
     w32(b, 56, 2);
     w32(b, 60, 24);
     rejects(b, "duplicate LC_SYMTAB");
+}
+Bytes large_table(std::uint32_t count, std::size_t name_length) {
+    constexpr std::size_t symbols_at = 56;
+    const auto strings_at = symbols_at + std::size_t(count) * 16;
+    Bytes b(strings_at + name_length + 2);
+    w32(b, 0, 0xfeedfacf); w32(b, 4, 0x0100000c); w32(b, 12, 6);
+    w32(b, 16, 1); w32(b, 20, 24); w32(b, 32, 2); w32(b, 36, 24);
+    w32(b, 40, symbols_at); w32(b, 44, count);
+    w32(b, 48, static_cast<std::uint32_t>(strings_at));
+    w32(b, 52, static_cast<std::uint32_t>(name_length + 2));
+    std::fill(b.begin() + static_cast<std::ptrdiff_t>(strings_at + 1), b.end() - 1, std::byte{'s'});
+    for (std::uint32_t i = 0; i < count; ++i) {
+        const auto at = symbols_at + std::size_t(i) * 16;
+        w32(b, at, 1);
+        b[at + 4] = std::byte{0x24}; // N_FUN debug entry: retained, not an export.
+        w64(b, at + 8, i);
+    }
+    return b;
+}
+void test_large_tables() {
+    auto b = large_table(100001, 1);
+    auto parsed = anyios::macho::inspect(b);
+    check(parsed.symbols.size() == 100001 && parsed.symbols.back().value == 100000,
+          "large debug table lost entries or order");
+    check(!anyios::macho::is_defined_external_symbol(parsed.symbols.back()),
+          "debug entry became a public export");
+    w32(b, 56 + std::size_t(100000) * 16, 3);
+    rejects(b, "symbol name offset out of bounds");
+    b = large_table(40000, 256); // More than the former 8 MiB copied-name cap.
+    parsed = anyios::macho::inspect(b);
+    check(parsed.symbols.size() == 40000 && parsed.symbols.back().name.size() == 256,
+          "large valid aggregate names rejected");
+    b = large_table(4097, 16383); // Repeated string still consumes the copy budget.
+    rejects(b, "symbol names exceed safety limit");
+    b = large_table(1, 16384);
+    rejects(b, "symbol name exceeds length limit");
+    b = fixture();
+    w32(b, 44, anyios::macho::max_symbol_table_entries);
+    rejects(b, "symbol table out of bounds");
 }
 void test_indirect() {
     Bytes b(112);
@@ -110,6 +149,7 @@ void test_sections() {
 int main() {
     try {
         test_symtab();
+        test_large_tables();
         test_indirect();
         test_sections();
         std::cout << "Symbol and section checks passed\n";

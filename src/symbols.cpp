@@ -35,7 +35,7 @@ std::uint64_t read64(std::span<const std::byte> bytes, std::size_t offset) {
 std::vector<Symbol> parse_symbols(std::span<const std::byte> bytes,
                                   std::uint32_t symbols_offset, std::uint32_t symbol_count,
                                   std::uint32_t strings_offset, std::uint32_t strings_size) {
-    if (symbol_count > 100000) throw FormatError("symbol count exceeds safety limit");
+    if (symbol_count > max_symbol_table_entries) throw FormatError("symbol count exceeds safety limit");
     require(bytes, symbols_offset, std::size_t(symbol_count) * 16, "symbol table");
     require(bytes, strings_offset, strings_size, "symbol string table");
     const auto strings = bytes.subspan(strings_offset, strings_size);
@@ -53,7 +53,7 @@ std::vector<Symbol> parse_symbols(std::span<const std::byte> bytes,
             if (end - strx == 16384) throw FormatError("symbol name exceeds length limit");
             if (end == strings.size()) throw FormatError("symbol name not NUL-terminated");
             const auto length = end - strx;
-            if (length > 8 * 1024 * 1024 - total_names) throw FormatError("symbol names exceed safety limit");
+            if (length > max_symbol_table_name_bytes - total_names) throw FormatError("symbol names exceed safety limit");
             total_names += length;
             name.assign(reinterpret_cast<const char*>(strings.data() + strx), length);
         }

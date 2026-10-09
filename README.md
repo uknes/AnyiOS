@@ -18,6 +18,8 @@ Research into a clean-room compatibility layer for legally accessible, unprotect
 
 **Latest owned execution milestone:** [three-image dependency-first C constructors](_docs/MULTI_IMAGE_INITIALIZERS.md) ran under Windows x64 Dynarmic and returned 735 in [CI 37974381605](https://github.com/uknes/AnyiOS/actions/runs/37974381605). Windows/Linux ARM64 verified the host planning contracts; native execution of this constructor chain is not claimed.
 
+**Current original-app work:** [bounded large symbol-table parsing](_docs/LARGE_SYMBOL_TABLES.md) accepts all 15 hash-verified Wikipedia binaries locally and reveals missing dependencies in four reachable main-process images. Windows x64 and native Windows ARM64 CI now require this metadata regression. The owned constructor-chain regression also has a native Windows ARM64 execution path; original Wikipedia native execution and its UI remain unsupported.
+
 ## Cross-app iOS requirements — research snapshot 2026-10-09
 
 The SVG above now includes **575 runtime/behavior gates across 53 subsystems**, the existing **269 selected API exports**, and a separate **405-entry Apple technology discovery panel**. New requirements are pending; existing evidence and verified counts are unchanged. Wikipedia is one stress target, not a runtime specialization.

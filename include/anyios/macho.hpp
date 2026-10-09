@@ -10,6 +10,11 @@
 
 namespace anyios::macho {
 
+// Resource policy, not Mach-O format limits. Keep all nlist entries (including
+// debug/local symbols); import/export visibility is decided by their consumers.
+inline constexpr std::uint32_t max_symbol_table_entries = 1'000'000;
+inline constexpr std::size_t max_symbol_table_name_bytes = 64U * 1024U * 1024U;
+
 struct FormatError final : std::runtime_error {
     using std::runtime_error::runtime_error;
 };

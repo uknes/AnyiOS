@@ -22,7 +22,9 @@ Windows x64 CI runs:
 
     anyios-a64-smoke --initializers InitializerChainApp libInitMiddle.dylib libInitLeaf.dylib
 
-Portable contract tests include a shared diamond dependency, dependency-first order independent of input order, snapshot lifetime, missing dependencies, cycles, unsupported edge kinds, orphan/duplicate images, alignment, overflow boundaries, zero-fill and out-of-image tables, overlapping tables, per-image limits, cross-image/nonexecuting/unaligned targets and file-backed code bounds. Windows ARM64 and Linux ARM64 execute the portable planning contracts natively; the three-image original instruction test is Windows x64 Dynarmic only.
+Portable contract tests include a shared diamond dependency, dependency-first order independent of input order, snapshot lifetime, missing dependencies, cycles, unsupported edge kinds, orphan/duplicate images, alignment, overflow boundaries, zero-fill and out-of-image tables, overlapping tables, per-image limits, cross-image/nonexecuting/unaligned targets and file-backed code bounds. Windows ARM64 and Linux ARM64 execute the portable planning contracts natively. The initial implementation run exercised the three-image original instructions under Windows x64 Dynarmic; the additional native Windows ARM64 regression is described below.
+
+The native Windows ARM64 trusted runner now also accepts `--initializers app middle.dylib leaf.dylib`. It stages the identical SDK-free three-image artifact using the shared import resolver, mapping transaction and initializer planner, publishes validated segments at their reserved native addresses with W xor X and executable SVC preflight, and copies the actual bounded guest argument vectors to nonexecutable pages. It calls the real original constructors and LC_MAIN; 735 is required. This uses the compatible fixed integer/pointer calling subset and the host call stack for these known freestanding C functions. It is a trusted CI fixture, not arbitrary native Darwin process execution, a guest-stack/exception bridge or a third-party app sandbox.
 
 ## Evidence and limits
 
