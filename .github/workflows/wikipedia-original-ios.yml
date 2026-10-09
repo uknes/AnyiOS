@@ -209,7 +209,7 @@ jobs:
       - name: Configure and build general ARM64 original instruction probe
         shell: pwsh
         run: |
-          cmake -S . -B build-wikipedia-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=OFF -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
+          cmake -S . -B build-wikipedia-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
           if ($LASTEXITCODE -ne 0) { throw "Could not configure Dynarmic runtime" }
           cmake --build build-wikipedia-guest --config Release --target anyios-general-entry-probe anyios-os-log-tests --parallel 2
           if ($LASTEXITCODE -ne 0) { throw "Could not compile general ARM64 guest probe" }
