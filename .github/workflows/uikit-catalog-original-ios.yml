@@ -232,10 +232,18 @@ jobs:
         if: steps.app.outputs.built == 'true'
         shell: pwsh
         run: |
-          cmake -S . -B build-catalog-arm64 -DBUILD_TESTING=OFF
+          cmake -S . -B build-catalog-arm64 -DBUILD_TESTING=ON
           if ($LASTEXITCODE -ne 0) { throw "Native ARM64 stage configuration failed" }
-          cmake --build build-catalog-arm64 --config Release --target anyios-app-stage-probe --parallel 2
+          cmake --build build-catalog-arm64 --config Release --target anyios-app-stage-probe anyios-legacy-bind-tests anyios-linked-image-tests --parallel 2
           if ($LASTEXITCODE -ne 0) { throw "Native ARM64 stage build failed" }
+      - name: Validate legacy relocation and malformed input on native Windows ARM64
+        if: steps.app.outputs.built == 'true'
+        shell: pwsh
+        run: |
+          & ./build-catalog-arm64/Release/anyios-legacy-bind-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Native ARM64 legacy bind contract failed" }
+          & ./build-catalog-arm64/Release/anyios-linked-image-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Native ARM64 transactional relocation contract failed" }
       - name: Record real loader stage, not native guest execution
         if: steps.app.outputs.built == 'true'
         shell: pwsh

@@ -141,6 +141,19 @@ void run() {
         };
         rejected(legacy,std::span<const std::uint64_t>(targets).first(1));
         const std::array<std::uint64_t,2> unresolved{0x14000,0};rejected(legacy,unresolved);
+        auto with_addend=[&](unsigned char delta){
+            auto altered=legacy;
+            const std::array<unsigned char,11> ops{0x10,0x40,'_','e',0,0x60,delta,0x71,8,0x90,0};
+            for(std::size_t i=0;i<ops.size();++i)altered[0x420+i]=std::byte{ops[i]};
+            u32(altered,244,static_cast<std::uint32_t>(ops.size()));return altered;
+        };
+        const auto minus_two=with_addend(0x7e);
+        GuestMemory signed_memory(0x10000,0x20000);
+        (void)anyios::loader::stage_linked_image(minus_two,signed_memory,0x10000,targets,
+            anyios::loader::LinkedImageOptions{false,nullptr,true});
+        check(signed_memory.read(0x11008,8)==0x13ffe,"legacy negative addend lost");
+        const std::array<std::uint64_t,2> underflow{1,0x15000};rejected(minus_two,underflow);
+        const std::array<std::uint64_t,2> overflow{UINT64_MAX,0x15000};rejected(with_addend(1),overflow);
         auto outside=legacy;u64(outside,4096,0xffffffffffffffffULL);rejected(outside,targets);
         auto duplicate=legacy;duplicate[0x446]=std::byte{0x90};
         duplicate[0x445]=std::byte{8};rejected(duplicate,targets);
