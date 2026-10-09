@@ -50,7 +50,9 @@ std::vector<LegacyRebaseSite> inspect_legacy_rebase_sites(
         if ((seg_offset & 7) || seg_offset > seg.file_size ||
             seg.file_size - seg_offset < 8 ||
             seg_offset > seg.vm_size || seg.vm_size - seg_offset < 8 ||
-            (seg.init_protection & 1u)==0)
+            (seg.init_protection & 1u)==0 ||
+            (seg.init_protection & 2u)==0 ||
+            (seg.init_protection & 4u)!=0)
             throw macho::FormatError("legacy rebase pointer outside mapped file-backed segment");
         const auto file_at=add(seg.file_offset,seg_offset);
         if (file_at>file.size() || file.size()-file_at<8)
