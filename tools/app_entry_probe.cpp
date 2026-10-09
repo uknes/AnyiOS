@@ -5,6 +5,7 @@
 #include <anyios/macho.hpp>
 #include <anyios/objc_identity.hpp>
 #include <anyios/objc_objects.hpp>
+#include <anyios/objc_dispatch.hpp>
 #include <anyios/objc_registry.hpp>
 #include <anyios/objc_signature.hpp>
 #include <anyios/objc_selectors.hpp>
@@ -255,14 +256,17 @@ int main(int argc, char** argv) {
                 }
                 std::cout << "GUEST_DELEGATE_INSTANCE=allocated-from-class-ro"
                           << "\nGUEST_DELEGATE_ISA=original-guest-class\n";
-                const std::array<std::uint64_t, 4> params{
-                    *delegate, did_launch->selector, 0, 0
-                };
-                const auto result = anyios::abi::invoke_guest_callback(
-                    *cpu, did_launch->entry, params, kReturn, 4096);
+                const auto result = anyios::darwin::invoke_guest_bool_launch_message(
+                    *cpu, memory, objc, registry, selectors, instances,
+                    *delegate, did_launch->selector, 0, 0, kReturn, 4096);
+                if (!result) {
+                    throw std::runtime_error(
+                        "original guest AppDelegate method dispatch was refused");
+                }
+                std::cout << "APP_DELEGATE_DISPATCH=validated-guest-instance-BOOL\n";
                 std::cout << "APP_DELEGATE_GUEST_IMP=executed"
                           << "\nAPP_DELEGATE_METHOD=application:didFinishLaunchingWithOptions:"
-                          << "\nAPP_DELEGATE_CALLBACK_RESULT=" << result
+                          << "\nAPP_DELEGATE_CALLBACK_RESULT=" << *result
                           << "\nCALLBACK_SCOPE=diagnostic-only-no-UIKit-lifecycle\n";
                 if (!instances.release(*delegate) || instances.is_live(*delegate)) {
                     throw std::runtime_error("guest delegate lifetime check failed");

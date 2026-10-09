@@ -48,7 +48,7 @@ jobs:
       - name: Configure guest runtime test
         run: cmake -S . -B build-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
       - name: Build guest runtime and portable ObjC identity contract
-        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests anyios-objc-objects-tests anyios-objc-registry-tests anyios-objc-selector-tests anyios-objc-signature-tests --parallel 2
+        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests anyios-objc-objects-tests anyios-objc-registry-tests anyios-objc-selector-tests anyios-objc-signature-tests anyios-objc-dispatch-tests --parallel 2
       - name: Validate local guest ObjC class identity contract
         shell: pwsh
         run: |
@@ -74,6 +74,11 @@ jobs:
         run: |
           & ./build-guest/Release/anyios-objc-signature-tests.exe
           if ($LASTEXITCODE -ne 0) { throw "ObjC guest method ABI contract failed" }
+      - name: Validate guarded guest-instance Objective-C message dispatch
+        shell: pwsh
+        run: |
+          & ./build-guest/Release/anyios-objc-dispatch-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Typed guest Objective-C instance dispatch test failed" }
       - name: Execute pinned third-party iOS app until next genuine blocker
         shell: pwsh
         run: |
@@ -107,6 +112,9 @@ jobs:
           }
           if (-not ($trace -match "APP_DELEGATE_METHOD_RESOLUTION=validated-local-guest-IMP")) {
             throw "Original app guest IMP was not resolved by the class registry"
+          }
+          if (-not ($trace -match "APP_DELEGATE_DISPATCH=validated-guest-instance-BOOL")) {
+            throw "Original guest AppDelegate was not dispatched via guest instance ABI"
           }
           if (-not ($trace -match "APP_DELEGATE_GUEST_IMP=executed") -or
               -not ($trace -match "APP_DELEGATE_CALLBACK_RESULT=1")) {

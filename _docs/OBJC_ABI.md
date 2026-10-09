@@ -151,3 +151,25 @@ Dynarmic CI, not just portable tests.
 
 Primary research: https://developer.apple.com/documentation/objectivec/method_gettypeencoding%28_%3A%29
 and https://developer.apple.com/videos/play/wwdc2020/10163/ .
+
+## Original guest BOOL instance dispatch — restricted diagnostic
+
+The independent `anyios_objc_dispatch` subsystem composes validated guest
+instance allocation, local Objective-C class inheritance, mapped compiler
+selector identity, original method type encoding, and a bounded Apple ARM64
+host-to-guest callback. The only accepted signature is the documented BOOL
+`application:didFinishLaunchingWithOptions:` method, with four register
+arguments `x0=self, x1=_cmd, x2=nil, x3=nil`. Unlike a general runtime,
+non-nil app/options object arguments are refused: there is still no actual
+UIKit object to pass. The guest memory `isa` must resolve through the local
+class registry, the guest object must still be live, and the original guest
+IMP executes only through the shared CPU backend. An unsupported message
+returns no result. ARM64 guest faults or platform register corruption remain
+hard errors; guest CPU state is restored.
+
+Portable fake-backend CTests check the dispatch orchestration and denial
+boundaries, **not** execution of ARM64 instructions. The pinned external MIT
+Bitrise Windows x86-64 Dynarmic probe is required to prove original ARM64
+IMP execution through this path. No `UIApplicationMain`, UIWindow, object
+message forwarding, metaclass dispatch, general `objc_msgSend`, native
+Windows ARM64 third-party app lifecycle or UIKit implementation is claimed.
