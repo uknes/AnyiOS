@@ -112,6 +112,14 @@ bool GuestMemory::copy_from(std::uint64_t address, std::span<std::byte> destinat
     return true;
 }
 
+bool GuestMemory::copy_to(std::uint64_t address, std::span<const std::byte> source) {
+    if (source.empty() || !allowed(address, source.size(), Access::write)) return false;
+    const auto begin = *offset_of(address, source.size());
+    std::copy(source.begin(), source.end(),
+              bytes_.begin() + static_cast<std::ptrdiff_t>(begin));
+    return true;
+}
+
 bool GuestMemory::load(std::uint64_t address, std::span<const std::byte> source) {
     const auto begin = offset_of(address, source.size());
     if (!begin || source.empty()) return false;

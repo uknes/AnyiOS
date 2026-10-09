@@ -2,6 +2,7 @@
 #include <anyios/guest_memory.hpp>
 #include <anyios/guest_os_log.hpp>
 #include <anyios/guest_environ.hpp>
+#include <anyios/libsystem_shim.hpp>
 #include <anyios/linked_image.hpp>
 #include <anyios/macho.hpp>
 #include <anyios/legacy_bind.hpp>
@@ -113,6 +114,7 @@ int main(int argc, char** argv) {
             memory, kStack, 0x10000, args, env, apple);
         anyios::darwin::GuestOsLogRegistry os_logs(memory, 0x16000000);
         const anyios::darwin::GuestEnvironment guest_environ(memory, start.envp);
+        anyios::darwin::LibSystemShim libsystem(memory, 0x15800000, 0x100000);
         auto cpu = anyios::cpu::make_dynarmic_backend(memory);
         anyios::cpu::CpuState state{};
         state.pc = loaded.guest_entry;
@@ -142,6 +144,22 @@ int main(int argc, char** argv) {
                 at.pc == imports[static_cast<std::size_t>(at.x[16])] + 8) {
                 const auto& symbol = import_names[
                     static_cast<std::size_t>(at.x[16])];
+                if (symbol == "_memcpy") {
+                    try {
+                        const auto result = libsystem.invoke(symbol, {at.x[0], at.x[1], at.x[2]});
+                        auto resumed = at;
+                        resumed.x[0] = result.value;
+                        cpu->set_state(resumed);
+                        std::cout << "SUPPORTED_NARROW_IMPORT=_memcpy\n"
+                                  << "MEMCPY_BYTES=" << at.x[2] << "\n"
+                                  << "MEMORY_SCOPE=validated-guest-only\n";
+                        continue;
+                    } catch (const std::exception& error) {
+                        std::cout << "FIRST_RUNTIME_BLOCKER=_memcpy\n"
+                                  << "REASON=" << error.what() << "\n";
+                        return 0;
+                    }
+                }
                 if (symbol == "_getenv") {
                     const auto result = guest_environ.lookup(at.x[0]);
                     if (!result) {
@@ -186,6 +204,23 @@ int main(int argc, char** argv) {
                     std::cout << "SUPPORTED_NARROW_IMPORT=_os_log_create\n"
                               << "OS_LOG_SCOPE=opaque-guest-token-only\n";
                     continue;
+                }
+                if (symbol == "_dlsym") {
+                    std::cout << "DLSYM_GUEST_HANDLE_RAW=" << at.x[0] << "\n";
+                    std::string requested;
+                    bool terminated=false;
+                    for(std::uint64_t offset=0;offset<1024;++offset) {
+                        if(at.x[1]>UINT64_MAX-offset)break;
+                        const auto value=memory.read(at.x[1]+offset,1);
+                        if(!value)break;
+                        if(*value==0){terminated=true;break;}
+                        if(*value<33 || *value>126)break;
+                        requested.push_back(static_cast<char>(*value));
+                    }
+                    if(terminated && !requested.empty())
+                        std::cout << "DLSYM_REQUESTED_SYMBOL=" << requested << "\n";
+                    else std::cout << "DLSYM_SYMBOL_DIAGNOSTIC=unreadable-or-outside-bounded-ASCII-scope\n";
+                    std::cout << "DLSYM_RESOLUTION=unsupported-no-guest-module-registry\n";
                 }
                 std::cout << "FIRST_RUNTIME_BLOCKER=" << symbol
                           << "\nRESULT=unsupported-framework-import\n";
