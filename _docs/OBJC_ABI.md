@@ -115,3 +115,19 @@ reinterpreted or silently fabricated. This does not implement arbitrary
 objc_msgSend, forwarding, dynamic method resolution, metaclasses, categories,
 class initialization, or UIKit. The unchanged Bitrise AppDelegate callback
 continues to be a diagnostic guest execution only.
+
+## Bounded original compiler selector identity (next step after PR #13)
+
+`GuestObjcSelectorRegistry` canonicalizes a maximum of 256 validated
+compiler-emitted `__objc_methname` strings to original guest pointer
+addresses. Repeated selector text receives the first registered original
+address, with the canonical guest string revalidated before reuse. Unknown,
+unterminated, stale, unmapped and non-method-section guest selector values
+fail closed. This narrow interner is wired to the original Bitrise ARM64
+`+[AppDelegate class]` diagnostic `_objc_msgSend` entry path, and cannot
+materialize Windows-side substitute selectors or arbitrary host pointers.
+
+The selector table does **not** implement `sel_registerName`, `sel_getName`,
+`__objc_selrefs` patching, dynamic method lookup, general class/instance
+message dispatch, cross-module registration or UIKit. Its verified scope is
+one prerequisite for guest-owned selector identity only.
