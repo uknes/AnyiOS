@@ -97,7 +97,14 @@ std::vector<std::uint64_t> find_owned_module_initializers(
     if (text == image.segments.end()) {
         throw macho::FormatError("module initializer image has no __TEXT");
     }
+    if (guest_image_base % cpu::GuestMemory::ios_page_size != 0 || image.segments.size() > 128 || image.sections.size() > 4096)
+        throw macho::FormatError("invalid initializer image mapping configuration");
+    auto contains = [](std::uint64_t at, std::uint64_t size,
+                       std::uint64_t base, std::uint64_t length) {
+        return at >= base && at - base <= length && size <= length - (at - base);
+    };
     std::vector<std::uint64_t> functions;
+    std::vector<std::pair<std::uint64_t, std::uint64_t>> tables;
     for (const auto& section : image.sections) {
         const bool pointer_array = section.name == "__mod_init_func";
         const bool text_offsets = section.name == "__init_offsets";
@@ -114,15 +121,38 @@ std::vector<std::uint64_t> find_owned_module_initializers(
             section.address < text->vm_address) {
             throw macho::FormatError("invalid owned initializer section");
         }
+        if (section.zero_fill || section.address % width != 0 ||
+            section.size / width > 64 - functions.size())
+            throw macho::FormatError("initializer descriptor alignment or total count invalid");
+        const auto owner = std::find_if(image.segments.begin(), image.segments.end(),
+            [&](const macho::Segment& segment) {
+                return segment.name == section.segment_name && (segment.init_protection & 1u) &&
+                    contains(section.address, section.size, segment.vm_address, segment.file_size);
+            });
+        if (owner == image.segments.end())
+            throw macho::FormatError("initializer descriptor outside file-backed image segment");
         const auto offset = section.address - text->vm_address;
         const auto address = checked_add(guest_image_base, offset);
+        const auto end = checked_add(address, section.size);
+        for (const auto& table : tables) {
+            if (address < table.second && table.first < end)
+                throw macho::FormatError("initializer descriptor tables overlap");
+        }
+        tables.emplace_back(address, end);
         for (std::uint64_t i = 0; i < section.size; i += width) {
             const auto raw = memory.read(checked_add(address, i),
                                          static_cast<unsigned>(width));
             if (!raw) throw macho::FormatError("initializer descriptor is unreadable");
             const auto target = text_offsets
                 ? checked_add(guest_image_base, *raw) : *raw;
-            if (!memory.fetch(target)) {
+            bool owned_code = false;
+            for (const auto& segment : image.segments) {
+                if (segment.vm_address < text->vm_address ||
+                    (segment.init_protection & 7u) != 5u) continue;
+                const auto begin = checked_add(guest_image_base, segment.vm_address - text->vm_address);
+                if (contains(target, 4, begin, segment.file_size)) owned_code = true;
+            }
+            if (!owned_code || target % 4 != 0 || !memory.fetch(target)) {
                 throw macho::FormatError("initializer target unmapped or not executable");
             }
             functions.push_back(target);

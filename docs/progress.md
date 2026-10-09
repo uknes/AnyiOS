@@ -5,7 +5,7 @@ The percentages below count only explicitly inventoried candidate API exports an
 | Metric | Verified | Partial | Pending or unverified | Tracked | Coverage |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | iOS API exports | 3 | 1 | 265 | 269 | 1.12% |
-| Compatibility gates | 6 | 11 | 558 | 575 | 1.04% |
+| Compatibility gates | 6 | 12 | 557 | 575 | 1.04% |
 
 ## Candidate API exports
 
@@ -693,11 +693,11 @@ The percentages below count only explicitly inventoried candidate API exports an
 
 </details>
 
-<details><summary><b>dyld and linking</b> — 0 verified, 1 partial, 8 pending / 9 total</summary>
+<details><summary><b>dyld and linking</b> — 0 verified, 2 partial, 7 pending / 9 total</summary>
 
+- 🟨 `C/C++ static constructors across images` — Partial
 - 🟨 `Chained rebases and binds for owned fixtures` — Partial
 - ⬜ `App/framework nested bundle resolution` — Pending / unverified
-- ⬜ `C/C++ static constructors across images` — Pending / unverified
 - ⬜ `Classic binds, lazy binds and weak symbols` — Pending / unverified
 - ⬜ `Multi-dylib recursive load and @rpath resolution` — Pending / unverified
 - ⬜ `Objective-C category/selector initialization order` — Pending / unverified

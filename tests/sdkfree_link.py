@@ -74,6 +74,31 @@ def main():
             "-L", str(work), "-lRuntimeWidget", "-lSystem",
             "-rpath", "@executable_path/Frameworks", "-o", str(app),
         ])
+        # A complete owned dependency chain with real compiler-generated
+        # constructors. No metadata-only system library is included in this graph.
+        init_outputs = []
+        for suffix in ("leaf", "middle", "main"):
+            obj = work / ("Init" + suffix + ".o")
+            run(clang_flags + ["-fno-stack-protector", str(fixtures / ("arm64_init_" + suffix + ".c")), "-o", str(obj)])
+            init_outputs.append(obj)
+        leaf = work / "libInitLeaf.dylib"
+        middle = work / "libInitMiddle.dylib"
+        init_app = work / "InitializerChainApp"
+        run(link + ["-fixup_chains", "-dylib", str(init_outputs[0]), "-install_name",
+                    "@rpath/libInitLeaf.dylib", "-o", str(leaf)])
+        run(link + ["-fixup_chains", "-dylib", str(init_outputs[1]), "-install_name",
+                    "@rpath/libInitMiddle.dylib", "-L", str(work), "-lInitLeaf",
+                    "-rpath", "@loader_path", "-o", str(middle)])
+        run(link + ["-fixup_chains", "-execute", str(init_outputs[2]), "-e", "_main",
+                    "-L", str(work), "-lInitMiddle", "-rpath", "@executable_path/Frameworks",
+                    "-o", str(init_app)])
+        for binary in (leaf, middle, init_app):
+            info = run([str(inspector), str(binary)])
+            if not any("Section: " + name in info for name in (
+                "__TEXT/__init_offsets", "__DATA/__mod_init_func", "__DATA_CONST/__mod_init_func")):
+                raise AssertionError("owned dependency chain lacks real initializer table: " + str(binary))
+            if "/usr/lib/" in info:
+                raise AssertionError("owned initializer graph unexpectedly requires a system image")
         libsystem_obj = work / "LibSystemApp.o"
         libsystem_app = work / "LibSystemApp"
         run(clang_flags + [
@@ -156,6 +181,8 @@ def main():
             import shutil
             output = pathlib.Path(args.output_dir).resolve()
             output.mkdir(parents=True, exist_ok=True)
+            for binary in (leaf, middle, init_app):
+                shutil.copyfile(binary, output / binary.name)
             shutil.copyfile(app, output / "RuntimeApp")
             shutil.copyfile(libsystem_app, output / "LibSystemApp")
             shutil.copyfile(hello_app, output / "HelloProcess")

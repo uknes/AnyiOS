@@ -60,6 +60,7 @@ int main() {
                 modern, code, 0x10000);
             check(offsets.size() == 1 && offsets[0] == 0x10100,
                   "modern __init_offsets constructor target");
+            modern.segments.push_back({"__DATA", 0x100004000ULL, 0x4000, 0x4000, 0x4000, 0, 1, 1});
             modern.sections.clear();
             modern.sections.push_back({"__mod_init_func", "__DATA",
                                        0x100004080ULL, 8, 0x4080, 0, false});

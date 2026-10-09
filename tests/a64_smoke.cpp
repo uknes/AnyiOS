@@ -6,6 +6,8 @@
 #include <anyios/object_code.hpp>
 #include <anyios/executable.hpp>
 #include <anyios/linked_pair.hpp>
+#include <anyios/initializer_plan.hpp>
+#include <anyios/import_resolver.hpp>
 #include <anyios/macho.hpp>
 #include <anyios/libsystem_shim.hpp>
 #include <anyios/linked_image.hpp>
@@ -193,6 +195,67 @@ void verify_real_linked_call(const std::vector<std::byte>& main_image,
         throw std::runtime_error("cross-dylib ARM64 guest call returned incorrect value");
     }
     std::cout << "Executed real iPhoneOS MH_EXECUTE -> MH_DYLIB call on Windows x64: 42\n";
+}
+
+
+void verify_initializer_chain(const std::vector<std::byte>& app_file,
+                              const std::vector<std::byte>& middle_file,
+                              const std::vector<std::byte>& leaf_file) {
+    constexpr std::uint64_t app_base = 0x10000, middle_base = 0x80000, leaf_base = 0x100000;
+    constexpr std::uint64_t sentinel = 0x400000;
+    const auto app = anyios::macho::inspect(app_file);
+    const auto middle = anyios::macho::inspect(middle_file);
+    const auto leaf = anyios::macho::inspect(leaf_file);
+    auto slide = [](const anyios::macho::Image& image, std::uint64_t base) {
+        const auto text = std::find_if(image.segments.begin(), image.segments.end(),
+            [](const anyios::macho::Segment& segment) { return segment.name == "__TEXT"; });
+        if (text == image.segments.end() || base < text->vm_address)
+            throw std::runtime_error("owned initializer library slide invalid");
+        return base - text->vm_address;
+    };
+    const std::array<anyios::dyld::LoadedDylib, 2> libraries{{
+        {&middle, slide(middle, middle_base)}, {&leaf, slide(leaf, leaf_base)}
+    }};
+    const auto app_imports = anyios::dyld::resolve_chained_import_targets(app_file, app, libraries);
+    const auto middle_imports = anyios::dyld::resolve_chained_import_targets(middle_file, middle, libraries);
+    const auto leaf_imports = anyios::dyld::resolve_chained_import_targets(leaf_file, leaf, libraries);
+    GuestMemory memory(0x10000, 4 * 1024 * 1024);
+    const std::array<anyios::loader::LinkedImageInput, 3> inputs{{
+        {app_file, app_base, app_imports}, {middle_file, middle_base, middle_imports},
+        {leaf_file, leaf_base, leaf_imports}
+    }};
+    const auto staged = anyios::loader::stage_linked_images(inputs, memory, true);
+    const std::array<anyios::loader::MappedInitializerImage, 3> modules{{
+        {{"Bundle/InitializerChainApp", app}, app_base},
+        {{"Bundle/Frameworks/libInitMiddle.dylib", middle}, middle_base},
+        {{"Bundle/Frameworks/libInitLeaf.dylib", leaf}, leaf_base}
+    }};
+    const auto plan = anyios::loader::plan_owned_image_initializers(
+        modules, "Bundle/InitializerChainApp", memory);
+    if (plan.size() != 3 || plan[0].module_path != modules[2].module.path ||
+        plan[1].module_path != modules[1].module.path || plan[2].module_path != modules[0].module.path)
+        throw std::runtime_error("owned dependency chain constructor order incorrect");
+    const std::array<std::string_view, 2> argv{"initializer-chain", "guest"};
+    const std::array<std::string_view, 1> envp{"ANYIOS_TEST=1"};
+    const std::array<std::string_view, 1> apple{"executable_path=/AnyiOS/InitializerChainApp"};
+    const auto boot = anyios::loader::prepare_owned_process_stack(
+        memory, 0x300000, 0x10000, argv, envp, apple);
+    auto backend = anyios::cpu::make_dynarmic_backend(memory);
+    anyios::cpu::CpuState guest{};
+    guest.sp = boot.sp;
+    guest.pc = staged[0].guest_entry;
+    guest.x[30] = sentinel;
+    backend->set_state(guest);
+    const std::array<std::uint64_t, 4> arguments{boot.argc, boot.argv, boot.envp, boot.apple};
+    for (const auto& call : plan) {
+        (void)anyios::abi::invoke_guest_callback(*backend, call.guest_function, arguments, sentinel, 4096);
+        std::cout << "INITIALIZED_MODULE=" << call.module_path << "\n";
+    }
+    backend->set_state(guest);
+    const auto event = backend->run_until_event(4096, sentinel);
+    if (event.kind != anyios::cpu::CpuEventKind::returned || backend->state().x[0] != 735)
+        throw std::runtime_error("owned initializer dependency chain did not return 735: " + event.diagnostic);
+    std::cout << "Executed three original owned ARM64 images with dependency-first constructors: 735\n";
 }
 
 
@@ -689,6 +752,10 @@ int main(int argc, char** argv) {
         }
         if (argc == 3 && std::string(argv[1]) == "--libsystem") {
             verify_sdkfree_libsystem(read_owned_binary(argv[2]));
+            return 0;
+        }
+        if (argc == 5 && std::string(argv[1]) == "--initializers") {
+            verify_initializer_chain(read_owned_binary(argv[2]), read_owned_binary(argv[3]), read_owned_binary(argv[4]));
             return 0;
         }
         if (argc == 4 && std::string(argv[1]) == "--linked") {

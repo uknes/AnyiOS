@@ -76,7 +76,9 @@
         },
         {
           "name": "C/C++ static constructors across images",
-          "status": "pending"
+          "status": "partial",
+          "evidence": "https://github.com/uknes/AnyiOS/actions/runs/37974381605",
+          "scope": "Owned Clang ARM64 C executable plus two dylibs: complete bounded graph, same-image initializer ownership, dependency-first calls under Windows x64 Dynarmic, argc/argv/envp/apple checked, LC_MAIN returns 735. Native ARM64 host planning contracts only. General C++/ObjC/Swift lifecycle, system dependencies and original app launch remain unsupported."
         },
         {
           "name": "Thread local variable fixups across modules",

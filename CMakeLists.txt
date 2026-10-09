@@ -26,7 +26,7 @@ target_link_libraries(anyios-app-stage-probe PRIVATE anyios_owned_object)
 add_executable(anyios-inspect tools/inspect.cpp)
 target_link_libraries(anyios-inspect PRIVATE anyios_macho)
 
-add_library(anyios_owned_object STATIC src/object_code.cpp src/executable.cpp src/dyld_plan.cpp src/linked_image.cpp src/linked_pair.cpp src/process_bootstrap.cpp)
+add_library(anyios_owned_object STATIC src/object_code.cpp src/executable.cpp src/dyld_plan.cpp src/linked_image.cpp src/linked_pair.cpp src/process_bootstrap.cpp src/initializer_plan.cpp)
 target_include_directories(anyios_owned_object PUBLIC include)
 target_link_libraries(anyios_owned_object PUBLIC anyios_macho)
 target_compile_features(anyios_owned_object PUBLIC cxx_std_20)
@@ -79,6 +79,9 @@ target_link_libraries(anyios_objc_identity PUBLIC anyios_macho anyios_guest_memo
 
 include(CTest)
 if(BUILD_TESTING)
+    add_executable(anyios-initializer-plan-tests tests/initializer_plan_tests.cpp)
+    target_link_libraries(anyios-initializer-plan-tests PRIVATE anyios_owned_object)
+    add_test(NAME owned-multi-image-initializer-plan COMMAND anyios-initializer-plan-tests)
     find_package(Python3 QUIET COMPONENTS Interpreter)
     if(Python3_Interpreter_FOUND)
         add_test(NAME bundle-metadata-filesystem-contract
