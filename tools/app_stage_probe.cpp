@@ -75,6 +75,21 @@ int main(int argc, char** argv) {
                 std::cout << "LEGACY_BIND_DECODER_BLOCKER=" << error.what() << "\n";
             }
         }
+        if (info.legacy_dyld) {
+            try {
+                const auto weak = anyios::dyld::inspect_legacy_weak_bind_sites(data, info);
+                std::cout << "LEGACY_WEAK_BIND_SITES=" << weak.sites.size() << "\n"
+                          << "LEGACY_NON_WEAK_DEFINITIONS=" << weak.non_weak_definitions.size() << "\n";
+            } catch (const anyios::macho::FormatError& error) {
+                std::cout << "LEGACY_WEAK_DECODER_BLOCKER=" << error.what() << "\n";
+            }
+            try {
+                const auto lazy = anyios::dyld::inspect_legacy_lazy_bind_sites(data, info);
+                std::cout << "LEGACY_LAZY_BIND_SITES=" << lazy.size() << "\n";
+            } catch (const anyios::macho::FormatError& error) {
+                std::cout << "LEGACY_LAZY_DECODER_BLOCKER=" << error.what() << "\n";
+            }
+        }
         if (info.has_unixthread) {
             std::cout << "LEGACY_UNIXTHREAD=present-not-executable\n";
         }

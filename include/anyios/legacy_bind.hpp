@@ -12,9 +12,18 @@ struct LegacyBindSite {
     std::int32_t library_ordinal;
     std::int64_t addend;
     bool weak_import;
+    std::uint64_t lazy_record_offset = 0;
 };
-// Bounded/read-only classic eager bind scanner. NOT lazy/weak/threaded bind,
-// resolution, guest pointer rewriting, or a dyld runtime.
+struct LegacyBindStream {
+    std::vector<LegacyBindSite> sites;
+    std::vector<std::string> non_weak_definitions;
+};
+// Read-only pointer bind metadata. Weak coalescing and lazy dispatch are
+// not implemented by these decoders. Threaded binds fail closed.
 std::vector<LegacyBindSite> inspect_legacy_eager_bind_sites(
+    std::span<const std::byte> file, const macho::Image& image);
+LegacyBindStream inspect_legacy_weak_bind_sites(
+    std::span<const std::byte> file, const macho::Image& image);
+std::vector<LegacyBindSite> inspect_legacy_lazy_bind_sites(
     std::span<const std::byte> file, const macho::Image& image);
 }
