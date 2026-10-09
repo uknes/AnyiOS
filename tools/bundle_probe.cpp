@@ -54,6 +54,7 @@ public:
         std::cout << "BUNDLE_MODULE=" << candidate << "\n"
                   << "BUNDLE_MODULE_FILE_BYTES=" << size << "\n"
                   << "BUNDLE_MODULE_INSTALL_NAME=" << image.install_name << "\n"
+                  << "BUNDLE_MODULE_SYMBOL_TABLE_ENTRIES=" << image.symbols.size() << "\n"
                   << "BUNDLE_MODULE_CHAINED_IMPORTS=" << image.chained_imports.size() << "\n";
         for (const auto& runpath : image.rpaths)
             std::cout << "BUNDLE_MODULE_RPATH=" << runpath << "\n";

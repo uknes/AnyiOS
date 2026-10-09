@@ -58,7 +58,8 @@ void GuestModuleRegistry::add_image(const macho::Image& image,
     const auto text = std::find_if(image.segments.begin(), image.segments.end(),
         [](const macho::Segment& segment) { return segment.name == "__TEXT"; });
     if (text == image.segments.end()) throw macho::FormatError("guest exports require __TEXT");
-    if (image.exports.size() > max_exports || image.dependencies.size() > 4096 || image.symbols.size() > 100000)
+    if (image.exports.size() > max_exports || image.dependencies.size() > 4096 ||
+        image.symbols.size() > macho::max_symbol_table_entries)
         throw macho::FormatError("guest image export/dependency limit exceeded");
     std::size_t names = name_bytes_;
     count_name(names, main ? "<main>" : image.install_name);
@@ -66,8 +67,13 @@ void GuestModuleRegistry::add_image(const macho::Image& image,
     if (image.has_export_trie) {
         for (const auto& symbol : image.exports) count_name(names, symbol.name);
     } else {
-        for (const auto& symbol : image.symbols)
-            if (macho::is_defined_external_symbol(symbol)) count_name(names, symbol.name);
+        std::size_t external_count = 0;
+        for (const auto& symbol : image.symbols) {
+            if (!macho::is_defined_external_symbol(symbol)) continue;
+            if (++external_count > max_exports - export_count_)
+                throw macho::FormatError("guest module/export limit exceeded");
+            count_name(names, symbol.name);
+        }
     }
     std::vector<macho::Export> exports;
     if (image.has_export_trie) exports = image.exports;

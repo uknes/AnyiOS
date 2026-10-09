@@ -25,6 +25,27 @@ bool inside(std::uint64_t at, std::uint64_t bytes, std::uint64_t begin,
 }
 }
 
+std::uint64_t ios_segment_mapping_size(const macho::Image& image, std::size_t index) {
+    if (index >= image.segments.size()) throw macho::FormatError("linked segment index out of bounds");
+    const auto& segment = image.segments[index];
+    constexpr auto page = cpu::GuestMemory::ios_page_size;
+    if (segment.file_size > segment.vm_size)
+        throw macho::FormatError("linked segment file extent exceeds virtual extent");
+    if (segment.vm_address % page != 0 || segment.vm_size == 0)
+        throw macho::FormatError("linked iOS segment " + segment.name + " violates 16 KiB guest page alignment");
+    auto size = segment.vm_size;
+    if (size % page != 0) {
+        const bool safe_tail = segment.name == "__LINKEDIT" && index + 1 == image.segments.size() &&
+                               segment.init_protection == 1 && segment.file_size <= size;
+        if (!safe_tail || size > UINT64_MAX - (page - 1))
+            throw macho::FormatError("linked iOS segment " + segment.name + " violates 16 KiB guest page alignment");
+        size = (size + page - 1) & ~std::uint64_t(page - 1);
+    }
+    if (size > 64U * 1024U * 1024U) throw macho::FormatError("linked iOS segment mapping exceeds safety limit");
+    if (size > UINT64_MAX - segment.vm_address) throw macho::FormatError("linked iOS rounded virtual range overflow");
+    return size;
+}
+
 LinkedImage stage_linked_image(
     std::span<const std::byte> file,
     cpu::GuestMemory& memory,
@@ -109,32 +130,12 @@ LinkedImage stage_linked_image(
     cpu::GuestMemory::MappingJournal local(memory);
     auto& journal = options.transaction ? *options.transaction : local;
     std::size_t mapped = 0;
-    for (const auto& segment : image.segments) {
+    for (std::size_t index = 0; index < image.segments.size(); ++index) {
+        const auto& segment = image.segments[index];
         if (segment.name == "__PAGEZERO" && segment.file_size == 0 &&
             segment.init_protection == 0) continue;
-        std::uint64_t mapping_size = segment.vm_size;
-        if (options.require_ios_pages) {
-            if (segment.vm_address % cpu::GuestMemory::ios_page_size != 0) {
-                throw macho::FormatError("linked iOS segment " + segment.name +
-                                         " violates 16 KiB guest page alignment");
-            }
-            if (segment.vm_size % cpu::GuestMemory::ios_page_size != 0) {
-                const auto safe_tail = segment.name == "__LINKEDIT" &&
-                                       &segment == &image.segments.back() &&
-                                       segment.init_protection == 1 &&
-                                       segment.file_size <= segment.vm_size &&
-                                       segment.vm_size > 0;
-                if (!safe_tail ||
-                    segment.vm_size > UINT64_MAX -
-                        (cpu::GuestMemory::ios_page_size - 1)) {
-                    throw macho::FormatError("linked iOS segment " + segment.name +
-                                             " violates 16 KiB guest page alignment");
-                }
-                mapping_size = (segment.vm_size +
-                    cpu::GuestMemory::ios_page_size - 1) &
-                    ~std::uint64_t(cpu::GuestMemory::ios_page_size - 1);
-            }
-        }
+        const auto mapping_size = options.require_ios_pages ?
+            ios_segment_mapping_size(image, index) : segment.vm_size;
         if (segment.vm_size == 0 || mapping_size % page != 0 ||
             segment.vm_address < original_base ||
             (segment.vm_address - original_base) % page != 0 ||

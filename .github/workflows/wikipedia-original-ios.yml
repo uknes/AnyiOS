@@ -145,10 +145,29 @@ jobs:
       - name: Build native Windows Mach-O stage inspector
         shell: pwsh
         run: |
-          cmake -S . -B build-original-stage -DBUILD_TESTING=OFF
+          $arguments = @("-S", ".", "-B", "build-original-stage", "-DBUILD_TESTING=OFF")
+          if ("${{ matrix.architecture }}" -eq "ARM64") { $arguments += @("-A", "ARM64") }
+          & cmake @arguments
           if ($LASTEXITCODE -ne 0) { throw "CMake staging configuration failed" }
-          cmake --build build-original-stage --config Release --target anyios-inspect anyios-app-stage-probe --parallel 2
+          cmake --build build-original-stage --config Release --target anyios-inspect anyios-app-stage-probe anyios-bundle-probe --parallel 2
           if ($LASTEXITCODE -ne 0) { throw "Cannot build native stage probe" }
+      - name: Verify all original binaries and inspect large-symbol bundle on native host
+        shell: pwsh
+        run: |
+          python tools/app_coverage.py compat-output/original/Wikipedia.app --verify-report compat-output/wikipedia-report.json
+          if ($LASTEXITCODE -ne 0) { throw "Original Wikipedia bundle identity changed" }
+          $output = & ./build-original-stage/Release/anyios-bundle-probe.exe compat-output/original/Wikipedia.app Wikipedia 2>&1
+          $code = $LASTEXITCODE
+          $output | Out-File "compat-output/bundle-${{ matrix.architecture }}.txt"
+          $output | ForEach-Object { Write-Output $_ }
+          $largeTables = @($output | Where-Object { $_ -match '^BUNDLE_MODULE_SYMBOL_TABLE_ENTRIES=([0-9]+)$' -and [int64]$Matches[1] -gt 100000 })
+          if ($code -ne 0 -or -not ($output -match "^BUNDLE_DISCOVERY=metadata-only$") -or
+              -not ($output -match '^BUNDLE_MODULE=Bundle/Wikipedia.debug.dylib$') -or
+              -not ($output -match '^BUNDLE_MODULE=Bundle/Frameworks/WMF.framework/WMF$') -or
+              $largeTables.Count -lt 2 -or -not ($output -match '^BUNDLE_STAGING=not-attempted$')) {
+            throw "Original Wikipedia large symbol-table metadata regression"
+          }
+          Write-Output "HOST=${{ matrix.architecture }}; BUNDLE_METADATA=native-host-parser; NATIVE_GUEST_EXECUTION=not-attempted"
       - name: Stage original ARM64 iOS executable; report first missing guest ABI
         shell: pwsh
         run: |
@@ -165,7 +184,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: wikipedia-windows-stage-${{ matrix.architecture }}
-          path: compat-output/stage-${{ matrix.architecture }}.txt
+          path: |
+            compat-output/stage-${{ matrix.architecture }}.txt
+            compat-output/bundle-${{ matrix.architecture }}.txt
           retention-days: 7
           if-no-files-found: error
 
@@ -251,8 +272,8 @@ jobs:
           $code = $LASTEXITCODE
           $output | Out-File compat-output/wikipedia-bundle-dependencies.txt
           $output | ForEach-Object { Write-Output $_ }
-          if ($code -ne 0 -and $code -ne 3) { throw "Bundle metadata probe crashed" }
-          if (-not ($output -match "BUNDLE_DISCOVERY=metadata-only|BUNDLE_DISCOVERY=blocked") -or
+          if ($code -ne 0) { throw "Original Wikipedia bundle metadata regression" }
+          if (-not ($output -match "BUNDLE_DISCOVERY=metadata-only") -or
               -not ($output -match "BUNDLE_STAGING=not-attempted")) { throw "Bundle metadata evidence missing" }
           exit 0
       - name: Execute ORIGINAL Wikipedia ARM64 entry to first actual ABI failure

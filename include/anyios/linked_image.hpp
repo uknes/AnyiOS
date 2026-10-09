@@ -1,6 +1,7 @@
 #pragma once
 
 #include <anyios/guest_memory.hpp>
+#include <anyios/macho.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -8,6 +9,10 @@
 #include <vector>
 
 namespace anyios::loader {
+
+// Shared 16 KiB mapping policy. Only a final read-only __LINKEDIT tail may
+// round up; its padding is never an original symbol/initializer target.
+std::uint64_t ios_segment_mapping_size(const macho::Image& image, std::size_t index);
 
 struct LinkedImageOptions {
     bool require_ios_pages = false;

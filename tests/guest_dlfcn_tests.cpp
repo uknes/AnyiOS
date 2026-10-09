@@ -156,6 +156,18 @@ void run() {
     GuestModuleRegistry invalid_section(memory);
     refused([&] { invalid_section.add_image(fallback, 0x10000, true); });
     check(invalid_section.size() == 0, "invalid nlist section partially registered");
+    fallback.symbols[0].section_index = 1;
+    fallback.symbols.resize(100001, {"_local", 0x100000100, 0x0e, 1});
+    GuestModuleRegistry large_symbols(memory);
+    large_symbols.add_image(fallback, 0x10000, true);
+    large_symbols.seal();
+    check(large_symbols.lookup(anyios::dyld::rtld_default, "table") == 0x10100 &&
+          !large_symbols.lookup(anyios::dyld::rtld_default, "local"),
+          "large local table changed export visibility");
+    fallback.symbols.assign(65537, {"_external", 0x100000100, 0x0f, 1});
+    GuestModuleRegistry large_exports(memory);
+    refused([&] { large_exports.add_image(fallback, 0x10000, true); });
+    check(large_exports.size() == 0, "large fallback bypassed export count budget");
     refused([&] { (void)errors.dlsym(1, anyios::dyld::rtld_default, 0); });
     GuestModuleRegistry budget(memory);
     auto bounded = image(true, "main");
