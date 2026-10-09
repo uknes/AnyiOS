@@ -7,6 +7,11 @@
 #include <vector>
 
 namespace anyios::macho {
+bool is_defined_external_symbol(const Symbol& symbol) {
+    if (symbol.name.empty() || (symbol.type & 0xf0) != 0 || (symbol.type & 1) == 0) return false;
+    const auto kind = symbol.type & 0x0e;
+    return (kind == 0x0e && symbol.section_index != 0) || kind == 0x02;
+}
 namespace {
 void require(std::span<const std::byte> bytes, std::size_t offset, std::size_t length,
              std::string_view subject) {

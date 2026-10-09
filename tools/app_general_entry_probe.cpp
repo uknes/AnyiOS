@@ -1,3 +1,4 @@
+#include <anyios/guest_dlfcn.hpp>
 #include <anyios/cpu_backend.hpp>
 #include <anyios/guest_memory.hpp>
 #include <anyios/guest_os_log.hpp>
@@ -22,6 +23,9 @@ namespace {
 constexpr std::size_t kMaxFile = 128U * 1024U * 1024U;
 constexpr std::size_t kMaxImports = 8192;
 constexpr std::size_t kMaxSteps = 10000;
+constexpr std::array<std::string_view, 6> kRuntimeExports{
+    "_os_log_create", "_os_log_type_enabled", "_getenv", "_memcpy", "_dlsym", "_dlerror"
+};
 constexpr std::uint64_t kStub = 0x10000000;
 constexpr std::uint64_t kStack = 0x14000000;
 constexpr std::uint64_t kReturn = 0x17000000;
@@ -72,7 +76,7 @@ int main(int argc, char** argv) {
             for(const auto& site:anyios::dyld::inspect_legacy_lazy_bind_sites(data,image))
                 import_names.push_back(site.symbol);
         }
-        if (import_names.empty() || import_names.size() > kMaxImports) {
+        if (import_names.empty() || import_names.size() > kMaxImports - kRuntimeExports.size()) {
             throw std::runtime_error("unsupported external app import site count");
         }
         std::vector<std::uint64_t> imports;
@@ -89,6 +93,11 @@ int main(int argc, char** argv) {
             anyios::loader::LinkedImageOptions{true, nullptr, image.legacy_dyld.has_value()});
         const auto rx = anyios::cpu::bits(anyios::cpu::Access::read) |
                         anyios::cpu::bits(anyios::cpu::Access::execute);
+        const auto runtime_start = import_names.size();
+        for (const auto symbol : kRuntimeExports) {
+            imports.push_back(kStub + import_names.size() * 16);
+            import_names.emplace_back(symbol);
+        }
         if (!memory.map_ios(kStub, kStubBytes, rx)) {
             throw std::runtime_error("mapped guest overlaps bounded import trap area");
         }
@@ -115,6 +124,9 @@ int main(int argc, char** argv) {
         anyios::darwin::GuestOsLogRegistry os_logs(memory, 0x16000000);
         const anyios::darwin::GuestEnvironment guest_environ(memory, start.envp);
         anyios::darwin::LibSystemShim libsystem(memory, 0x15800000, 0x100000);
+        anyios::dyld::GuestModuleRegistry modules(memory);
+        anyios::dyld::GuestDlState dynamic(memory, modules, 0x16800000);
+        bool modules_ready = false;
         auto cpu = anyios::cpu::make_dynarmic_backend(memory);
         anyios::cpu::CpuState state{};
         state.pc = loaded.guest_entry;
@@ -205,6 +217,18 @@ int main(int argc, char** argv) {
                               << "OS_LOG_SCOPE=opaque-guest-token-only\n";
                     continue;
                 }
+                if (symbol == "_dlerror") {
+                    try {
+                        auto resumed = at;
+                        resumed.x[0] = dynamic.dlerror(at.guest_thread_id);
+                        cpu->set_state(resumed);
+                        std::cout << "SUPPORTED_NARROW_IMPORT=_dlerror\nDLERROR_SCOPE=guest-thread-owned\n";
+                        continue;
+                    } catch (const std::exception& error) {
+                        std::cout << "FIRST_RUNTIME_BLOCKER=_dlerror\nREASON=" << error.what() << "\n";
+                        return 0;
+                    }
+                }
                 if (symbol == "_dlsym") {
                     std::cout << "DLSYM_GUEST_HANDLE_RAW=" << at.x[0] << "\n";
                     std::string requested;
@@ -220,7 +244,30 @@ int main(int argc, char** argv) {
                     if(terminated && !requested.empty())
                         std::cout << "DLSYM_REQUESTED_SYMBOL=" << requested << "\n";
                     else std::cout << "DLSYM_SYMBOL_DIAGNOSTIC=unreadable-or-outside-bounded-ASCII-scope\n";
-                    std::cout << "DLSYM_RESOLUTION=unsupported-no-guest-module-registry\n";
+                    std::cout << "DLSYM_MAIN_EXPORTS=" << image.exports.size() << "\n";
+                    for (const auto& dependency : image.dependencies)
+                        std::cout << "DLSYM_DECLARED_DEPENDENCY=" << dependency.install_name << "\n";
+                    try {
+                        if (!modules_ready) {
+                            modules.add_image(image, loaded.guest_base, true);
+                            std::vector<anyios::dyld::RuntimeExport> runtime;
+                            for (std::size_t n = 0; n < kRuntimeExports.size(); ++n)
+                                runtime.push_back({std::string(kRuntimeExports[n]), imports[runtime_start + n]});
+                            modules.add_runtime_module("/usr/lib/libSystem.B.dylib", runtime);
+                            modules.seal();
+                            modules_ready = true;
+                        }
+                        auto resumed = at;
+                        resumed.x[0] = dynamic.dlsym(at.guest_thread_id, at.x[0], at.x[1]);
+                        cpu->set_state(resumed);
+                        std::cout << "SUPPORTED_NARROW_IMPORT=_dlsym\n"
+                                  << "DLSYM_REGISTERED_MODULES=" << modules.size() << "\n"
+                                  << "DLSYM_RESULT=" << resumed.x[0] << "\n"
+                                  << "DLSYM_SCOPE=validated-loaded-guest-and-implemented-runtime-exports\n";
+                        continue;
+                    } catch (const std::exception& error) {
+                        std::cout << "DLSYM_RESOLUTION=unsupported\nREASON=" << error.what() << "\n";
+                    }
                 }
                 std::cout << "FIRST_RUNTIME_BLOCKER=" << symbol
                           << "\nRESULT=unsupported-framework-import\n";
