@@ -146,6 +146,32 @@ void test_image_set() {
     rejected(empty, no_main, "requires one executable");
 }
 
+void test_ios_mapping_policy() {
+    anyios::macho::Image image;
+    image.segments = {{"__TEXT", 0x10000, 0x8000, 0, 0x8000, 0, 5, 5},
+                      {"__LINKEDIT", 0x18000, 0x150, 0x8000, 0x150, 0, 1, 1}};
+    check(anyios::loader::ios_segment_mapping_size(image, 0) == 0x8000 &&
+          anyios::loader::ios_segment_mapping_size(image, 1) == 0x4000,
+          "native and guest LINKEDIT sizing policy differs");
+    auto reject = [](const anyios::macho::Image& metadata, std::size_t index) {
+        try { (void)anyios::loader::ios_segment_mapping_size(metadata, index); }
+        catch (const anyios::macho::FormatError&) { return; }
+        throw std::runtime_error("invalid iOS segment sizing accepted");
+    };
+    reject(image, 2);
+    auto bad = image;
+    bad.segments.back().init_protection = 3; reject(bad, 1);
+    bad = image; bad.segments.back().init_protection = 5; reject(bad, 1);
+    bad = image; bad.segments.back().name = "__DATA"; reject(bad, 1);
+    bad = image; bad.segments.push_back(image.segments[0]); reject(bad, 1);
+    bad = image; bad.segments.back().vm_address += 1; reject(bad, 1);
+    bad = image; bad.segments.back().vm_size = 0; bad.segments.back().file_size = 0; reject(bad, 1);
+    bad = image; bad.segments.back().file_size = 0x151; reject(bad, 1);
+    bad = image; bad.segments.back().vm_size = UINT64_MAX; reject(bad, 1);
+    bad = image; bad.segments.back().vm_address = UINT64_MAX - 0x3fff; reject(bad, 1);
+    bad = image; bad.segments.back().vm_size = 64U * 1024U * 1024U + 1; reject(bad, 1);
+}
+
 void run() {
     const auto original = fixture();
     const std::array<std::uint64_t,1> imports{0x14000};
@@ -348,6 +374,7 @@ int main() {
     try {
         run();
         test_image_set();
+        test_ios_mapping_policy();
         std::cout << "Linked-image guest mapping and relocatable dyld patch tests passed\n";
     } catch (const std::exception& error) {
         std::cerr << "linked-image test failed: " << error.what() << '\n';

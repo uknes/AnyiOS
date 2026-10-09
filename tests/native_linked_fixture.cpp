@@ -81,12 +81,12 @@ void publish_segment(const anyios::macho::Image& image,
     const auto text = std::find_if(image.segments.begin(), image.segments.end(),
         [](const anyios::macho::Segment& segment) { return segment.name == "__TEXT"; });
     if (text == image.segments.end()) throw std::runtime_error("missing linked text segment");
-    for (const auto& segment : image.segments) {
+    for (std::size_t index = 0; index < image.segments.size(); ++index) {
+        const auto& segment = image.segments[index];
         if (segment.name == "__PAGEZERO" && segment.file_size == 0) continue;
+        const auto mapping_size = anyios::loader::ios_segment_mapping_size(image, index);
         if (segment.vm_address < text->vm_address ||
-            segment.vm_size > arena_size ||
-            segment.file_size > segment.vm_size ||
-            segment.vm_size % anyios::cpu::GuestMemory::ios_page_size != 0) {
+            mapping_size > arena_size || segment.file_size > segment.vm_size) {
             throw std::runtime_error("invalid native linked segment range");
         }
         const auto offset = segment.vm_address - text->vm_address;
@@ -94,18 +94,20 @@ void publish_segment(const anyios::macho::Image& image,
             throw std::runtime_error("native linked segment address overflow");
         }
         const auto address = mapped_base + offset;
+        if (!staged.allowed(address, static_cast<std::size_t>(mapping_size), anyios::cpu::Access::read))
+            throw std::runtime_error("native segment is outside validated staged pages");
         if ((segment.init_protection & 4u) != 0) {
             if ((segment.init_protection & 1u) == 0) {
                 throw std::runtime_error("execute-only guest segment cannot be scanned");
             }
-            std::vector<std::byte> entire(static_cast<std::size_t>(segment.vm_size));
+            std::vector<std::byte> entire(static_cast<std::size_t>(mapping_size));
             if (!staged.copy_from(address, entire)) {
                 throw std::runtime_error("cannot scan executable guest segment");
             }
             anyios::cpu::reject_svc_in_executable_mapping(entire);
         }
         if (!VirtualAlloc(reinterpret_cast<void*>(static_cast<std::uintptr_t>(address)),
-                          static_cast<std::size_t>(segment.vm_size),
+                          static_cast<std::size_t>(mapping_size),
                           MEM_COMMIT, PAGE_READWRITE)) {
             throw std::runtime_error("ARM64 guest page commit failed");
         }
@@ -123,7 +125,7 @@ void publish_segment(const anyios::macho::Image& image,
         else if (protection == 3) native_protect = PAGE_READWRITE;
         else if (protection == 1) native_protect = PAGE_READONLY;
         else throw std::runtime_error("unsupported native image permission");
-        for (std::uint64_t offset = 0; offset < segment.vm_size;
+        for (std::uint64_t offset = 0; offset < mapping_size;
              offset += anyios::cpu::GuestMemory::ios_page_size) {
             DWORD previous = 0;
             if (!VirtualProtect(
@@ -136,7 +138,7 @@ void publish_segment(const anyios::macho::Image& image,
             !FlushInstructionCache(GetCurrentProcess(),
                                    reinterpret_cast<const void*>(
                                        static_cast<std::uintptr_t>(address)),
-                                   static_cast<std::size_t>(segment.vm_size))) {
+                                   static_cast<std::size_t>(mapping_size))) {
             throw std::runtime_error("host ARM64 instruction-cache flush failed");
         }
     }
