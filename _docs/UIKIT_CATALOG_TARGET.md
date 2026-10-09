@@ -44,3 +44,7 @@ first real imported-call blockers continue to be fixed separately.
 
 Source: https://github.com/appium/ios-uicatalog ; Apple's control reference:
 https://developer.apple.com/documentation/uikit/uikit-catalog-creating-and-customizing-views-and-controls .
+
+## Source-matched original UIKitCatalog Windows staging and first instruction trial
+
+A stacked PR now adds Windows x86-64 Dynarmic guest entry with same-run Xcode build SHA-256 verification. It must either execute original UIKitCatalog ARM64 instructions and report the first missing import, or classify a loader failure *before execution*. Windows ARM64 does only native Mach-O metadata staging. Neither result proves native Windows ARM64 guest execution, UIKit pixels, input or original app UI; these remain explicit acceptance gates.
