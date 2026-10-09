@@ -211,7 +211,7 @@ jobs:
         run: |
           cmake -S . -B build-wikipedia-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
           if ($LASTEXITCODE -ne 0) { throw "Could not configure Dynarmic runtime" }
-          cmake --build build-wikipedia-guest --config Release --target anyios-general-entry-probe anyios-os-log-tests anyios-getenv-tests anyios-libsystem-tests anyios-dlfcn-tests --parallel 2
+          cmake --build build-wikipedia-guest --config Release --target anyios-bundle-probe anyios-general-entry-probe anyios-os-log-tests anyios-getenv-tests anyios-libsystem-tests anyios-dlfcn-tests --parallel 2
           if ($LASTEXITCODE -ne 0) { throw "Could not compile general ARM64 guest probe" }
       - name: Validate bounded guest logging create ABI
         shell: pwsh
@@ -233,6 +233,19 @@ jobs:
         run: |
           & ./build-wikipedia-guest/Release/anyios-dlfcn-tests.exe
           if ($LASTEXITCODE -ne 0) { throw "Guest dynamic lookup contract failed" }
+      - name: Verify all original bundle binaries and discover actual dependencies
+        shell: pwsh
+        run: |
+          python tools/app_coverage.py compat-output/original/Wikipedia.app --verify-report compat-output/wikipedia-report.json
+          if ($LASTEXITCODE -ne 0) { throw "Original Wikipedia bundle binary identity mismatch" }
+          $output = & ./build-wikipedia-guest/Release/anyios-bundle-probe.exe compat-output/original/Wikipedia.app Wikipedia 2>&1
+          $code = $LASTEXITCODE
+          $output | Out-File compat-output/wikipedia-bundle-dependencies.txt
+          $output | ForEach-Object { Write-Output $_ }
+          if ($code -ne 0 -and $code -ne 3) { throw "Bundle metadata probe crashed" }
+          if (-not ($output -match "BUNDLE_DISCOVERY=metadata-only|BUNDLE_DISCOVERY=blocked") -or
+              -not ($output -match "BUNDLE_STAGING=not-attempted")) { throw "Bundle metadata evidence missing" }
+          exit 0
       - name: Execute ORIGINAL Wikipedia ARM64 entry to first actual ABI failure
         shell: pwsh
         run: |

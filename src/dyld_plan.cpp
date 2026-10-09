@@ -6,6 +6,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -17,7 +18,7 @@ bool begins(std::string_view value, std::string_view prefix) {
 }
 
 std::string normalize(std::string_view path) {
-    if (path.empty() || path.front() == '/' || path.find('\\') != path.npos ||
+    if (path.empty() || path.size() > 4096 || path.front() == '/' || path.find('\\') != path.npos ||
         path.find(':') != path.npos || path.find('\0') != path.npos) {
         throw macho::FormatError("invalid bundle-relative path");
     }
@@ -53,6 +54,8 @@ std::string join(std::string_view base, std::string_view suffix) {
 std::string expand(std::string_view value,
                    std::string_view owner,
                    std::string_view executable) {
+    if (value == "@loader_path") return normalize(directory(owner));
+    if (value == "@executable_path") return normalize(directory(executable));
     if (begins(value, "@loader_path/")) {
         return join(directory(owner), value.substr(13));
     }
@@ -67,8 +70,9 @@ std::string expand(std::string_view value,
 
 }
 
-LoadPlan plan_dependencies(std::span<const Module> modules,
-                           std::string_view executable_path) {
+namespace {
+DependencyDiscovery walk(std::vector<Module> modules, std::string_view executable_path,
+                         const ModuleReader* reader) {
     if (modules.empty() || modules.size() > 4096) {
         throw macho::FormatError("invalid dyld module count");
     }
@@ -84,63 +88,100 @@ LoadPlan plan_dependencies(std::span<const Module> modules,
     if (root == index.end() || modules[root->second].image.file_type != 2) {
         throw macho::FormatError("main dyld executable is missing or invalid");
     }
+    const auto root_index = root->second;
     std::vector<std::uint8_t> state(modules.size());
+    std::unordered_set<std::string> absent;
     LoadPlan plan;
-    std::size_t edges = 0;
+    std::vector<UnresolvedDependency> unresolved;
+    std::size_t edges = 0, reads = 0;
+    auto locate = [&](const std::string& candidate) -> std::optional<std::size_t> {
+        if (const auto found = index.find(candidate); found != index.end()) return found->second;
+        if (!reader || absent.contains(candidate)) return std::nullopt;
+        if (++reads > 65536) throw macho::FormatError("dyld candidate read limit exceeded");
+        auto image = (*reader)(candidate);
+        if (!image) { absent.insert(candidate); return std::nullopt; }
+        if (modules.size() >= 4096) throw macho::FormatError("dyld module count limit exceeded");
+        const auto slot = modules.size();
+        modules.push_back({candidate, std::move(*image)});
+        state.push_back(0);
+        index.emplace(candidate, slot);
+        return slot;
+    };
     std::function<void(std::size_t, const std::vector<std::string>&, unsigned)> visit;
-
-    visit = [&](std::size_t current,
-                const std::vector<std::string>& inherited,
-                unsigned depth) {
+    visit = [&](std::size_t current, const std::vector<std::string>& inherited, unsigned depth) {
         if (depth > 64) throw macho::FormatError("dyld dependency depth limit exceeded");
         if (state[current] == 1) throw macho::FormatError("circular dyld dependency unsupported");
         if (state[current] == 2) return;
         state[current] = 1;
-        const auto& module = modules[current];
-        if (current != root->second && module.image.file_type != 6) {
+        if (current != root_index && modules[current].image.file_type != 6) {
             throw macho::FormatError("dyld dependency is not MH_DYLIB");
         }
-
+        // Discovery may grow modules. Own the strings used across reader calls.
+        const auto owner = modules[current].path;
+        const auto dependencies = modules[current].image.dependencies;
         std::vector<std::string> runpaths;
-        for (const auto& runpath : module.image.rpaths) {
+        for (const auto& runpath : modules[current].image.rpaths) {
             if (runpath.starts_with("@rpath/")) {
                 throw macho::FormatError("nested @rpath is unsupported");
             }
-            runpaths.push_back(expand(runpath, module.path, executable));
+            if (runpaths.size() >= 512) throw macho::FormatError("dyld runpath limit exceeded");
+            runpaths.push_back(expand(runpath, owner, executable));
+        }
+        if (inherited.size() > 512 - runpaths.size()) {
+            throw macho::FormatError("dyld inherited runpath limit exceeded");
         }
         runpaths.insert(runpaths.end(), inherited.begin(), inherited.end());
-        for (const auto& dependency : module.image.dependencies) {
+        for (const auto& dependency : dependencies) {
             if (++edges > 16384) throw macho::FormatError("dyld dependency edge limit exceeded");
             const auto& name = dependency.install_name;
-            if (name.empty()) throw macho::FormatError("empty dyld dependency");
-            std::string resolved;
+            if (name.empty() || name.size() > 4096 || name.find('\0') != name.npos ||
+                name.find('\\') != name.npos || name.find(':') != name.npos) {
+                throw macho::FormatError("invalid dyld dependency name");
+            }
+            std::optional<std::size_t> resolved;
             if (begins(name, "@rpath/")) {
                 for (const auto& runpath : runpaths) {
-                    const auto candidate = join(runpath, std::string_view(name).substr(7));
-                    if (index.contains(candidate)) {
-                        resolved = candidate;
-                        break;
-                    }
+                    resolved = locate(join(runpath, std::string_view(name).substr(7)));
+                    if (resolved) break;
                 }
             } else if (begins(name, "@loader_path/") || begins(name, "@executable_path/")) {
-                const auto candidate = expand(name, module.path, executable);
-                if (index.contains(candidate)) resolved = candidate;
+                resolved = locate(expand(name, owner, executable));
+            } else if (reader && name.front() == '/') {
+                // System images are requirements, never host paths or guessed modules.
             } else {
                 throw macho::FormatError("system or bare dylib paths are not implemented");
             }
-            if (resolved.empty()) {
+            if (!resolved) {
+                if (reader) unresolved.push_back({owner, name, dependency.weak});
                 if (dependency.weak) {
-                    plan.missing_weak.push_back({module.path, name});
+                    plan.missing_weak.push_back({owner, name});
                     continue;
                 }
+                if (reader) continue;
                 throw macho::FormatError("unresolved dyld dependency: " + name);
             }
-            visit(index.at(resolved), runpaths, depth + 1);
+            visit(*resolved, runpaths, depth + 1);
         }
         state[current] = 2;
-        plan.load_order.push_back(module.path);
+        plan.load_order.push_back(owner);
     };
-    visit(root->second, {}, 0);
-    return plan;
+    visit(root_index, {}, 0);
+    return {std::move(modules), std::move(plan), std::move(unresolved)};
+}
+}
+
+LoadPlan plan_dependencies(std::span<const Module> modules, std::string_view executable_path) {
+    return walk(std::vector<Module>(modules.begin(), modules.end()), executable_path, nullptr).plan;
+}
+
+DependencyDiscovery discover_dependencies(std::string_view executable_path,
+                                          const ModuleReader& reader) {
+    if (!reader) throw macho::FormatError("missing dyld module reader");
+    const auto path = normalize(executable_path);
+    auto image = reader(path);
+    if (!image) throw macho::FormatError("main dyld executable is missing or invalid");
+    std::vector<Module> modules;
+    modules.push_back({path, std::move(*image)});
+    return walk(std::move(modules), path, &reader);
 }
 }

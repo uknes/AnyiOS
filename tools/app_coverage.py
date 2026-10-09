@@ -124,15 +124,45 @@ def make_report(bundle, api_candidates, gate_inventory, manifest, binary_paths=N
     return report
 
 
+def verify_report(bundle: Path, report: dict):
+    """Verify all original Mach-O identities before inspecting bundle dependencies."""
+    records = report.get("binaries")
+    if not isinstance(records, list) or not records or len(records) > MAX_MACHOS:
+        raise ValueError("invalid original binary identity manifest")
+    actual = {path.relative_to(bundle).as_posix(): path for path in app_binary_paths(bundle)}
+    expected = {}
+    for record in records:
+        if not isinstance(record, dict) or not isinstance(record.get("path"), str):
+            raise ValueError("invalid original binary identity record")
+        name = record["path"]
+        if name in expected:
+            raise ValueError("duplicate original binary identity")
+        expected[name] = record
+    if set(actual) != set(expected):
+        raise ValueError("original bundle binary set changed")
+    for name, path in actual.items():
+        data = path.read_bytes()
+        if len(data) != expected[name].get("bytes") or hashlib.sha256(data).hexdigest() != expected[name].get("sha256"):
+            raise ValueError("original bundle binary identity changed: " + name)
+    return len(actual)
+
+
 def main():
     root = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("bundle", type=Path)
     parser.add_argument("--target", choices=("wikipedia-ios", "appium-uicatalog"),
                         default="wikipedia-ios")
-    parser.add_argument("--output", type=Path, required=True)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--output", type=Path)
+    mode.add_argument("--verify-report", type=Path)
     args = parser.parse_args()
     try:
+        if args.verify_report:
+            count = verify_report(args.bundle, json.loads(args.verify_report.read_text("utf-8")))
+            print("ORIGINAL_BUNDLE_BINARIES=hash-verified-from-same-run")
+            print("ORIGINAL_BUNDLE_BINARY_COUNT=" + str(count))
+            return 0
         api = json.loads((root / "tools/api_inventory.json").read_text("utf-8"))
         gates = json.loads((root / "tools/compat_capabilities.json").read_text("utf-8"))
         manifest = json.loads((root / "tools/api_manifest.json").read_text("utf-8"))

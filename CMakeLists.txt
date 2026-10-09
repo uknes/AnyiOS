@@ -17,6 +17,9 @@ endif()
 add_executable(anyios-link-probe tools/link_probe.cpp)
 target_link_libraries(anyios-link-probe PRIVATE anyios_owned_object)
 
+add_executable(anyios-bundle-probe tools/bundle_probe.cpp)
+target_link_libraries(anyios-bundle-probe PRIVATE anyios_owned_object)
+
 add_executable(anyios-app-stage-probe tools/app_stage_probe.cpp)
 target_link_libraries(anyios-app-stage-probe PRIVATE anyios_owned_object)
 
@@ -76,6 +79,11 @@ target_link_libraries(anyios_objc_identity PUBLIC anyios_macho anyios_guest_memo
 
 include(CTest)
 if(BUILD_TESTING)
+    find_package(Python3 QUIET COMPONENTS Interpreter)
+    if(Python3_Interpreter_FOUND)
+        add_test(NAME bundle-metadata-filesystem-contract
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/bundle_probe_contract.py $<TARGET_FILE:anyios-bundle-probe>)
+    endif()
     add_executable(anyios-dlfcn-tests tests/guest_dlfcn_tests.cpp)
     target_link_libraries(anyios-dlfcn-tests PRIVATE anyios_guest_dlfcn)
     add_test(NAME guest-dlfcn-scope-and-errors COMMAND anyios-dlfcn-tests)

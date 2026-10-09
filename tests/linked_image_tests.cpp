@@ -91,6 +91,61 @@ void throws(const Bytes& source, GuestMemory& memory,
     throw std::runtime_error("invalid linked image accepted");
 }
 
+void test_image_set() {
+    auto main = fixture();
+    auto library = fixture();
+    u32(library, 12, 6);
+    const auto main_original = main, library_original = library;
+    const std::array<std::uint64_t, 1> to_library{0x20300}, to_main{0x10300};
+    std::array<anyios::loader::LinkedImageInput, 2> inputs{{
+        {main, 0x10000, to_library}, {library, 0x20000, to_main}
+    }};
+    GuestMemory memory(0x10000, 0x20000);
+    const auto staged = anyios::loader::stage_linked_images(inputs, memory);
+    check(staged.size() == 2 && staged[0].guest_entry == 0x10300 &&
+          memory.read(0x11008, 8) == 0x20303 && memory.read(0x21008, 8) == 0x10303,
+          "set lost cross-image bind targets/addends");
+    check(main == main_original && library == library_original && !memory.write(0x10300, 0, 4) &&
+          !memory.fetch(0x21000), "set modified input or lost page permissions");
+    auto rejected = [&](GuestMemory& guest, std::span<const anyios::loader::LinkedImageInput> set,
+                        std::string_view reason) {
+        bool failed = false;
+        try { (void)anyios::loader::stage_linked_images(set, guest); }
+        catch (const anyios::macho::FormatError& error) {
+            failed = std::string_view(error.what()).find(reason) != std::string_view::npos;
+        }
+        check(failed && !guest.fetch(0x10300) && !guest.read(0x11000, 1) && !guest.fetch(0x20300),
+              "failed set leaked mappings or unexpected diagnostic");
+    };
+    GuestMemory guarded(0x10000, 0x20000);
+    check(guarded.map(0x21000, 4096, 3) && guarded.write(0x21000, 0x5a, 1), "set guard setup");
+    rejected(guarded, inputs, "linked guest mapping failed");
+    check(guarded.read(0x21000, 1) == 0x5a, "rollback changed preexisting page");
+    library[104+60] = std::byte{7};
+    GuestMemory invalid(0x10000, 0x20000);
+    rejected(invalid, inputs, "unsupported linked segment protections");
+    library = library_original;
+    const std::array<std::uint64_t, 1> outside{0x2f000}, addend_outside{0x21fff};
+    inputs[0].resolved_imports = outside;
+    GuestMemory foreign(0x10000, 0x20000);
+    check(foreign.map(0x2f000, 4096, 5), "foreign target setup");
+    rejected(foreign, inputs, "binding target outside image set");
+    inputs[0].resolved_imports = addend_outside;
+    GuestMemory addend(0x10000, 0x20000);
+    rejected(addend, inputs, "binding target outside image set");
+    inputs[0].resolved_imports = to_library;
+    inputs[1].guest_base = 0x10000;
+    GuestMemory overlap(0x10000, 0x20000);
+    rejected(overlap, inputs, "readable segments overlap");
+    inputs[1].guest_base = 0x20000;
+    GuestMemory empty(0x10000, 0x20000);
+    rejected(empty, {}, "invalid linked image set size");
+    std::vector<anyios::loader::LinkedImageInput> huge(257, inputs[0]);
+    rejected(empty, huge, "invalid linked image set size");
+    const std::array<anyios::loader::LinkedImageInput, 1> no_main{inputs[1]};
+    rejected(empty, no_main, "requires one executable");
+}
+
 void run() {
     const auto original = fixture();
     const std::array<std::uint64_t,1> imports{0x14000};
@@ -292,6 +347,7 @@ void run() {
 int main() {
     try {
         run();
+        test_image_set();
         std::cout << "Linked-image guest mapping and relocatable dyld patch tests passed\n";
     } catch (const std::exception& error) {
         std::cerr << "linked-image test failed: " << error.what() << '\n';

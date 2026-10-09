@@ -178,4 +178,77 @@ LinkedImage stage_linked_image(
     if (!options.transaction) local.commit();
     return {guest_base, entry, mapped, patches.size()};
 }
+
+std::vector<LinkedImage> stage_linked_images(std::span<const LinkedImageInput> inputs,
+                                            cpu::GuestMemory& memory,
+                                            bool require_ios_pages) {
+    if (inputs.empty() || inputs.size() > 256) {
+        throw macho::FormatError("invalid linked image set size");
+    }
+    std::vector<macho::Image> images;
+    std::size_t bytes = 0, executables = 0;
+    for (const auto& input : inputs) {
+        constexpr std::size_t limit = 256U * 1024U * 1024U;
+        if (input.file.size() > limit - bytes) {
+            throw macho::FormatError("linked image set exceeds file byte limit");
+        }
+        bytes += input.file.size();
+        images.push_back(macho::inspect(input.file));
+        if (images.back().file_type == 2) ++executables;
+    }
+    if (executables != 1) throw macho::FormatError("linked image set requires one executable");
+    std::vector<std::pair<std::uint64_t, std::uint64_t>> ranges;
+    for (std::size_t n = 0; n < images.size(); ++n) {
+        const auto& image = images[n];
+        if (image.segments.size() > 128) throw macho::FormatError("linked image set segment limit exceeded");
+        const auto text = std::find_if(image.segments.begin(), image.segments.end(),
+            [](const macho::Segment& segment) { return segment.name == "__TEXT"; });
+        if (text == image.segments.end()) throw macho::FormatError("linked image set missing __TEXT");
+        for (const auto& segment : image.segments) {
+            if (!(segment.init_protection & 1u) || segment.vm_size == 0) continue;
+            if (segment.vm_address < text->vm_address) throw macho::FormatError("linked image set segment before __TEXT");
+            const auto begin = sum(inputs[n].guest_base, segment.vm_address - text->vm_address,
+                                   "linked image set target address overflow");
+            ranges.emplace_back(begin, sum(begin, segment.vm_size, "linked image set segment overflow"));
+        }
+    }
+    std::sort(ranges.begin(), ranges.end());
+    for (std::size_t n = 1; n < ranges.size(); ++n) {
+        if (ranges[n].first < ranges[n-1].second) throw macho::FormatError("linked image set readable segments overlap");
+    }
+    auto contains_target = [&](std::uint64_t target) {
+        auto next = std::upper_bound(ranges.begin(), ranges.end(), target,
+            [](std::uint64_t value, const auto& range) { return value < range.first; });
+        return next != ranges.begin() && target < std::prev(next)->second;
+    };
+    // Check final values, including signed addends, before publishing any pages.
+    // A target in rounded page padding or a preexisting trap page is not owned.
+    std::vector<std::uint64_t> targets;
+    for (std::size_t n = 0; n < inputs.size(); ++n) {
+        const auto& input = inputs[n];
+        const auto patches = images[n].legacy_dyld && input.allow_legacy_fixups ?
+            dyld::plan_legacy_fixups(input.file, images[n], input.resolved_imports) :
+            dyld::plan_chained_fixups(input.file, images[n], input.resolved_imports);
+        for (const auto& patch : patches) {
+            if (!patch.binding) continue;
+            if (targets.size() >= 65536 || !contains_target(patch.value)) {
+                throw macho::FormatError("linked binding target outside image set or limit exceeded");
+            }
+            targets.push_back(patch.value);
+        }
+    }
+    cpu::GuestMemory::MappingJournal journal(memory);
+    std::vector<LinkedImage> result;
+    result.reserve(inputs.size());
+    for (const auto& input : inputs) {
+        result.push_back(stage_linked_image(input.file, memory, input.guest_base,
+            input.resolved_imports, {require_ios_pages, &journal, input.allow_legacy_fixups}));
+    }
+    for (const auto target : targets) {
+        if (!memory.read(target, 1)) throw macho::FormatError("linked image set target not readable");
+    }
+    journal.commit();
+    return result;
+}
+
 }

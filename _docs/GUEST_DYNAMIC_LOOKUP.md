@@ -56,7 +56,11 @@ this concrete runtime module, then verifies the declared dependency closure.
 If any other required image is missing, it stops with that identity. A genuine
 negative lookup in the supported namespace records dlerror; no symbol-specific
 startup bypass is used. Bundled debug dylibs are not falsely marked loaded.
-The original workflows must determine the resulting next actual blocker.
+Fresh PR #33 exact-head original workflows 37953254788 (UIKitCatalog) and
+37953254812 (Wikipedia) confirmed the required `@rpath/NAME.debug.dylib`
+is not loaded at instruction 212. Wikipedia on Windows ARM64 still uses
+x64-emulated Dynarmic. See [bundle dependency intake](BUNDLE_DEPENDENCY_INTAKE.md)
+for the next discovery and transactional staging prerequisites.
 
 This registry does not implement dlopen, path/rpath alias resolution, image
 unloading, dynamic interposition, initializer ordering, Swift/Objective-C
