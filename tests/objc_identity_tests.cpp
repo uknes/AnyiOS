@@ -1,4 +1,5 @@
 #include <anyios/objc_identity.hpp>
+#include <anyios/objc_signature.hpp>
 
 #include <array>
 #include <cassert>
@@ -33,6 +34,8 @@ anyios::macho::Image make_image() {
                               0x100005000, 32, 0x5000, 0, false, 2});
     image.sections.push_back({"__objc_const", "__DATA",
                               0x100011000, 0x1200, 0x11000, 0, false, 0});
+    image.sections.push_back({"__objc_methtype", "__TEXT",
+                              0x100006000, 0x100, 0x6000, 0, false, 2});
     return image;
 }
 
@@ -66,6 +69,7 @@ void test_clang_guest_method_lookup() {
     }
     const char selectors[] = "class\0viewDidLoad\0\0";
     const char class_name[] = "AppDelegate\0";
+    const char types[] = "c32@0:8@16@24";
     const std::array<std::byte, 4> ret_instruction{
         std::byte{0xc0}, std::byte{0x03}, std::byte{0x5f}, std::byte{0xd6}
     };
@@ -73,6 +77,8 @@ void test_clang_guest_method_lookup() {
             reinterpret_cast<const std::byte*>(selectors), sizeof(selectors))) ||
         !memory.load(0x15000, std::span<const std::byte>(
             reinterpret_cast<const std::byte*>(class_name), sizeof(class_name))) ||
+        !memory.load(0x16000, std::span<const std::byte>(
+            reinterpret_cast<const std::byte*>(types), sizeof(types))) ||
         !memory.write(0x18000, 0x20000, 8) ||
         !memory.write(0x20000 + 32, 0x21000, 8) ||
         !memory.write(0x21000 + 4, 0, 4) ||
@@ -82,7 +88,7 @@ void test_clang_guest_method_lookup() {
         !memory.write(0x22000, 24, 4) ||
         !memory.write(0x22000 + 4, 1, 4) ||
         !memory.write(0x22000 + 8, 0x14006, 8) ||
-        !memory.write(0x22000 + 16, 0x14006, 8) ||
+        !memory.write(0x22000 + 16, 0x16000, 8) ||
         !memory.write(0x22000 + 24, 0x40000, 8) ||
         !memory.load(0x40000, ret_instruction)) {
         throw std::runtime_error("cannot stage owned Clang ObjC class/method metadata");
@@ -92,14 +98,23 @@ void test_clang_guest_method_lookup() {
         throw std::runtime_error("Clang guest class name not resolved");
     }
     const auto method = probe.local_instance_method(0x20000, "viewDidLoad");
-    if (!method || method->selector != 0x14006 || method->entry != 0x40000) {
+    if (!method || method->selector != 0x14006 || method->entry != 0x40000 ||
+        method->type_encoding != "c32@0:8@16@24" ||
+        !anyios::darwin::supported_bool_launch_abi(*method->type_encoding)) {
         throw std::runtime_error("Clang guest class method implementation not resolved");
     }
     if (probe.local_instance_method(0x20000, "doesNotExist") ||
         probe.local_instance_method(0x24000, "viewDidLoad")) {
         throw std::runtime_error("unsupported guest ObjC method dispatched");
     }
-    if (!memory.write(0x22000, 0x80000018U, 4)) {
+    if (!memory.write(0x22000 + 16, 0x160ff, 8)) {
+        throw std::runtime_error("cannot mutate ObjC method type pointer");
+    }
+    if (probe.local_instance_method(0x20000, "viewDidLoad")->type_encoding) {
+        throw std::runtime_error("unmapped type string accepted");
+    }
+    if (!memory.write(0x22000 + 16, 0x16000, 8) ||
+        !memory.write(0x22000, 0x80000018U, 4)) {
         throw std::runtime_error("cannot mutate guest method table encoding");
     }
     if (probe.local_instance_method(0x20000, "viewDidLoad")) {

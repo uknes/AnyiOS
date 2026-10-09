@@ -18,6 +18,9 @@ namespace anyios::darwin {
 struct GuestObjcMethod {
     std::uint64_t selector = 0;
     std::uint64_t entry = 0;
+    // Original compiler-emitted Objective-C method type encoding, if validated.
+    // Absence must prevent typed guest invocation, never be guessed.
+    std::optional<std::string> type_encoding;
 };
 
 class ObjcIdentityProbe {
@@ -48,6 +51,7 @@ private:
     bool within_constants(std::uint64_t at, std::uint64_t bytes) const;
     std::optional<std::uint64_t> local_ro(std::uint64_t receiver) const;
     std::vector<Range> method_ranges_;
+    std::vector<Range> type_ranges_;
     std::vector<Range> class_name_ranges_;
     std::vector<Range> constants_ranges_;
 };

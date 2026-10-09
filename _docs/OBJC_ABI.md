@@ -131,3 +131,23 @@ The selector table does **not** implement `sel_registerName`, `sel_getName`,
 `__objc_selrefs` patching, dynamic method lookup, general class/instance
 message dispatch, cross-module registration or UIKit. Its verified scope is
 one prerequisite for guest-owned selector identity only.
+
+## Compiler method ABI gate — narrow BOOL delegate callback
+
+Apple's runtime exposes the method type encoding separately from the original
+ARM64 IMP. `ObjcIdentityProbe` now reads type-encoding strings only from mapped,
+bounded `__objc_methtype` or compiler `__cstring` sections. Unknown encoding
+pointers are reported as absent, not accepted. `supported_bool_launch_abi`
+accepts only the exact compiler scalar signatures `c32@0:8@16@24` and
+`B32@0:8@16@24` for the pinned four-register AppDelegate diagnostic,
+rejecting unsupported aggregates, variadics, offsets and qualifiers.
+
+The original Bitrise ARM64 method is permitted through the existing guarded
+callback only if its actual metadata matches. This is **not** a complete
+`objc_msgSend` implementation or a general method type-encoding parser;
+`UIApplicationMain`, class initialization, dispatch, real Foundation and
+UIKit remain unsupported. Positive evidence requires pinned original-app
+Dynarmic CI, not just portable tests.
+
+Primary research: https://developer.apple.com/documentation/objectivec/method_gettypeencoding%28_%3A%29
+and https://developer.apple.com/videos/play/wwdc2020/10163/ .
