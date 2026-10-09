@@ -61,6 +61,8 @@ std::vector<LegacyBindSite> inspect_legacy_eager_bind_sites(
     auto emit=[&](){
         if(!ordinal_set || !symbol_set || !segment_set)
             throw macho::FormatError("legacy bind missing ordinal, symbol, or segment");
+        if(ordinal>0 && static_cast<std::size_t>(ordinal)>image.dependencies.size())
+            throw macho::FormatError("legacy bind library ordinal outside dependencies");
         if(seg_index>=image.segments.size())
             throw macho::FormatError("legacy bind segment index invalid");
         const auto& segment=image.segments[seg_index];
