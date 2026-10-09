@@ -33,7 +33,8 @@ void run(){
         0x11,0x40,'_','p','r','i','n','t','f',0x00,
         0x51,0x71,0x00,0x90,0xb1,0xa0,0x08,
         0xc0,0x02,0x08,0x00};
-    auto data=file(code),im=image(code.size());
+    auto data=file(code);
+    auto im=image(code.size());
     const auto found=anyios::dyld::inspect_legacy_eager_bind_sites(data,im);
     const std::vector<std::uint64_t> expected={0x1000,0x1008,0x1018,0x1028,0x1038};
     check(found.size()==expected.size(),"wrong number of legacy eager binds");
