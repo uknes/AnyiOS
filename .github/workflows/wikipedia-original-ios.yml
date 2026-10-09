@@ -1,0 +1,97 @@
+name: Wikipedia original iPhoneOS ARM64 compatibility intake
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/wikipedia-original-ios.yml'
+      - 'compatibility/targets/wikipedia-ios.json'
+      - 'tools/app_coverage.py'
+      - 'tests/test_app_coverage.py'
+      - '_docs/WIKIPEDIA_TARGET.md'
+
+permissions:
+  contents: read
+
+jobs:
+  audited-intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate strict static exposure accounting and no false guest execution
+        run: python3 -m unittest discover -s tests -p test_app_coverage.py -v
+      - name: Confirm 269 candidate API / 239 gate inventories remain scoped
+        run: python3 tools/progress.py docs --check
+
+  upstream-iphoneos-build:
+    needs: audited-intake
+    runs-on: macos-15
+    timeout-minutes: 55
+    outputs:
+      built: ${{ steps.state.outputs.built }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch exact unmodified MIT upstream revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --filter=blob:none https://github.com/wikimedia/wikipedia-ios.git "$RUNNER_TEMP/wikipedia-ios"
+          git -C "$RUNNER_TEMP/wikipedia-ios" checkout --detach d2b887fc8cefc42a4c06a1f9c82c6b1ac056d76c
+          test "$(git -C "$RUNNER_TEMP/wikipedia-ios" rev-parse HEAD)" = d2b887fc8cefc42a4c06a1f9c82c6b1ac056d76c
+          grep -q 'MIT License' "$RUNNER_TEMP/wikipedia-ios/LICENSE.txt"
+          test -z "$(git -C "$RUNNER_TEMP/wikipedia-ios" status --porcelain --untracked-files=no)"
+          xcodebuild -version
+      - name: Build ORIGINAL Wikipedia iOS device app without signing or project edits
+        id: build
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/compat-output"
+          xcodebuild -project "$RUNNER_TEMP/wikipedia-ios/Wikipedia.xcodeproj" \
+            -scheme Wikipedia -configuration Debug -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/anyios-upstream-build" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            build > "$GITHUB_WORKSPACE/compat-output/xcodebuild.log" 2>&1
+          code=$?
+          echo "XCODEBUILD_EXIT=$code" >> "$GITHUB_ENV"
+          echo "Original pinned source unchanged; upstream build exit code $code"
+          tail -n 80 "$GITHUB_WORKSPACE/compat-output/xcodebuild.log"
+          exit 0
+      - name: Record exact outcome, binary hash and 269/239 static exposure
+        id: state
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p compat-output
+          APP="$(find "$RUNNER_TEMP/anyios-upstream-build/Build/Products/Debug-iphoneos" -maxdepth 1 -name '*.app' -type d 2>/dev/null | head -n 1 || true)"
+          if [[ "$XCODEBUILD_EXIT" == 0 && -n "$APP" && -f "$APP/Info.plist" ]]; then
+            echo "built=true" >> "$GITHUB_OUTPUT"
+            python3 tools/app_coverage.py "$APP" --output compat-output/wikipedia-coverage.json
+            cp compat-output/wikipedia-coverage.json compat-output/wikipedia-report.json
+            echo "Source SHA pinned. Original ARM64 app built. STATIC ONLY, not guest run."
+          else
+            echo "built=false" >> "$GITHUB_OUTPUT"
+            python3 - <<'PY'
+          import json, pathlib, os
+          out = pathlib.Path("compat-output/wikipedia-report.json")
+          out.write_text(json.dumps({
+              "schema": 1, "target": "wikipedia-ios",
+              "original_revision": "d2b887fc8cefc42a4c06a1f9c82c6b1ac056d76c",
+              "status": "blocked-upstream-build",
+              "xcodebuild_exit": int(os.environ["XCODEBUILD_EXIT"]),
+              "source_edited": False, "arm64_guest_executed": False,
+              "windows_x64_window": False, "windows_arm64_window": False,
+              "compatibility_gates_promoted": 0
+          }, indent=2)+"\n")
+          PY
+            echo "BLOCKED-UPSTREAM-BUILD. No runnable binary; see retained Xcode log."
+          fi
+      - name: Publish honest build and static gap evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: wikipedia-original-ios-intake
+          path: compat-output/
+          if-no-files-found: error
+          retention-days: 7

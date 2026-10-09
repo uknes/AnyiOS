@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "id": "wikipedia-ios",
+  "name": "Wikipedia for iOS",
+  "developer": "Wikimedia Foundation",
+  "upstream": "https://github.com/wikimedia/wikipedia-ios",
+  "upstream_revision": "d2b887fc8cefc42a4c06a1f9c82c6b1ac056d76c",
+  "license": "MIT; verified from upstream LICENSE.txt at pinned revision",
+  "license_file": "https://github.com/wikimedia/wikipedia-ios/blob/d2b887fc8cefc42a4c06a1f9c82c6b1ac056d76c/LICENSE.txt",
+  "source_modifications_permitted_for_test": false,
+  "source_changes_made": false,
+  "target": "Original unmodified Xcode project sources compiled for generic iOS device ARM64",
+  "use": "Broad real-world stress case for Swift/ObjC/Foundation/UIKit/networking/web architecture; no assumption all 269/239 items reachable",
+  "build_status": "not-yet-verified",
+  "guest_execution_x64": "not-yet-tested",
+  "guest_execution_arm64": "not-yet-tested",
+  "windows_guest_pixels": "not-displayed",
+  "windows_touch": "not-tested",
+  "unsupported_summary": "Swift runtime, full dyld dependency graph, UIKit scene lifecycle, Foundation, rendering and input remain blockers",
+  "original_binary_required": true,
+  "credentials_or_fairplay_bypass": false
+}
