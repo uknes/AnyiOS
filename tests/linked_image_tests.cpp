@@ -106,6 +106,68 @@ void run() {
     check(!memory.fetch(0x11000), "data page executable");
 
     {
+        auto legacy=fixture();
+        // Replace the chained-fixups command with LC_DYLD_INFO_ONLY.
+        for(std::size_t i=224;i<272;++i)legacy[i]=std::byte{0};
+        u32(legacy,20,240); u32(legacy,224,0x80000022); u32(legacy,228,48);
+        u32(legacy,232,0x400); u32(legacy,236,5);
+        u32(legacy,240,0x420); u32(legacy,244,9);
+        u32(legacy,256,0x440); u32(legacy,260,8);
+        const std::array<unsigned char,5> rebase{0x11,0x21,0,0x53,0};
+        const std::array<unsigned char,9> bind{0x10,0x40,'_','e',0,0x71,8,0x90,0};
+        const std::array<unsigned char,8> lazy{0x10,0x40,'f',0,0x71,16,0x90,0};
+        for(std::size_t i=0;i<rebase.size();++i)legacy[0x400+i]=std::byte{rebase[i]};
+        for(std::size_t i=0;i<bind.size();++i)legacy[0x420+i]=std::byte{bind[i]};
+        for(std::size_t i=0;i<lazy.size();++i)legacy[0x440+i]=std::byte{lazy[i]};
+        u64(legacy,4096,0x100000300ULL);
+        u64(legacy,4104,0x100000300ULL); u64(legacy,4112,0x100000300ULL);
+        const auto untouched=legacy;
+        const std::array<std::uint64_t,2> targets{0x14000,0x15000};
+        GuestMemory mapped(0x10000,0x20000);
+        const auto staged=anyios::loader::stage_linked_image(legacy,mapped,0x10000,targets,
+            anyios::loader::LinkedImageOptions{false,nullptr,true});
+        check(staged.patched_pointers==3 && mapped.read(0x11000,8)==0x10300 &&
+              mapped.read(0x11008,8)==targets[0] && mapped.read(0x11010,8)==targets[1],
+              "legacy rebase or eager/lazy prebind wrong");
+        check(legacy==untouched && !mapped.write(0x10300,0,4) && !mapped.fetch(0x11000),
+              "legacy source ownership or W xor X violated");
+        auto rejected=[&](const Bytes& candidate,std::span<const std::uint64_t> addresses){
+            GuestMemory empty(0x10000,0x20000); bool failed=false;
+            try{(void)anyios::loader::stage_linked_image(candidate,empty,0x10000,addresses,
+                anyios::loader::LinkedImageOptions{false,nullptr,true});}
+            catch(const anyios::macho::FormatError&){failed=true;}
+            check(failed && !empty.fetch(0x10300) && !empty.read(0x11000,1),
+                  "failed legacy relocation leaked mapping");
+        };
+        rejected(legacy,std::span<const std::uint64_t>(targets).first(1));
+        const std::array<std::uint64_t,2> unresolved{0x14000,0};rejected(legacy,unresolved);
+        auto with_addend=[&](unsigned char delta){
+            auto altered=legacy;
+            const std::array<unsigned char,11> ops{0x10,0x40,'_','e',0,0x60,delta,0x71,8,0x90,0};
+            for(std::size_t i=0;i<ops.size();++i)altered[0x420+i]=std::byte{ops[i]};
+            u32(altered,244,static_cast<std::uint32_t>(ops.size()));return altered;
+        };
+        const auto minus_two=with_addend(0x7e);
+        GuestMemory signed_memory(0x10000,0x20000);
+        (void)anyios::loader::stage_linked_image(minus_two,signed_memory,0x10000,targets,
+            anyios::loader::LinkedImageOptions{false,nullptr,true});
+        check(signed_memory.read(0x11008,8)==0x13ffe,"legacy negative addend lost");
+        const std::array<std::uint64_t,2> underflow{1,0x15000};rejected(minus_two,underflow);
+        const std::array<std::uint64_t,2> overflow{UINT64_MAX,0x15000};rejected(with_addend(1),overflow);
+        auto outside=legacy;u64(outside,4096,0xffffffffffffffffULL);rejected(outside,targets);
+        auto duplicate=legacy;duplicate[0x446]=std::byte{0x90};
+        duplicate[0x445]=std::byte{8};rejected(duplicate,targets);
+        auto weak=legacy;u32(weak,248,0x460);u32(weak,252,1);rejected(weak,targets);
+        GuestMemory occupied(0x10000,0x20000);
+        check(occupied.map(0x11000,4096,3) && occupied.write(0x11000,0x5a,1),"legacy guard");
+        bool rolled_back=false;
+        try{(void)anyios::loader::stage_linked_image(legacy,occupied,0x10000,targets,
+            anyios::loader::LinkedImageOptions{false,nullptr,true});}
+        catch(const anyios::macho::FormatError&){rolled_back=true;}
+        check(rolled_back && !occupied.fetch(0x10300) && occupied.read(0x11000,1)==0x5a,
+              "legacy mapping journal failed to preserve occupied page");
+    }
+    {
         GuestMemory guarded(0x10000, 0x20000);
         check(guarded.map(0x11000, 4096, 3), "guard setup");
         throws(original, guarded, 0x10000, imports, "linked guest mapping failed");
