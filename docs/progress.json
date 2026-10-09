@@ -486,11 +486,11 @@
         "label": "dyld and linking",
         "name": "dyld and linking",
         "partial_names": [
+          "C/C++ static constructors across images",
           "Chained rebases and binds for owned fixtures"
         ],
         "todo_names": [
           "App/framework nested bundle resolution",
-          "C/C++ static constructors across images",
           "Classic binds, lazy binds and weak symbols",
           "Multi-dylib recursive load and @rpath resolution",
           "Objective-C category/selector initialization order",
@@ -1529,8 +1529,8 @@
         "total": 16
       }
     ],
-    "partial": 11,
-    "pending": 558,
+    "partial": 12,
+    "pending": 557,
     "percent": 1.04,
     "source": "tools/compat_capabilities.json",
     "total": 575,

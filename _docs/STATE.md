@@ -1,6 +1,6 @@
-## 2026-10-09 — multi-image constructor prerequisite (CI pending)
+## 2026-10-09 — multi-image constructor prerequisite (owned scope CI verified)
 
-Dependency-first owned initializer planning, stricter initializer descriptor/code ownership, and a real three-image Clang ARM64 constructor chain are implemented. Local GCC host contracts pass; exact-head Windows x64 Dynarmic execution remains pending. Native ARM64 coverage is host planning only. Original app startup and inventory completion counts remain unchanged. See [contract and acceptance](MULTI_IMAGE_INITIALIZERS.md).
+Dependency-first owned initializer planning, stricter initializer descriptor/code ownership, and a real three-image Clang ARM64 constructor chain are implemented. Local GCC host contracts and exact implementation head `827ce8e58d5c060d8ed2d7e4d7ed5f28c01199ce` main CI passed: [run 37974381605](https://github.com/uknes/AnyiOS/actions/runs/37974381605), 14/14 jobs. Windows x64 Dynarmic executed all three original owned constructors in leaf/middle/main order and LC_MAIN returned 735. Native Windows/Linux ARM64 coverage is host planning only. The C/C++ constructor gate is now partial (12 partial gates total); verified count remains 6/575. Original third-party app startup is unchanged. See [contract and acceptance](MULTI_IMAGE_INITIALIZERS.md).
 
 ## First external Objective-C iOS app compatibility checkpoint (verified on PR head)
 

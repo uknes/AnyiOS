@@ -16,6 +16,8 @@ Research into a clean-room compatibility layer for legally accessible, unprotect
 
 **Additional protected-game research target:** [Sneaky Sasquatch — unchanged-binary intake](compatibility/targets/sneaky-sasquatch.json). This Apple Arcade game has **not** been obtained or launched. The [read-only original IPA inspection tool](tools/unchanged_ipa_probe.py) reports missing/incompatible APIs without modifying game files or bypassing protection. [App compatibility evidence](_docs/APP_COMPATIBILITY.md).
 
+**Latest owned execution milestone:** [three-image dependency-first C constructors](_docs/MULTI_IMAGE_INITIALIZERS.md) ran under Windows x64 Dynarmic and returned 735 in [CI 37974381605](https://github.com/uknes/AnyiOS/actions/runs/37974381605). Windows/Linux ARM64 verified the host planning contracts; native execution of this constructor chain is not claimed.
+
 ## Cross-app iOS requirements — research snapshot 2026-10-09
 
 The SVG above now includes **575 runtime/behavior gates across 53 subsystems**, the existing **269 selected API exports**, and a separate **405-entry Apple technology discovery panel**. New requirements are pending; existing evidence and verified counts are unchanged. Wikipedia is one stress target, not a runtime specialization.
