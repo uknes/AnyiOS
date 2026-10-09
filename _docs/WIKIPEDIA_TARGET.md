@@ -30,3 +30,9 @@ Wikipedia source/build instructions: https://github.com/wikimedia/wikipedia-ios/
 5. **Guest execution** — original ARM64 instructions run, crash/fault step and architecture recorded, no premature success.
 6. **Actual app UI** — unmodified application creates/updates its own guest state and pixels displayed on Windows, keyboard/pointer input drives original guest callback; separately proven for x64 and native ARM64.
 7. **Compatibility promotion** — only specifically proven ABI symbols/gates marked verified after regression across owning fixtures, Windows x64, Windows ARM64, and unchanged real apps.
+
+## First actual upstream build blocker and correction
+
+The initial macOS 15 run [37864921845](https://github.com/uknes/AnyiOS/actions/runs/37864921845) captured original Xcode exit 74: `package 'wmfcomponents' is using Swift tools version 6.2.0 but the installed version is 6.1.0`. This is a **host toolchain mismatch**, not an AnyiOS guest ABI bug. The workflow now uses the officially supported GitHub Actions `macos-26` ARM64 runner with default Xcode 26 / Swift 6.2 or later; verify it in the new exact-head CI logs. Upstream source stays unchanged.
+
+Official GitHub runner availability: https://github.blog/changelog/2026-02-26-macos-26-is-now-generally-available-for-github-hosted-runners/ . Apple Xcode 26 includes Swift 6.2: https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes .
