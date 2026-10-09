@@ -209,10 +209,15 @@ jobs:
       - name: Configure and build general ARM64 original instruction probe
         shell: pwsh
         run: |
-          cmake -S . -B build-wikipedia-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=OFF -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
+          cmake -S . -B build-wikipedia-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
           if ($LASTEXITCODE -ne 0) { throw "Could not configure Dynarmic runtime" }
-          cmake --build build-wikipedia-guest --config Release --target anyios-general-entry-probe --parallel 2
+          cmake --build build-wikipedia-guest --config Release --target anyios-general-entry-probe anyios-os-log-tests --parallel 2
           if ($LASTEXITCODE -ne 0) { throw "Could not compile general ARM64 guest probe" }
+      - name: Validate bounded guest logging create ABI
+        shell: pwsh
+        run: |
+          & ./build-wikipedia-guest/Release/anyios-os-log-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Scoped Apple ARM64 guest os_log_create failed" }
       - name: Execute ORIGINAL Wikipedia ARM64 entry to first actual ABI failure
         shell: pwsh
         run: |
@@ -226,8 +231,10 @@ jobs:
           }
           if ($trace -match "ENTRY_PROBE=original-unchanged-arm64-instructions" -and
               $trace -match "GUEST_STEPS=[1-9][0-9]*" -and
-              $trace -match "FIRST_RUNTIME_BLOCKER=") {
-            Write-Output "RESULT=bounded-original-arm64-entry-reached-first-actual-runtime-blocker"
+              $trace -match "SUPPORTED_NARROW_IMPORT=_os_log_create" -and
+              $trace -match "FIRST_RUNTIME_BLOCKER=" -and
+              -not ($trace -match "FIRST_RUNTIME_BLOCKER=_os_log_create")) {
+            Write-Output "RESULT=original-wikipedia-past-guest-os-log-create"
           } elseif ($code -eq 3 -and
                     $trace -match "ENTRY_PROBE=not-started" -and
                     $trace -match "FIRST_LOADER_BLOCKER=") {
