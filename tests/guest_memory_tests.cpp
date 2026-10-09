@@ -82,6 +82,13 @@ void run() {
         require(!journal_memory.allowed(0x48000, 16384, Access::read));
         require(journal_memory.read(0x40000, 4) == 0x12345678);
     }
+    // Bound must be checked *before* attempting a large host allocation.
+    try {
+        GuestMemory oversized(0x10000, GuestMemory::max_bytes + GuestMemory::page_size);
+        static_cast<void>(oversized);
+        throw std::runtime_error("oversized whole-app memory accepted");
+    } catch (const std::invalid_argument&) {
+    }
     try {
         GuestMemory bad(UINT64_MAX - 4095, 8192);
         static_cast<void>(bad);
