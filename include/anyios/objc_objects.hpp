@@ -26,12 +26,16 @@ public:
     bool retain(std::uint64_t guest_instance);
     bool release(std::uint64_t guest_instance);
     bool is_live(std::uint64_t guest_instance) const;
+    // A live object is valid only while its original guest isa matches
+    // the validated class recorded when the object was allocated.
+    std::optional<std::uint64_t> class_of(std::uint64_t guest_instance) const;
     std::size_t live_count() const noexcept { return instances_.size(); }
 
 private:
     struct Instance {
         std::size_t allocated_bytes = 0;
         std::uint32_t references = 1;
+        std::uint64_t guest_class = 0;
     };
 
     cpu::GuestMemory& memory_;

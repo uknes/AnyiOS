@@ -151,3 +151,21 @@ Dynarmic CI, not just portable tests.
 
 Primary research: https://developer.apple.com/documentation/objectivec/method_gettypeencoding%28_%3A%29
 and https://developer.apple.com/videos/play/wwdc2020/10163/ .
+
+## Object-owned guest BOOL method dispatch probe
+
+The bounded dispatcher checks a live GuestObjcObjectArena instance, validates
+its guest-memory `isa` against the original allocation's class, resolves
+only original compiler-mapped selector strings and local class/ancestor method
+metadata, and verifies the exact BOOL delegate ABI before entering the
+original ARM64 guest IMP through `invoke_guest_callback`. The diagnostic
+passes only nil UIApplication and launch options, as independently inspected
+for the pinned Bitrise sample, and enforces BOOL values 0 or 1. Released,
+forged, externally registered or isa-corrupted objects are refused. The
+portable backend mock proves dispatch invariants only; the pinned original
+Bitrise Dynarmic regression alone proves real ARM64 instructions executed.
+
+This does not provide general `objc_msgSend`, class methods, +initialize,
+Foundation UIApplication, NSString, UIWindow, touch events or original guest
+pixels. It is not an application launch and does not justify promoting any
+full compatibility/API gate.
