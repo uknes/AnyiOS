@@ -46,3 +46,19 @@ is a research limitation; do not claim complete memcpy/libc or promote API/gate
 inventories from this subset. Tests also prove no partial destination write when
 a source is unreadable or a destination crosses an unmapped boundary.
 Reference: https://pubs.opengroup.org/onlinepubs/9699919799/functions/memcpy.html
+
+Verified prior memory head 2ec0d8d2f0e6b6a3299bbea3ec72cdb514b9aa56:
+full CI 37930150383 passed, owned Clang MemoryStringApp executed all four
+functions and returned 27 on Windows x64 Dynarmic. Unchanged Wikipedia
+37930150418 performed an actual 28-byte guest memcpy and reached instruction
+212, FIRST_RUNTIME_BLOCKER=_dlsym, on Windows x64 and on Windows ARM64 via
+x64 emulation of Dynarmic. This is not native ARM64 or UIKit startup.
+
+The branch is reconciled with accepted legacy relocation from main before
+final merge; repeat exact-head acceptance. The next unresolved dlsym call now
+records only its bounded guest symbol name and raw guest handle. It remains
+unsupported: resolving host symbols or reporting a fabricated NULL would not
+implement Darwin module scope/handles. Next needs a validated guest module
+registry, Darwin dlsym handle/name rules, loaded original dependent image
+exports, dlerror state and initializer order. No host dlsym/GetProcAddress is
+used to answer this guest call.

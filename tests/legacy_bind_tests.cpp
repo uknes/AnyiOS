@@ -72,6 +72,59 @@ void run(){
     fail({0x11,0x40,'_','f',0x00,0x51,0x71,0x80}); // truncated address
     fail({0x11,0x51,0x71,0x00,0x90,0x00}); // missing symbol
     fail({0x40,'_','f',0x00,0x51,0x71,0x00,0x90,0x00}); // missing ordinal
+    // Lazy records are independently addressable; DONE is not end-of-stream.
+    const std::vector<std::uint8_t> lazy={
+        0x11,0x40,'_','a',0,0x60,0x7e,0x71,0,0x90,0,
+        0x11,0x41,'_','b',0,0x71,8,0x90,0,0,0};
+    auto lazy_image=image(lazy.size());
+    lazy_image.legacy_dyld->bind.reset();
+    lazy_image.legacy_dyld->lazy_bind=anyios::macho::LinkeditRange{0x2800,static_cast<std::uint32_t>(lazy.size())};
+    auto lazy_file=file(lazy); const auto before=lazy_file;
+    const auto lazy_sites=anyios::dyld::inspect_legacy_lazy_bind_sites(lazy_file,lazy_image);
+    check(lazy_sites.size()==2 && lazy_sites[0].addend==-2 &&
+          lazy_sites[1].addend==0 && lazy_sites[1].weak_import &&
+          lazy_sites[1].lazy_record_offset==11 && lazy_file==before,
+          "lazy record state/offset or original input ownership lost");
+    const std::vector<std::uint8_t> weak={
+        0x48,'_','s',0, 0x40,'_','w',0,0x71,0,0x90,0};
+    auto weak_image=image(weak.size());
+    weak_image.legacy_dyld->bind.reset();
+    weak_image.legacy_dyld->weak_bind=anyios::macho::LinkeditRange{0x2800,static_cast<std::uint32_t>(weak.size())};
+    const auto weak_sites=anyios::dyld::inspect_legacy_weak_bind_sites(file(weak),weak_image);
+    check(weak_sites.sites.size()==1 && weak_sites.sites[0].library_ordinal==-3 &&
+          !weak_sites.sites[0].weak_import &&
+          weak_sites.non_weak_definitions==std::vector<std::string>{"_s"},
+          "weak lookup confused with weak import or strong definition discarded");
+    auto bad_stream=[&](std::vector<std::uint8_t> code,bool is_lazy){
+        auto im=image(code.size()); im.legacy_dyld->bind.reset();
+        auto range=anyios::macho::LinkeditRange{0x2800,static_cast<std::uint32_t>(code.size())};
+        if(is_lazy) im.legacy_dyld->lazy_bind=range; else im.legacy_dyld->weak_bind=range;
+        bool rejected=false;
+        try {
+            if(is_lazy)(void)anyios::dyld::inspect_legacy_lazy_bind_sites(file(code),im);
+            else (void)anyios::dyld::inspect_legacy_weak_bind_sites(file(code),im);
+        }catch(const anyios::macho::FormatError&){rejected=true;}
+        check(rejected,"malformed weak/lazy stream accepted");
+    };
+    bad_stream({0x11,0x40,'_','a',0,0x71,0,0x90},true); // missing record DONE
+    bad_stream({0x11,0x40,'_','a',0,0x71,0,0x90,0,0x71,8,0x90,0},true); // inherited identity
+    bad_stream({0x11,0x40,'_','a',0,0x71,0,0x90,0x90,0},true); // two binds
+    bad_stream({0x11,0},true); // record with no bind
+    bad_stream({0x51,0},true); // pointer type opcode forbidden by lazy grammar
+    bad_stream({0x80,0,0},true); // lazy address arithmetic forbidden
+    bad_stream({0x11,0},false); // ordinal forbidden in weak grammar
+    bad_stream({0x44,'_','a',0,0},false); // reserved flag
+    bad_stream({0x40,'_','a',0,0x71,0,0xc1,1,0,0},false); // reserved immediate
+    bad_stream({0x40,'_','a',0,0x60,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x01,0},false); // SLEB overflow
+    // Signed 64-bit endpoints are parsed without signed shifts/overflow.
+    for (bool negative : {false,true}) {
+        std::vector<std::uint8_t> endpoint={0x11,0x40,'_','e',0,0x60};
+        endpoint.insert(endpoint.end(),9,negative ? 0x80 : 0xff);
+        endpoint.push_back(negative ? 0x7f : 0x00);
+        endpoint.insert(endpoint.end(),{0x71,0,0x90,0});
+        const auto e=anyios::dyld::inspect_legacy_eager_bind_sites(file(endpoint),image(endpoint.size()));
+        check(e[0].addend==(negative ? INT64_MIN : INT64_MAX),"SLEB endpoint lost");
+    }
     const auto none=anyios::dyld::inspect_legacy_eager_bind_sites(data,anyios::macho::Image{});
     check(none.empty(),"nonlegacy image fabricated eager bind");
 }

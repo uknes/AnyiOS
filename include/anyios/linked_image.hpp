@@ -11,6 +11,7 @@ namespace anyios::loader {
 struct LinkedImageOptions {
     bool require_ios_pages = false;
     cpu::GuestMemory::MappingJournal* transaction = nullptr;
+    bool allow_legacy_fixups = false;
 };
 
 struct LinkedImage {

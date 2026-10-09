@@ -1,5 +1,6 @@
 #include <anyios/linked_image.hpp>
 #include <anyios/fixup_plan.hpp>
+#include <anyios/legacy_fixups.hpp>
 #include <anyios/macho.hpp>
 
 #include <algorithm>
@@ -49,8 +50,8 @@ LinkedImage stage_linked_image(
         throw macho::FormatError("linked image has invalid __TEXT base");
     }
     const auto original_base = text->vm_address;
-    // Linked code can use modern chained fixups only. Legacy bind opcodes and
-    // arm64e pointer authentication are intentionally not executed here.
+    // Legacy linking requires an explicit caller opt-in and resolved targets.
+    // Thread-state entry and arm64e remain unsupported.
     if (file.size() < 32) throw macho::FormatError("linked header truncated");
     auto command = std::size_t{32};
     for (std::uint32_t i = 0; i < image.command_count; ++i) {
@@ -62,7 +63,7 @@ LinkedImage stage_linked_image(
             type |= std::uint32_t(std::to_integer<std::uint8_t>(file[command + b])) << (8 * b);
             bytes |= std::uint32_t(std::to_integer<std::uint8_t>(file[command + b + 4])) << (8 * b);
         }
-        if (type == 0x80000022 || type == 0x22 || type == 0x5) {
+        if (((type == 0x80000022 || type == 0x22) && !options.allow_legacy_fixups) || type == 0x5) {
             throw macho::FormatError("unsupported linked image legacy dyld/thread state");
         }
         if (bytes < 8 || bytes > file.size() - command) {
@@ -74,7 +75,9 @@ LinkedImage stage_linked_image(
         throw macho::FormatError("linked __TEXT does not cover its load commands");
     }
 
-    auto patches = dyld::plan_chained_fixups(file, image, resolved_imports);
+    auto patches = image.legacy_dyld && options.allow_legacy_fixups ?
+        dyld::plan_legacy_fixups(file,image,resolved_imports) :
+        dyld::plan_chained_fixups(file, image, resolved_imports);
     auto staged_file = std::vector<std::byte>(file.begin(), file.end());
     for (auto& patch : patches) {
         bool stored_in_segment = false;

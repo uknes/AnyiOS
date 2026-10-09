@@ -10,6 +10,10 @@ on:
       - '_docs/UIKIT_CATALOG_TARGET.md'
       - 'tools/app_stage_probe.cpp'
       - 'src/legacy_bind.cpp'
+      - 'src/legacy_fixups.cpp'
+      - 'src/linked_image.cpp'
+      - 'tools/app_general_entry_probe.cpp'
+      - 'tests/linked_image_tests.cpp'
       - 'src/legacy_rebase.cpp'
       - 'include/anyios/legacy_bind.hpp'
       - 'include/anyios/legacy_rebase.hpp'
@@ -142,10 +146,28 @@ jobs:
         if: steps.app.outputs.built == 'true'
         shell: pwsh
         run: |
-          cmake -S . -B build-catalog-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=OFF -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
+          cmake -S . -B build-catalog-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
           if ($LASTEXITCODE -ne 0) { throw "Dynarmic compiler configuration failed" }
-          cmake --build build-catalog-guest --config Release --target anyios-general-entry-probe --parallel 2
+          cmake --build build-catalog-guest --config Release --target anyios-general-entry-probe anyios-app-stage-probe anyios-legacy-bind-tests anyios-linked-image-tests --parallel 2
           if ($LASTEXITCODE -ne 0) { throw "Dynarmic executable build failed" }
+      - name: Check weak and lazy decode against unchanged original executable
+        if: steps.app.outputs.built == 'true'
+        shell: pwsh
+        run: |
+          & ./build-catalog-guest/Release/anyios-linked-image-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Transactional legacy relocation regression failed" }
+          & ./build-catalog-guest/Release/anyios-legacy-bind-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Legacy bind regression failed" }
+          $output = & ./build-catalog-guest/Release/anyios-app-stage-probe.exe original-catalog/recovered/UIKitCatalog.app/UIKitCatalog 2>&1
+          $code = $LASTEXITCODE
+          $output | Out-File original-catalog/uicatalog-legacy-decoders.txt
+          $output | ForEach-Object { Write-Output $_ }
+          if ($code -ne 3 -and $code -ne 0) { throw "Original decoder probe crashed" }
+          if (-not ($output -match "LEGACY_WEAK_BIND_SITES=|LEGACY_WEAK_DECODER_BLOCKER=") -or
+              -not ($output -match "LEGACY_LAZY_BIND_SITES=|LEGACY_LAZY_DECODER_BLOCKER=")) {
+            throw "Original weak/lazy decoder evidence missing"
+          }
+          exit 0
       - name: Run original unchanged ARM64 UIKitCatalog instructions to first missing runtime ABI
         if: steps.app.outputs.built == 'true'
         shell: pwsh
@@ -173,7 +195,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: uicatalog-original-windows-x64-first-fault
-          path: original-catalog/uicatalog-guest-first-failure.txt
+          path: |
+            original-catalog/uicatalog-guest-first-failure.txt
+            original-catalog/uicatalog-legacy-decoders.txt
           if-no-files-found: error
           retention-days: 7
 
@@ -208,10 +232,18 @@ jobs:
         if: steps.app.outputs.built == 'true'
         shell: pwsh
         run: |
-          cmake -S . -B build-catalog-arm64 -DBUILD_TESTING=OFF
+          cmake -S . -B build-catalog-arm64 -DBUILD_TESTING=ON
           if ($LASTEXITCODE -ne 0) { throw "Native ARM64 stage configuration failed" }
-          cmake --build build-catalog-arm64 --config Release --target anyios-app-stage-probe --parallel 2
+          cmake --build build-catalog-arm64 --config Release --target anyios-app-stage-probe anyios-legacy-bind-tests anyios-linked-image-tests --parallel 2
           if ($LASTEXITCODE -ne 0) { throw "Native ARM64 stage build failed" }
+      - name: Validate legacy relocation and malformed input on native Windows ARM64
+        if: steps.app.outputs.built == 'true'
+        shell: pwsh
+        run: |
+          & ./build-catalog-arm64/Release/anyios-legacy-bind-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Native ARM64 legacy bind contract failed" }
+          & ./build-catalog-arm64/Release/anyios-linked-image-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Native ARM64 transactional relocation contract failed" }
       - name: Record real loader stage, not native guest execution
         if: steps.app.outputs.built == 'true'
         shell: pwsh
@@ -227,7 +259,9 @@ jobs:
           if ($output -match "LEGACY_DYLD_INFO=present" -and
               -not ($output -match "LEGACY_REBASE_SITES=|LEGACY_REBASE_DECODER_BLOCKER=") -or
               $output -match "LEGACY_DYLD_INFO=present" -and
-              -not ($output -match "LEGACY_EAGER_BIND_SITES=|LEGACY_BIND_DECODER_BLOCKER=")) {
+              -not ($output -match "LEGACY_EAGER_BIND_SITES=|LEGACY_BIND_DECODER_BLOCKER=") -or
+              -not ($output -match "LEGACY_WEAK_BIND_SITES=|LEGACY_WEAK_DECODER_BLOCKER=") -or
+              -not ($output -match "LEGACY_LAZY_BIND_SITES=|LEGACY_LAZY_DECODER_BLOCKER=")) {
             throw "Original UIKitCatalog dyld scan did not report checked rebase/bind sites or first opcode boundary"
           }
           Write-Output "HOST=Windows-ARM64; NATIVE_ARM64_STAGING=yes; ORIGINAL_GUEST_EXECUTION=no; WINDOW=not-created"
