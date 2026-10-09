@@ -1,6 +1,7 @@
 #include <anyios/cpu_backend.hpp>
 #include <anyios/guest_memory.hpp>
 #include <anyios/guest_os_log.hpp>
+#include <anyios/guest_environ.hpp>
 #include <anyios/linked_image.hpp>
 #include <anyios/macho.hpp>
 #include <anyios/process_bootstrap.hpp>
@@ -101,6 +102,7 @@ int main(int argc, char** argv) {
         const auto start = anyios::loader::prepare_owned_process_stack(
             memory, kStack, 0x10000, args, env, apple);
         anyios::darwin::GuestOsLogRegistry os_logs(memory, 0x16000000);
+        const anyios::darwin::GuestEnvironment guest_environ(memory, start.envp);
         auto cpu = anyios::cpu::make_dynarmic_backend(memory);
         anyios::cpu::CpuState state{};
         state.pc = loaded.guest_entry;
@@ -128,6 +130,20 @@ int main(int argc, char** argv) {
                 at.pc == imports[static_cast<std::size_t>(at.x[16])] + 8) {
                 const auto& symbol = image.chained_imports[
                     static_cast<std::size_t>(at.x[16])];
+                if (symbol == "_getenv") {
+                    const auto result = guest_environ.lookup(at.x[0]);
+                    if (!result) {
+                        std::cout << "FIRST_RUNTIME_BLOCKER=_getenv\n"
+                                  << "REASON=invalid-original-guest-envp-or-name\n";
+                        return 0;
+                    }
+                    auto resumed = at;
+                    resumed.x[0] = *result;
+                    cpu->set_state(resumed);
+                    std::cout << "SUPPORTED_NARROW_IMPORT=_getenv\n"
+                              << "ENV_SCOPE=original-guest-process-envp-only\n";
+                    continue;
+                }
                 if (symbol == "_os_log_create") {
                     const auto guest_log = os_logs.create(at.x[0], at.x[1]);
                     if (!guest_log) {

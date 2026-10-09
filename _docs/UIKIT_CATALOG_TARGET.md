@@ -44,3 +44,11 @@ first real imported-call blockers continue to be fixed separately.
 
 Source: https://github.com/appium/ios-uicatalog ; Apple's control reference:
 https://developer.apple.com/documentation/uikit/uikit-catalog-creating-and-customizing-views-and-controls .
+
+## Source-matched original UIKitCatalog Windows staging and first instruction trial
+
+A stacked PR now adds Windows x86-64 Dynarmic guest entry with same-run Xcode build SHA-256 verification. It must either execute original UIKitCatalog ARM64 instructions and report the first missing import, or classify a loader failure *before execution*. Windows ARM64 does only native Mach-O metadata staging. Neither result proves native Windows ARM64 guest execution, UIKit pixels, input or original app UI; these remain explicit acceptance gates.
+
+## First measured native ARM64-host loader blocker from original UIKitCatalog
+
+Original pinned source-built UIKitCatalog app (Xcode build verified) reached a native Windows ARM64 Mach-O stage in run [37870715261](https://github.com/uknes/AnyiOS/actions/runs/37870715261). It printed `STATIC_IMPORTS=0`, `STAGING=blocked`, `FIRST_LOADER_BLOCKER=unsupported linked image legacy dyld/thread state`. This is an actual original app Mach-O format **unsupported by the current chained-fixups-only linked loader**, not proof of UIKit failure after process startup. Native staging returned expected status 3; PowerShell exited nonzero because the last external command's nonzero code was propagated even after reporting the blocker. The workflow now explicitly exits zero ONLY after verifying expected and recorded `STAGING=blocked` / `STAGING=passed-metadata-only` with status 0 or 3; all abnormal statuses remain errors. Acceptance does not claim guest execution or UI. Next real loader subtask: recognize original legacy LC_DYLD_INFO / LC_DYLD_INFO_ONLY and LC_UNIXTHREAD formats separately, implement bounded bind/rebase with format-specific tests, then retry the UNMODIFIED original executable.

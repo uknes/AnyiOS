@@ -86,3 +86,145 @@ jobs:
           path: original-catalog/
           if-no-files-found: error
           retention-days: 7
+
+  original-uicatalog-windows-x64-entry:
+    needs: original-arm64-device-build
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: appium-uicatalog-original-arm64-intake
+          path: original-catalog
+      - name: Verify and extract same-run original ARM64 executable
+        id: app
+        shell: pwsh
+        run: |
+          $report = Get-Content original-catalog/appium-report.json -Raw | ConvertFrom-Json
+          if ($report.status -eq "blocked-upstream-build") {
+            "built=false" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+            Write-Output "RESULT=source-build-blocked"
+            exit 0
+          }
+          if ($report.target -ne "appium-uicatalog" -or
+              $report.api_inventory_total -ne 269 -or
+              $report.runtime_gate_inventory_total -ne 239) {
+            throw "Unverified source build provenance"
+          }
+          mkdir -Force original-catalog/recovered | Out-Null
+          tar -xzf original-catalog/original-uicatalog-arm64-app.tar.gz -C original-catalog/recovered
+          if ($LASTEXITCODE -ne 0) { throw "Source-built ARM64 app archive unavailable" }
+          $original = @($report.binaries | Where-Object { $_.path -eq "UIKitCatalog" })
+          $path = "original-catalog/recovered/UIKitCatalog.app/UIKitCatalog"
+          if ($original.Count -ne 1 -or
+              (Get-FileHash $path -Algorithm SHA256).Hash.ToLowerInvariant() -ne $original[0].sha256) {
+            throw "Original ARM64 UIKitCatalog Mach-O hash mismatch"
+          }
+          "built=true" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Output "ORIGINAL_UIKITCATALOG_SHA256=same-run-verified"
+      - name: Install pinned Dynarmic dependencies on Windows x86-64
+        if: steps.app.outputs.built == 'true'
+        shell: pwsh
+        run: |
+          nuget install boost -Version 1.87.0 -OutputDirectory "$env:RUNNER_TEMP\anyios-deps" -ExcludeVersion -NonInteractive
+          if ($LASTEXITCODE -ne 0) { throw "Boost headers install failed" }
+          $found = Get-ChildItem "$env:RUNNER_TEMP\anyios-deps\boost" -Filter version.hpp -Recurse | Where-Object { $_.Directory.Name -eq 'boost' } | Select-Object -First 1
+          if (-not $found) { throw "Vetted Boost headers missing" }
+          "BOOST_INCLUDEDIR=$(Split-Path -Parent $found.Directory.FullName)" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Compile original ARM64 general process entry executor
+        if: steps.app.outputs.built == 'true'
+        shell: pwsh
+        run: |
+          cmake -S . -B build-catalog-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=OFF -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
+          if ($LASTEXITCODE -ne 0) { throw "Dynarmic compiler configuration failed" }
+          cmake --build build-catalog-guest --config Release --target anyios-general-entry-probe --parallel 2
+          if ($LASTEXITCODE -ne 0) { throw "Dynarmic executable build failed" }
+      - name: Run original unchanged ARM64 UIKitCatalog instructions to first missing runtime ABI
+        if: steps.app.outputs.built == 'true'
+        shell: pwsh
+        run: |
+          $binary = "original-catalog/recovered/UIKitCatalog.app/UIKitCatalog"
+          $output = & ./build-catalog-guest/Release/anyios-general-entry-probe.exe $binary 2>&1
+          $status = $LASTEXITCODE
+          $output | Out-File original-catalog/uicatalog-guest-first-failure.txt
+          $output | ForEach-Object { Write-Output $_ }
+          if ($status -ne 0 -and $status -ne 3) { throw "Original guest execution crashed" }
+          if ($output -match "ENTRY_PROBE=original-unchanged-arm64-instructions" -and
+              $output -match "GUEST_STEPS=[1-9][0-9]*" -and
+              $output -match "FIRST_RUNTIME_BLOCKER=") {
+            Write-Output "RESULT=real-original-uicatalog-ARM64-entry-first-import"
+          } elseif ($output -match "ENTRY_PROBE=not-started" -and
+                    $output -match "FIRST_LOADER_BLOCKER=") {
+            Write-Output "RESULT=original-uicatalog-loader-blocked-before-guest-execution"
+          } else {
+            throw "Cannot verify original guest execution or loader blocker"
+          }
+          Write-Output "WINDOW=not-created; GUI=unsupported; NATIVE_WINARM64_EXECUTION=not-tested"
+          exit 0  # Expected unsupported guest-import/loader status is a captured result, not CI failure.
+      - name: Preserve guest execution or actual loader blocker
+        if: steps.app.outputs.built == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: uicatalog-original-windows-x64-first-fault
+          path: original-catalog/uicatalog-guest-first-failure.txt
+          if-no-files-found: error
+          retention-days: 7
+
+  original-uicatalog-windows-arm64-stage:
+    needs: original-arm64-device-build
+    runs-on: windows-11-vs2026-arm
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: appium-uicatalog-original-arm64-intake
+          path: original-catalog
+      - name: Recover exact original source-built iOS app for ARM64 staging
+        id: app
+        shell: pwsh
+        run: |
+          $report = Get-Content original-catalog/appium-report.json -Raw | ConvertFrom-Json
+          if ($report.status -eq "blocked-upstream-build") {
+            "built=false" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+            exit 0
+          }
+          mkdir -Force original-catalog/recovered | Out-Null
+          tar -xzf original-catalog/original-uicatalog-arm64-app.tar.gz -C original-catalog/recovered
+          $entry = @($report.binaries | Where-Object { $_.path -eq "UIKitCatalog" })
+          if ($entry.Count -ne 1 -or
+              (Get-FileHash original-catalog/recovered/UIKitCatalog.app/UIKitCatalog -Algorithm SHA256).Hash.ToLowerInvariant() -ne $entry[0].sha256) {
+            throw "Original same-run UIKitCatalog ARM64 app binary identity mismatch"
+          }
+          "built=true" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+      - name: Build native Windows ARM64 original Mach-O staging probe
+        if: steps.app.outputs.built == 'true'
+        shell: pwsh
+        run: |
+          cmake -S . -B build-catalog-arm64 -DBUILD_TESTING=OFF
+          if ($LASTEXITCODE -ne 0) { throw "Native ARM64 stage configuration failed" }
+          cmake --build build-catalog-arm64 --config Release --target anyios-app-stage-probe --parallel 2
+          if ($LASTEXITCODE -ne 0) { throw "Native ARM64 stage build failed" }
+      - name: Record real loader stage, not native guest execution
+        if: steps.app.outputs.built == 'true'
+        shell: pwsh
+        run: |
+          $output = & ./build-catalog-arm64/Release/anyios-app-stage-probe.exe original-catalog/recovered/UIKitCatalog.app/UIKitCatalog 2>&1
+          $code = $LASTEXITCODE
+          $output | Out-File original-catalog/uicatalog-native-winarm64-stage.txt
+          $output | ForEach-Object { Write-Output $_ }
+          if (($code -ne 0 -and $code -ne 3) -or
+              -not ($output -match "STAGING=passed-metadata-only|STAGING=blocked")) {
+            throw "Original ARM64 app metadata staging crashed without diagnostic"
+          }
+          Write-Output "HOST=Windows-ARM64; NATIVE_ARM64_STAGING=yes; ORIGINAL_GUEST_EXECUTION=no; WINDOW=not-created"
+          exit 0  # Explicitly accept diagnosed first loader blocker (native probe returns 3).
+      - name: Preserve native Windows ARM64 metadata report
+        if: steps.app.outputs.built == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: uicatalog-original-windows-arm64-stage
+          path: original-catalog/uicatalog-native-winarm64-stage.txt
+          if-no-files-found: error
+          retention-days: 7
