@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <limits>
 #include <stdexcept>
+#include <utility>
 
 namespace anyios::darwin {
 namespace {
@@ -27,6 +28,7 @@ ObjcIdentityProbe::ObjcIdentityProbe(
     for (const auto& section : image.sections) {
         if (section.name != "__objc_classlist" &&
             section.name != "__objc_methname" &&
+            section.name != "__objc_methtype" &&
             section.name != "__objc_const" &&
             section.name != "__cstring" &&
             section.name != "__objc_classname") {
@@ -45,7 +47,16 @@ ObjcIdentityProbe::ObjcIdentityProbe(
             method_ranges_.emplace_back(start, start + section.size);
             continue;
         }
-        if (section.name == "__cstring" || section.name == "__objc_classname") {
+        if (section.name == "__objc_methtype") {
+            type_ranges_.emplace_back(start, start + section.size);
+            continue;
+        }
+        if (section.name == "__cstring") {
+            class_name_ranges_.emplace_back(start, start + section.size);
+            type_ranges_.emplace_back(start, start + section.size);
+            continue;
+        }
+        if (section.name == "__objc_classname") {
             class_name_ranges_.emplace_back(start, start + section.size);
             continue;
         }
@@ -174,12 +185,16 @@ std::optional<GuestObjcMethod> ObjcIdentityProbe::local_instance_method(
         const auto entry = *methods + 8 + (i * 24);
         const auto selector = memory_.read(entry, 8);
         const auto imp = memory_.read(entry + 16, 8);
-        if (!selector || !imp) return std::nullopt;
+        const auto encoding = memory_.read(entry + 8, 8);
+        if (!selector || !imp || !encoding) return std::nullopt;
         if (selector_name(*selector) != method_name) continue;
         if ((*imp & 3) != 0 || !memory_.fetch(*imp)) {
             return std::nullopt;
         }
-        return GuestObjcMethod{*selector, *imp};
+        // Only a method-type or compiler cstring section may hold types.
+        // Never reinterpret a class-name-only section as method ABI evidence.
+        auto types = bounded_ascii(*encoding, type_ranges_);
+        return GuestObjcMethod{*selector, *imp, std::move(types)};
     }
     return std::nullopt;
 }

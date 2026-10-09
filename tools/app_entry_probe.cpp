@@ -6,6 +6,7 @@
 #include <anyios/objc_identity.hpp>
 #include <anyios/objc_objects.hpp>
 #include <anyios/objc_registry.hpp>
+#include <anyios/objc_signature.hpp>
 #include <anyios/objc_selectors.hpp>
 #include <anyios/process_bootstrap.hpp>
 
@@ -229,6 +230,17 @@ int main(int argc, char** argv) {
                     return 0;
                 }
                 std::cout << "APP_DELEGATE_METHOD_RESOLUTION=validated-local-guest-IMP\n";
+                // Match only this inspected fixed Apple ARM64 BOOL callback.
+                // Do not infer variadic, aggregate or arbitrary object ABI.
+                if (!did_launch->type_encoding ||
+                    !anyios::darwin::supported_bool_launch_abi(*did_launch->type_encoding)) {
+                    std::cout << "FIRST_RUNTIME_BLOCKER=_UIApplicationMain\n"
+                              << "REASON=unsupported-guest-delegate-ABI\n"
+                              << "EXECUTION=stopped-at-unimplemented-import\n";
+                    return 0;
+                }
+                std::cout << "APP_DELEGATE_TYPE_ENCODING=original-guest-validated\n"
+                          << "APP_DELEGATE_ABI=fixed-bool-self-cmd-two-objects\n";
                 // Diagnostic callback of actual app-owned ARM64 IMP. No
                 // UIKit app object, framework scheduler or window exists.
                 // Zero UIApplication/options are valid ONLY for this

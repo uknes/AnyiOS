@@ -48,7 +48,7 @@ jobs:
       - name: Configure guest runtime test
         run: cmake -S . -B build-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
       - name: Build guest runtime and portable ObjC identity contract
-        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests anyios-objc-objects-tests anyios-objc-registry-tests anyios-objc-selector-tests --parallel 2
+        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests anyios-objc-objects-tests anyios-objc-registry-tests anyios-objc-selector-tests anyios-objc-signature-tests --parallel 2
       - name: Validate local guest ObjC class identity contract
         shell: pwsh
         run: |
@@ -69,6 +69,11 @@ jobs:
         run: |
           & ./build-guest/Release/anyios-objc-selector-tests.exe
           if ($LASTEXITCODE -ne 0) { throw "Guest ObjC compiled selector identity contract failed" }
+      - name: Validate narrow guest Objective-C method ABI signatures
+        shell: pwsh
+        run: |
+          & ./build-guest/Release/anyios-objc-signature-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "ObjC guest method ABI contract failed" }
       - name: Execute pinned third-party iOS app until next genuine blocker
         shell: pwsh
         run: |
@@ -95,6 +100,10 @@ jobs:
               -not ($trace -match "GUEST_DELEGATE_ISA=original-guest-class") -or
               -not ($trace -match "GUEST_DELEGATE_RELEASE=verified")) {
             throw "Original AppDelegate did not receive and release a genuine guest-memory instance"
+          }
+          if (-not ($trace -match "APP_DELEGATE_TYPE_ENCODING=original-guest-validated") -or
+              -not ($trace -match "APP_DELEGATE_ABI=fixed-bool-self-cmd-two-objects")) {
+            throw "Original guest didFinishLaunching method ABI was not validated"
           }
           if (-not ($trace -match "APP_DELEGATE_METHOD_RESOLUTION=validated-local-guest-IMP")) {
             throw "Original app guest IMP was not resolved by the class registry"
