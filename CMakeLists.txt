@@ -63,6 +63,9 @@ target_link_libraries(anyios_objc_identity PUBLIC anyios_macho anyios_guest_memo
 
 include(CTest)
 if(BUILD_TESTING)
+    add_executable(anyios-legacy-dyld-tests tests/macho_legacy_dyld_tests.cpp)
+    target_link_libraries(anyios-legacy-dyld-tests PRIVATE anyios_macho)
+    add_test(NAME macho-legacy-dyld-metadata COMMAND anyios-legacy-dyld-tests)
     add_executable(anyios-os-log-tests tests/guest_os_log_tests.cpp)
     target_link_libraries(anyios-os-log-tests PRIVATE anyios_guest_os_log)
     add_test(NAME guest-os-log-create-contract COMMAND anyios-os-log-tests)
