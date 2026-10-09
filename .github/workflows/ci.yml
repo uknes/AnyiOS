@@ -240,6 +240,10 @@ jobs:
         run: cmake --build build-native --config Release --target anyios-os-log-tests --parallel 2
       - name: Test bounded OSLog guest token ABI on Windows ARM64
         run: ctest --test-dir build-native --build-config Release -R "^guest-os-log-create-contract$" --output-on-failure
+      - name: Build bounded guest memory ABI on native Windows ARM64
+        run: cmake --build build-native --config Release --target anyios-libsystem-tests --parallel 2
+      - name: Validate guest memory bounds and failure atomicity on native Windows ARM64
+        run: ctest --test-dir build-native --build-config Release -R "^minimal-libsystem-host-contract$" --output-on-failure
       - name: Build bounded object-owned BOOL dispatch on Windows ARM64
         run: cmake --build build-native --config Release --target anyios-objc-dispatch-tests --parallel 2
       - name: Test bounded object-owned BOOL dispatch on Windows ARM64
