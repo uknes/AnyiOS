@@ -23,6 +23,9 @@ public:
     class MappingJournal;
     static constexpr std::size_t page_size = 4096;
     static constexpr std::size_t ios_page_size = 16 * 1024;
+    // Hard safety bound for source-vetted research inputs, not general IPA sandbox.
+    // 64 MiB fixture buffers remain valid; whole-app guest mapping can be larger.
+    static constexpr std::size_t max_bytes = 512U * 1024U * 1024U;
 
     GuestMemory(std::uint64_t base, std::size_t size);
 
