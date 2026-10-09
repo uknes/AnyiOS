@@ -28,6 +28,51 @@ void fail(const std::vector<std::uint8_t>& code) {
     catch(const anyios::macho::FormatError&){rejected=true;}
     check(rejected,"invalid legacy bind opcode sequence was accepted");
 }
+void cursor_wrap_contract() {
+    auto operand = [](std::vector<std::uint8_t>& code, std::uint64_t value) {
+        do {
+            auto byte = static_cast<std::uint8_t>(value & 0x7fU);
+            value >>= 7;
+            if (value) byte |= 0x80;
+            code.push_back(byte);
+        } while (value);
+    };
+    for (const bool combined : {false, true}) {
+        std::vector<std::uint8_t> code{0x11,0x40,'_','f',0,0x71,32};
+        if (combined) code.push_back(0xa0);
+        else { code.push_back(0x90); code.push_back(0x80); }
+        operand(code, UINT64_MAX-23); // Encoded backward delta -24.
+        code.insert(code.end(), {0x90,0});
+        auto bytes = file(code); const auto original = bytes;
+        const auto decoded = anyios::dyld::inspect_legacy_eager_bind_stream(bytes,image(code.size()));
+        check(decoded.sites.size()==2 && decoded.sites[0].file_offset==0x1020 &&
+              decoded.sites[1].file_offset==0x1010 && bytes==original,
+              "modular cursor lost bounded descending bind sites or changed source");
+        check(decoded.cursor_wraps==1 && decoded.first_cursor_wrap &&
+              decoded.first_cursor_wrap->before==(combined ? 32U : 40U) &&
+              decoded.first_cursor_wrap->delta==UINT64_MAX-23 &&
+              decoded.first_cursor_wrap->pointer_advance==(combined ? 8U : 0U) &&
+              decoded.first_cursor_wrap->after==16,
+              "cursor wrap diagnostic does not describe original opcode operands");
+    }
+    std::vector<std::uint8_t> repeated{0x11,0x40,'_','f',0,0x71,16,0xc0,3};
+    operand(repeated, UINT64_MAX-15); // skip -16 plus pointer size gives -8.
+    repeated.push_back(0);
+    const auto sites = anyios::dyld::inspect_legacy_eager_bind_sites(file(repeated),image(repeated.size()));
+    check(sites.size()==3 && sites[0].file_offset==0x1010 && sites[1].file_offset==0x1008 &&
+          sites[2].file_offset==0x1000, "descending repeated binds lost or unused final cursor rejected");
+    std::vector<std::uint8_t> invalid{0x11,0x40,'_','f',0,0x71,0,0x80};
+    operand(invalid, UINT64_MAX-7);
+    invalid.insert(invalid.end(),{0x90,0});
+    fail(invalid); // Modular cursor must not turn an out-of-segment pointer into a binding.
+    std::vector<std::uint8_t> absolute{0x11,0x40,'_','f',0,0x71,16,0x90,0};
+    auto im=image(absolute.size()); im.segments[1].vm_address=UINT64_MAX-7;
+    bool rejected=false;
+    try { (void)anyios::dyld::inspect_legacy_eager_bind_sites(file(absolute),im); }
+    catch (const anyios::macho::FormatError&) { rejected=true; }
+    check(rejected,"absolute guest VM address overflow accepted");
+}
+
 void run(){
     const std::vector<std::uint8_t> code={
         0x11,0x40,'_','p','r','i','n','t','f',0x00,
@@ -129,5 +174,5 @@ void run(){
     check(none.empty(),"nonlegacy image fabricated eager bind");
 }
 }
-int main(){try{run();std::cout<<"Bounded legacy eager bind opcode inspector passed\n";return 0;}
+int main(){try{run();cursor_wrap_contract();std::cout<<"Bounded legacy eager bind opcode inspector passed\n";return 0;}
 catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}
