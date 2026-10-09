@@ -80,6 +80,7 @@ See [_docs/OSS_SURVEY.md](_docs/OSS_SURVEY.md) for the verified-license survey (
 ## Project documentation
 
 - [_docs/STATE.md](_docs/STATE.md) — verified state and next milestone
+- [_docs/MULTI_IMAGE_INITIALIZERS.md](_docs/MULTI_IMAGE_INITIALIZERS.md) — bounded dependency-first constructor planning and owned ARM64 acceptance
 - [_docs/BUNDLE_DEPENDENCY_INTAKE.md](_docs/BUNDLE_DEPENDENCY_INTAKE.md) — bounded original bundle metadata discovery and atomic image sets
 - [_docs/WINDOWS_X64.md](_docs/WINDOWS_X64.md) — Windows ARM64 translation architecture and restrictions
 - [_docs/ARCHITECTURE.md](_docs/ARCHITECTURE.md) — implementation boundaries

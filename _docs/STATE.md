@@ -1,3 +1,7 @@
+## 2026-10-09 — multi-image constructor prerequisite (CI pending)
+
+Dependency-first owned initializer planning, stricter initializer descriptor/code ownership, and a real three-image Clang ARM64 constructor chain are implemented. Local GCC host contracts pass; exact-head Windows x64 Dynarmic execution remains pending. Native ARM64 coverage is host planning only. Original app startup and inventory completion counts remain unchanged. See [contract and acceptance](MULTI_IMAGE_INITIALIZERS.md).
+
 ## First external Objective-C iOS app compatibility checkpoint (verified on PR head)
 
 - Pinned external target: Bitrise `sample-apps-ios-simple-objc` commit `91fef6f5a096220669934793a9256128bc73f25b`; actual upstream LICENSE is MIT. Original `main.m`, `AppDelegate.m`, `ViewController.m` compiled without Apple SDK using **project-authored declaration-only headers**; link uses **metadata-only unresolved symbol TAPI** (not UIKit/Foundation/CoreData/ObjC implementations).
