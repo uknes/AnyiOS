@@ -56,13 +56,22 @@ public:
                   << "BUNDLE_MODULE_INSTALL_NAME=" << image.install_name << "\n"
                   << "BUNDLE_MODULE_CHAINED_IMPORTS=" << image.chained_imports.size() << "\n";
         if (image.legacy_dyld) {
-            const auto eager = anyios::dyld::inspect_legacy_eager_bind_sites(bytes, image);
+            const auto eager = anyios::dyld::inspect_legacy_eager_bind_stream(bytes, image);
             const auto lazy = anyios::dyld::inspect_legacy_lazy_bind_sites(bytes, image);
             const auto weak = anyios::dyld::inspect_legacy_weak_bind_sites(bytes, image);
-            std::cout << "BUNDLE_MODULE_LEGACY_EAGER_BINDS=" << eager.size() << "\n"
+            std::cout << "BUNDLE_MODULE_LEGACY_EAGER_BINDS=" << eager.sites.size() << "\n"
                       << "BUNDLE_MODULE_LEGACY_LAZY_BINDS=" << lazy.size() << "\n"
                       << "BUNDLE_MODULE_LEGACY_WEAK_BINDS=" << weak.sites.size() << "\n"
-                      << "BUNDLE_MODULE_LEGACY_NON_WEAK_DEFINITIONS=" << weak.non_weak_definitions.size() << "\n";
+                      << "BUNDLE_MODULE_LEGACY_NON_WEAK_DEFINITIONS=" << weak.non_weak_definitions.size() << "\n"
+                      << "BUNDLE_MODULE_LEGACY_EAGER_CURSOR_WRAPS=" << eager.cursor_wraps << "\n";
+            if (eager.first_cursor_wrap) {
+                const auto& wrap = *eager.first_cursor_wrap;
+                std::cout << "LEGACY_CURSOR_WRAP_OPCODE_OFFSET=" << wrap.opcode_offset << "\n"
+                          << "LEGACY_CURSOR_WRAP_BEFORE=" << wrap.before << "\n"
+                          << "LEGACY_CURSOR_WRAP_DELTA=" << wrap.delta << "\n"
+                          << "LEGACY_CURSOR_WRAP_POINTER_ADVANCE=" << wrap.pointer_advance << "\n"
+                          << "LEGACY_CURSOR_WRAP_AFTER=" << wrap.after << "\n";
+            }
         }
         return image;
     }

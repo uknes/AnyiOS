@@ -66,7 +66,19 @@ LegacyBindStream inspect_bind_stream(std::span<const std::byte> file,
     bool record_open=false;
     bool record_bound=false;
     std::uint64_t record_offset=0;
-    auto advance=[&](std::uint64_t d){segment_offset=add(segment_offset,d);};
+    std::uint64_t opcode_offset = 0;
+    auto advance = [&](std::uint64_t delta, std::uint64_t pointer = 0) {
+        const auto before = segment_offset;
+        // dyld's unsigned segment-relative cursor is modular. An encoded
+        // backward step can wrap, but every emitted pointer is still bounded.
+        const auto step = delta + pointer;
+        segment_offset += step;
+        if (step < delta || segment_offset < before) {
+            ++result.cursor_wraps;
+            if (!result.first_cursor_wrap)
+                result.first_cursor_wrap = LegacyCursorWrap{opcode_offset, before, delta, pointer, segment_offset};
+        }
+    };
     auto emit=[&](){
         if (kind==StreamKind::lazy && record_bound)
             throw macho::FormatError("multiple bindings in one lazy record");
@@ -93,6 +105,7 @@ LegacyBindStream inspect_bind_stream(std::span<const std::byte> file,
         sites.push_back({file_at,add(segment.vm_address,segment_offset),symbol,ordinal,addend,weak,record_offset});
     };
     while(p<stream.size()) {
+        opcode_offset=p;
         const auto byte=std::to_integer<std::uint8_t>(stream[p++]);
         const auto cmd=byte&0xf0U,imm=byte&0x0fU;
         if (kind==StreamKind::weak && (cmd==0x10 || cmd==0x20 || cmd==0x30))
@@ -166,7 +179,7 @@ LegacyBindStream inspect_bind_stream(std::span<const std::byte> file,
                 emit();advance(8);break;
             case 0xa0:
                 if(imm)throw macho::FormatError("invalid legacy bind skip immediate");
-                {auto skip=uleb(stream,p);emit();advance(add(8,skip));}break;
+                {auto skip=uleb(stream,p);emit();advance(skip,8);}break;
             case 0xb0:
                 emit();advance(8U+std::uint64_t(imm)*8U);break;
             case 0xc0: {
@@ -174,8 +187,8 @@ LegacyBindStream inspect_bind_stream(std::span<const std::byte> file,
                 const auto count=uleb(stream,p),skip=uleb(stream,p);
                 if(count>kMaxSites-sites.size())
                     throw macho::FormatError("legacy bind count cap exceeded");
-                const auto stride=add(8,skip);
-                for(std::uint64_t i=0;i<count;++i){emit();advance(stride);}
+
+                for(std::uint64_t i=0;i<count;++i){emit();advance(skip,8);}
                 break;
             }
             default:
@@ -187,9 +200,13 @@ LegacyBindStream inspect_bind_stream(std::span<const std::byte> file,
     return result;
 }
 } // namespace
+LegacyBindStream inspect_legacy_eager_bind_stream(
+    std::span<const std::byte> file, const macho::Image& image) {
+    return inspect_bind_stream(file,image,StreamKind::eager);
+}
 std::vector<LegacyBindSite> inspect_legacy_eager_bind_sites(
     std::span<const std::byte> file, const macho::Image& image) {
-    return inspect_bind_stream(file,image,StreamKind::eager).sites;
+    return inspect_legacy_eager_bind_stream(file,image).sites;
 }
 LegacyBindStream inspect_legacy_weak_bind_sites(
     std::span<const std::byte> file, const macho::Image& image) {

@@ -214,9 +214,9 @@ jobs:
       - name: Test guest module scope and thread errors on Linux ARM64
         run: ctest --test-dir build-native -R "^guest-dlfcn-scope-and-errors$" --output-on-failure
       - name: Build bundle dependency and transactional image contracts on Linux ARM64
-        run: cmake --build build-native --target anyios-bundle-probe anyios-dyld-plan-tests anyios-linked-image-tests --parallel 2
+        run: cmake --build build-native --target anyios-bundle-probe anyios-dyld-plan-tests anyios-linked-image-tests anyios-legacy-bind-tests --parallel 2
       - name: Test bundle metadata and atomic image sets on Linux ARM64
-        run: ctest --test-dir build-native -R "^(bundle-metadata-filesystem-contract|dyld-dependency-plan|macho-linked-image-stage)$" --output-on-failure
+        run: ctest --test-dir build-native -R "^(bundle-metadata-filesystem-contract|dyld-dependency-plan|macho-linked-image-stage|macho-legacy-bind-opcodes)$" --output-on-failure
       - name: Compile owned iOS-target ARM64 Mach-O
         run: clang --target=arm64-apple-ios13.0 -O2 -ffreestanding -c tests/fixtures/arm64_sample.c -o build-native/owned-arm64.o
       - name: Execute compiled Mach-O function on ARM64 Linux
@@ -234,9 +234,9 @@ jobs:
       - name: Run native ARM64 fixture tests
         run: ctest --test-dir build-native --build-config Release -R "^native-arm64-owned$" --output-on-failure
       - name: Build bundle dependency and transactional image contracts on Windows ARM64
-        run: cmake --build build-native --config Release --target anyios-bundle-probe anyios-dyld-plan-tests anyios-linked-image-tests --parallel 2
+        run: cmake --build build-native --config Release --target anyios-bundle-probe anyios-dyld-plan-tests anyios-linked-image-tests anyios-legacy-bind-tests --parallel 2
       - name: Test bundle metadata and atomic image sets on Windows ARM64
-        run: ctest --test-dir build-native --build-config Release -R "^(bundle-metadata-filesystem-contract|dyld-dependency-plan|macho-linked-image-stage)$" --output-on-failure
+        run: ctest --test-dir build-native --build-config Release -R "^(bundle-metadata-filesystem-contract|dyld-dependency-plan|macho-linked-image-stage|macho-legacy-bind-opcodes)$" --output-on-failure
       - name: Build guest Objective-C metadata registry on Windows ARM64
         run: cmake --build build-native --config Release --target anyios-objc-registry-tests --parallel 2
       - name: Test local Objective-C class registry on Windows ARM64
