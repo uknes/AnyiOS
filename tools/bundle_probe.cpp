@@ -55,6 +55,8 @@ public:
                   << "BUNDLE_MODULE_FILE_BYTES=" << size << "\n"
                   << "BUNDLE_MODULE_INSTALL_NAME=" << image.install_name << "\n"
                   << "BUNDLE_MODULE_CHAINED_IMPORTS=" << image.chained_imports.size() << "\n";
+        for (const auto& runpath : image.rpaths)
+            std::cout << "BUNDLE_MODULE_RPATH=" << runpath << "\n";
         if (image.legacy_dyld) {
             const auto eager = anyios::dyld::inspect_legacy_eager_bind_stream(bytes, image);
             const auto lazy = anyios::dyld::inspect_legacy_lazy_bind_sites(bytes, image);
@@ -92,12 +94,16 @@ int main(int argc, char** argv) {
         const auto graph = anyios::dyld::discover_dependencies("Bundle/" + std::string(argv[2]),
             [&](std::string_view path) { return reader(path); });
         std::cout << "BUNDLE_DISCOVERY=metadata-only\nBUNDLE_MODULE_COUNT=" << graph.modules.size() << "\n";
+        for (const auto& runpath : graph.external_runpaths) {
+            std::cout << "BUNDLE_EXTERNAL_RPATH_LOADER=" << runpath.loader << "\n"
+                      << "BUNDLE_EXTERNAL_RPATH=" << runpath.path << "\n";
+        }
         for (const auto& issue : graph.unresolved) {
             std::cout << "BUNDLE_UNRESOLVED_LOADER=" << issue.loader << "\n"
                       << "BUNDLE_UNRESOLVED_DEPENDENCY=" << issue.install_name << "\n"
                       << "BUNDLE_UNRESOLVED_WEAK=" << issue.weak << "\n";
         }
-        std::cout << "BUNDLE_DEPENDENCY_CLOSURE=" << (graph.unresolved.empty() ? "discovered" : "incomplete")
+        std::cout << "BUNDLE_DEPENDENCY_CLOSURE=" << (graph.unresolved.empty() && graph.external_runpaths.empty() ? "discovered" : "incomplete")
                   << "\nBUNDLE_STAGING=not-attempted\nBUNDLE_GUEST_EXECUTION=not-attempted\n";
         return 0;
     } catch (const std::exception& error) {
