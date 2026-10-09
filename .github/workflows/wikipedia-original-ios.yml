@@ -8,6 +8,7 @@ on:
       - 'include/**'
       - 'CMakeLists.txt'
       - 'tools/bundle_probe.cpp'
+      - 'tools/app_general_entry_probe.cpp'
       - '.github/workflows/wikipedia-original-ios.yml'
       - 'compatibility/targets/wikipedia-ios.json'
       - 'tools/app_coverage.py'
