@@ -77,6 +77,33 @@ class AppCoverageTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "expected an ordinary"):
                 app_coverage.app_binary_paths(bundle / "Real")
 
+    def test_bundle_manifest_verification_checks_every_binary(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as temp:
+            bundle = Path(temp) / "App.app"
+            bundle.mkdir()
+            data = bytes(valid_macho())
+            (bundle / "App").write_bytes(data)
+            (bundle / "App.debug.dylib").write_bytes(data)
+            records = [{"path": name, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
+                       for name in ("App", "App.debug.dylib")]
+            report = {"binaries": records}
+            self.assertEqual(app_coverage.verify_report(bundle, report), 2)
+            altered = bytearray(data)
+            altered[-1] ^= 1
+            (bundle / "App.debug.dylib").write_bytes(altered)
+            with self.assertRaisesRegex(ValueError, "identity changed: App.debug.dylib"):
+                app_coverage.verify_report(bundle, report)
+            (bundle / "App.debug.dylib").write_bytes(data)
+            with self.assertRaisesRegex(ValueError, "set changed"):
+                app_coverage.verify_report(bundle, {"binaries": records[:1]})
+            with self.assertRaisesRegex(ValueError, "duplicate"):
+                app_coverage.verify_report(bundle, {"binaries": [records[0], records[0]]})
+            with self.assertRaisesRegex(ValueError, "set changed"):
+                app_coverage.verify_report(bundle, {"binaries": [dict(records[0], path="../outside")]})
+            with self.assertRaisesRegex(ValueError, "manifest"):
+                app_coverage.verify_report(bundle, {"binaries": []})
+
     def test_refuse_invalid_candidate_inventory(self):
         with self.assertRaisesRegex(ValueError, "duplicate"):
             app_coverage.inventory_symbols({"schema": 1, "groups": [

@@ -4,6 +4,7 @@
 #include <anyios/macho.hpp>
 
 #include <algorithm>
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <span>
@@ -56,17 +57,21 @@ OwnedLinkedPair stage_owned_linked_pair(
     if (resolved.size() != 1) {
         throw macho::FormatError("owned dependency did not resolve exactly one symbol");
     }
-    cpu::GuestMemory::MappingJournal journal(memory);
-    const LinkedImageOptions options{true, &journal};
-    const auto library_result = stage_linked_image(library, memory, library_base, {}, options);
-    const auto executable_result = stage_linked_image(
-        executable, memory, executable_base, resolved, options);
-    if (!executable_result.guest_entry ||
-        !memory.fetch(resolved[0]).has_value()) {
-        throw macho::FormatError("owned cross-library call target is not executable");
+    bool executable_target = false;
+    for (const auto& segment : dylib_image.segments) {
+        if (!(segment.init_protection & 4u) || segment.vm_address > UINT64_MAX - slide) continue;
+        const auto begin = segment.vm_address + slide;
+        if (resolved[0] >= begin && resolved[0] - begin <= segment.vm_size &&
+            segment.vm_size - (resolved[0] - begin) >= 4 && resolved[0] % 4 == 0) {
+            executable_target = true;
+        }
     }
-    journal.commit();
-    return {executable_result.guest_entry, resolved[0],
-            executable_result.patched_pointers, library_result.patched_pointers};
+    if (!executable_target) throw macho::FormatError("owned cross-library call target is not executable");
+    const std::array<LinkedImageInput, 2> inputs{{
+        {library, library_base, {}}, {executable, executable_base, resolved}
+    }};
+    const auto staged = stage_linked_images(inputs, memory, true);
+    return {staged[1].guest_entry, resolved[0],
+            staged[1].patched_pointers, staged[0].patched_pointers};
 }
 }
