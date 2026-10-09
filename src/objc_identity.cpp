@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <limits>
 #include <stdexcept>
+#include <utility>
 
 namespace anyios::darwin {
 namespace {
@@ -50,7 +51,12 @@ ObjcIdentityProbe::ObjcIdentityProbe(
             type_ranges_.emplace_back(start, start + section.size);
             continue;
         }
-        if (section.name == "__cstring" || section.name == "__objc_classname") {
+        if (section.name == "__cstring") {
+            class_name_ranges_.emplace_back(start, start + section.size);
+            type_ranges_.emplace_back(start, start + section.size);
+            continue;
+        }
+        if (section.name == "__objc_classname") {
             class_name_ranges_.emplace_back(start, start + section.size);
             continue;
         }
@@ -185,10 +191,9 @@ std::optional<GuestObjcMethod> ObjcIdentityProbe::local_instance_method(
         if ((*imp & 3) != 0 || !memory_.fetch(*imp)) {
             return std::nullopt;
         }
-        // Some older images store method encodings in __cstring. This is
-        // still a bounded guest section, not an arbitrary process pointer.
+        // Only a method-type or compiler cstring section may hold types.
+        // Never reinterpret a class-name-only section as method ABI evidence.
         auto types = bounded_ascii(*encoding, type_ranges_);
-        if (!types) types = bounded_ascii(*encoding, class_name_ranges_);
         return GuestObjcMethod{*selector, *imp, std::move(types)};
     }
     return std::nullopt;

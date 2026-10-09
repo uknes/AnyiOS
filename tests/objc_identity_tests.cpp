@@ -36,6 +36,8 @@ anyios::macho::Image make_image() {
                               0x100011000, 0x1200, 0x11000, 0, false, 0});
     image.sections.push_back({"__objc_methtype", "__TEXT",
                               0x100006000, 0x100, 0x6000, 0, false, 2});
+    image.sections.push_back({"__objc_classname", "__TEXT",
+                              0x100007000, 0x80, 0x7000, 0, false, 2});
     return image;
 }
 
@@ -79,6 +81,8 @@ void test_clang_guest_method_lookup() {
             reinterpret_cast<const std::byte*>(class_name), sizeof(class_name))) ||
         !memory.load(0x16000, std::span<const std::byte>(
             reinterpret_cast<const std::byte*>(types), sizeof(types))) ||
+        !memory.load(0x17000, std::span<const std::byte>(
+            reinterpret_cast<const std::byte*>(types), sizeof(types))) ||
         !memory.write(0x18000, 0x20000, 8) ||
         !memory.write(0x20000 + 32, 0x21000, 8) ||
         !memory.write(0x21000 + 4, 0, 4) ||
@@ -106,6 +110,13 @@ void test_clang_guest_method_lookup() {
     if (probe.local_instance_method(0x20000, "doesNotExist") ||
         probe.local_instance_method(0x24000, "viewDidLoad")) {
         throw std::runtime_error("unsupported guest ObjC method dispatched");
+    }
+    if (!memory.write(0x22000 + 16, 0x17000, 8)) {
+        throw std::runtime_error("cannot mutate method type into class-name section");
+    }
+    const auto name_only = probe.local_instance_method(0x20000, "viewDidLoad");
+    if (!name_only || name_only->type_encoding) {
+        throw std::runtime_error("class-name-only Objective-C section accepted as ABI");
     }
     if (!memory.write(0x22000 + 16, 0x160ff, 8)) {
         throw std::runtime_error("cannot mutate ObjC method type pointer");

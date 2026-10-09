@@ -223,6 +223,10 @@ jobs:
         run: cmake --build build-native --config Release --target anyios-objc-selector-tests --parallel 2
       - name: Test compiler guest selector alias registry on Windows ARM64
         run: ctest --test-dir build-native --build-config Release -R "^objc-local-selector-identity$" --output-on-failure
+      - name: Build bounded Objective-C method ABI contract on Windows ARM64
+        run: cmake --build build-native --config Release --target anyios-objc-signature-tests --parallel 2
+      - name: Test original method type encoding contract on Windows ARM64
+        run: ctest --test-dir build-native --build-config Release -R "^objc-bounded-method-abi$" --output-on-failure
       - name: Build guest Objective-C lifetime contract on Windows ARM64
         run: cmake --build build-native --config Release --target anyios-objc-objects-tests --parallel 2
       - name: Test guest Objective-C lifetime contract on Windows ARM64
