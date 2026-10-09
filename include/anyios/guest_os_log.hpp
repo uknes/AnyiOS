@@ -16,6 +16,9 @@ public:
     GuestOsLogRegistry(cpu::GuestMemory& memory, std::uint64_t guest_base);
     std::optional<std::uint64_t> create(std::uint64_t subsystem, std::uint64_t category);
     bool owns(std::uint64_t token) const noexcept;
+    // Apple os_log_type_enabled subset under a fixed *guest* log policy.
+    // Missing/forged handles or unknown types => nullopt (fail closed).
+    std::optional<bool> type_enabled(std::uint64_t guest_log, std::uint64_t type) const noexcept;
     std::size_t size() const noexcept { return entries_.size(); }
 private:
     struct Entry { std::string subsystem, category; };
