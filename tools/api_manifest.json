@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "note": "Only verified guest ABI subset; does not imply full Darwin library availability. Memory-string PR #3 remains unmerged.",
+  "symbols": {
+    "_malloc": {
+      "status": "implemented",
+      "scope": "Owned SDK-free C fixture only; 64 KiB bounded heap; CI 37763147842"
+    },
+    "_write": {
+      "status": "implemented",
+      "scope": "Owned stdout/stderr write subset; CI 37763147842"
+    },
+    "_exit": {
+      "status": "implemented",
+      "scope": "Owned fixture termination; CI 37766283476"
+    },
+    "__tlv_bootstrap": {
+      "status": "partial",
+      "scope": "Owned sequential guest-thread TLS fixture only; CI 37770789789"
+    },
+    "_UIApplicationMain": {
+      "status": "not implemented"
+    },
+    "_objc_msgSend": {
+      "status": "not implemented"
+    },
+    "_objc_autoreleasePoolPush": {
+      "status": "not implemented"
+    },
+    "_objc_autoreleasePoolPop": {
+      "status": "not implemented"
+    },
+    "_NSStringFromClass": {
+      "status": "not implemented"
+    }
+  }
+}

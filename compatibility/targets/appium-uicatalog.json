@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "appium-uicatalog",
+  "name": "Appium UIKitCatalog (native UIKit interaction test)",
+  "license": "Apache-2.0",
+  "upstream": "https://github.com/appium/ios-uicatalog",
+  "upstream_revision": "5855a3e05ec047c796514c93ce4dd22490af1905",
+  "upstream_license": "https://github.com/appium/ios-uicatalog/blob/5855a3e05ec047c796514c93ce4dd22490af1905/LICENSE",
+  "original_project": "UIKitCatalog/UIKitCatalog.xcodeproj",
+  "original_scheme": "UIKitCatalog",
+  "original_sources_edited": false,
+  "original_binary_edited": false,
+  "windows_x64_ui": "not-tested",
+  "windows_arm64_ui": "not-tested",
+  "windows_native_arm64_guest_execution": "not-tested",
+  "winarm64_dynarmic_x64_emulation": "not-tested",
+  "target_scope": "Original iPhoneOS ARM64 UIKit buttons, alerts, sliders, switches, fields, navigation, WKWebView. Visual input proof must come from guest, not host recreation.",
+  "runtime_gates_proven": 0
+}

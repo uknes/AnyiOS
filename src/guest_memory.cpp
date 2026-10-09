@@ -8,7 +8,7 @@ namespace anyios::cpu {
 GuestMemory::GuestMemory(std::uint64_t base, std::size_t size)
     : base_(base) {
     if (size == 0 || size % page_size != 0 ||
-        size > 64 * 1024 * 1024 ||
+        size > max_bytes ||
         base % page_size != 0 ||
         base > std::numeric_limits<std::uint64_t>::max() - size) {
         throw std::invalid_argument("invalid guest address-space configuration");

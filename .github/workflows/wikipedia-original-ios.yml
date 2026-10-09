@@ -1,0 +1,339 @@
+name: Wikipedia original iPhoneOS ARM64 compatibility intake
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/wikipedia-original-ios.yml'
+      - 'compatibility/targets/wikipedia-ios.json'
+      - 'tools/app_coverage.py'
+      - 'tests/test_app_coverage.py'
+      - '_docs/WIKIPEDIA_TARGET.md'
+
+permissions:
+  contents: read
+
+jobs:
+  audited-intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate strict static exposure accounting and no false guest execution
+        run: python3 -m unittest discover -s tests -p test_app_coverage.py -v
+      - name: Confirm 269 candidate API / 239 gate inventories remain scoped
+        run: python3 tools/progress.py docs --check
+
+  upstream-iphoneos-build:
+    needs: audited-intake
+    # The pinned upstream WMFComponents requires Swift tools 6.2; macOS 15
+    # default Xcode 16.x has Swift 6.1 and fails resolution with exit 74.
+    runs-on: macos-26
+    timeout-minutes: 55
+    outputs:
+      built: ${{ steps.state.outputs.built }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch exact unmodified MIT upstream revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --filter=blob:none https://github.com/wikimedia/wikipedia-ios.git "$RUNNER_TEMP/wikipedia-ios"
+          git -C "$RUNNER_TEMP/wikipedia-ios" checkout --detach d2b887fc8cefc42a4c06a1f9c82c6b1ac056d76c
+          test "$(git -C "$RUNNER_TEMP/wikipedia-ios" rev-parse HEAD)" = d2b887fc8cefc42a4c06a1f9c82c6b1ac056d76c
+          grep -q 'MIT License' "$RUNNER_TEMP/wikipedia-ios/LICENSE.txt"
+          test -z "$(git -C "$RUNNER_TEMP/wikipedia-ios" status --porcelain --untracked-files=no)"
+          # Upstream's own CI setup creates its gitignored OpenSourceDebug.xcconfig.
+          # It does not edit application source, Xcode project, or resources.
+          ( cd "$RUNNER_TEMP/wikipedia-ios" && bash scripts/setup_bundle_id ci )
+          test -f "$RUNNER_TEMP/wikipedia-ios/Configurations/OpenSourceDebug.xcconfig"
+          test -z "$(git -C "$RUNNER_TEMP/wikipedia-ios" status --porcelain --untracked-files=no)"
+          xcodebuild -version
+          swift --version
+      - name: Build ORIGINAL Wikipedia iOS device app without signing or project edits
+        id: build
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/compat-output"
+          xcodebuild -project "$RUNNER_TEMP/wikipedia-ios/Wikipedia.xcodeproj" \
+            -scheme Wikipedia -configuration Debug -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/anyios-upstream-build" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            build > "$GITHUB_WORKSPACE/compat-output/xcodebuild.log" 2>&1
+          code=$?
+          set -e
+          echo "XCODEBUILD_EXIT=$code" >> "$GITHUB_ENV"
+          echo "Original pinned source unchanged; upstream build exit code $code"
+          tail -n 80 "$GITHUB_WORKSPACE/compat-output/xcodebuild.log"
+          exit 0
+      - name: Record exact outcome, binary hash and 269/239 static exposure
+        id: state
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p compat-output
+          APP="$RUNNER_TEMP/anyios-upstream-build/Build/Products/Debug-iphoneos/Wikipedia.app"
+          if [[ "$XCODEBUILD_EXIT" == 0 && -f "$APP/Info.plist" && -f "$APP/Wikipedia" ]]; then
+            echo "built=true" >> "$GITHUB_OUTPUT"
+            python3 tools/app_coverage.py "$APP" --output compat-output/wikipedia-coverage.json
+            cp compat-output/wikipedia-coverage.json compat-output/wikipedia-report.json
+            tar -czf compat-output/wikipedia-original-bundle.tar.gz -C "$(dirname "$APP")" Wikipedia.app
+            echo "Source SHA pinned. Original ARM64 app built. STATIC ONLY, not guest run."
+          else
+            echo "built=false" >> "$GITHUB_OUTPUT"
+            python3 - <<'PY'
+          import json, pathlib, os
+          out = pathlib.Path("compat-output/wikipedia-report.json")
+          out.write_text(json.dumps({
+              "schema": 1, "target": "wikipedia-ios",
+              "original_revision": "d2b887fc8cefc42a4c06a1f9c82c6b1ac056d76c",
+              "status": "blocked-upstream-build",
+              "xcodebuild_exit": int(os.environ["XCODEBUILD_EXIT"]),
+              "source_edited": False, "arm64_guest_executed": False,
+              "windows_x64_window": False, "windows_arm64_window": False,
+              "compatibility_gates_promoted": 0
+          }, indent=2)+"\n")
+          PY
+            echo "BLOCKED-UPSTREAM-BUILD. No runnable binary; see retained Xcode log."
+          fi
+      - name: Publish honest build and static gap evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: wikipedia-original-ios-intake
+          path: compat-output/
+          if-no-files-found: error
+          retention-days: 7
+
+  windows-unchanged-app-stage:
+    needs: upstream-iphoneos-build
+    if: needs.upstream-iphoneos-build.outputs.built == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: x86-64
+            runner: windows-latest
+          - architecture: ARM64
+            runner: windows-11-vs2026-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: wikipedia-original-ios-intake
+          path: compat-output
+      - name: Extract EXACT original iPhoneOS device app on Windows
+        shell: pwsh
+        run: |
+          if (-not (Test-Path compat-output/wikipedia-original-bundle.tar.gz)) {
+            throw "Expected original upstream device binary; no synthetic fallback"
+          }
+          mkdir -Force compat-output/original | Out-Null
+          tar -xzf compat-output/wikipedia-original-bundle.tar.gz -C compat-output/original
+          if (-not (Test-Path compat-output/original/Wikipedia.app/Wikipedia)) {
+            throw "Original upstream ARM64 Mach-O missing"
+          }
+      - name: Build native Windows Mach-O stage inspector
+        shell: pwsh
+        run: |
+          cmake -S . -B build-original-stage -DBUILD_TESTING=OFF
+          if ($LASTEXITCODE -ne 0) { throw "CMake staging configuration failed" }
+          cmake --build build-original-stage --config Release --target anyios-inspect anyios-app-stage-probe --parallel 2
+          if ($LASTEXITCODE -ne 0) { throw "Cannot build native stage probe" }
+      - name: Stage original ARM64 iOS executable; report first missing guest ABI
+        shell: pwsh
+        run: |
+          $binary = "compat-output/original/Wikipedia.app/Wikipedia"
+          $lines = & ./build-original-stage/Release/anyios-app-stage-probe.exe $binary 2>&1
+          $code = $LASTEXITCODE
+          $lines | Out-File "compat-output/stage-${{ matrix.architecture }}.txt"
+          $lines | ForEach-Object { Write-Output $_ }
+          Write-Output "APP=original-pinned-Wikipedia; HOST=${{ matrix.architecture }}; STAGING_EXIT=$code; EXECUTION=not-attempted; WINDOW=not-created"
+          if ($code -ne 0 -and $code -ne 3) {
+            throw "Unexpected native Windows guest-stage crash or status"
+          }
+      - name: Preserve honest Windows ABI blocker
+        uses: actions/upload-artifact@v4
+        with:
+          name: wikipedia-windows-stage-${{ matrix.architecture }}
+          path: compat-output/stage-${{ matrix.architecture }}.txt
+          retention-days: 7
+          if-no-files-found: error
+
+  windows-x64-original-arm64-entry:
+    needs: upstream-iphoneos-build
+    if: needs.upstream-iphoneos-build.outputs.built == 'true'
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: wikipedia-original-ios-intake
+          path: compat-output
+      - name: Rehydrate original unchanged iOS bundle and verify compiler hash
+        shell: pwsh
+        run: |
+          if (-not (Test-Path compat-output/wikipedia-original-bundle.tar.gz)) {
+            throw "Original source-verified Wikipedia app bundle missing; no synthetic fallback"
+          }
+          mkdir -Force compat-output/original | Out-Null
+          tar -xzf compat-output/wikipedia-original-bundle.tar.gz -C compat-output/original
+          if ($LASTEXITCODE -ne 0) { throw "Original app extraction failed" }
+          $binary = "compat-output/original/Wikipedia.app/Wikipedia"
+          $report = Get-Content compat-output/wikipedia-report.json -Raw | ConvertFrom-Json
+          $entry = @($report.binaries | Where-Object { $_.path -eq "Wikipedia" })
+          if ($report.target -ne "wikipedia-ios" -or $report.api_inventory_total -ne 269 -or
+              $report.runtime_gate_inventory_total -ne 239 -or
+              $entry.Count -ne 1 -or $entry[0].status -ne "static-inspected") {
+            throw "Unverified original arm64 Mach-O analysis provenance"
+          }
+          $actual = (Get-FileHash -Algorithm SHA256 $binary).Hash.ToLowerInvariant()
+          if ($actual -ne $entry[0].sha256) {
+            throw "Original ARM64 Wikipedia executable hash changed after source build"
+          }
+          Write-Output "ORIGINAL_ARM64_BINARY=hash-verified-from-same-run"
+      - name: Install vetted Dynarmic source-translation prerequisites
+        shell: pwsh
+        run: |
+          nuget install boost -Version 1.87.0 -OutputDirectory "$env:RUNNER_TEMP\anyios-deps" -ExcludeVersion -NonInteractive
+          if ($LASTEXITCODE -ne 0) { throw "Boost dependency not installed" }
+          $found = Get-ChildItem -Path "$env:RUNNER_TEMP\anyios-deps\boost" -Filter version.hpp -Recurse | Where-Object { $_.Directory.Name -eq 'boost' } | Select-Object -First 1
+          if (-not $found) { throw "vetted Boost version.hpp unavailable" }
+          $include = Split-Path -Parent $found.Directory.FullName
+          "BOOST_INCLUDEDIR=$include" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Configure and build general ARM64 original instruction probe
+        shell: pwsh
+        run: |
+          cmake -S . -B build-wikipedia-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
+          if ($LASTEXITCODE -ne 0) { throw "Could not configure Dynarmic runtime" }
+          cmake --build build-wikipedia-guest --config Release --target anyios-general-entry-probe anyios-os-log-tests anyios-getenv-tests anyios-libsystem-tests --parallel 2
+          if ($LASTEXITCODE -ne 0) { throw "Could not compile general ARM64 guest probe" }
+      - name: Validate bounded guest logging create ABI
+        shell: pwsh
+        run: |
+          & ./build-wikipedia-guest/Release/anyios-os-log-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Scoped Apple ARM64 guest os_log_create failed" }
+      - name: Validate bounded real guest getenv envp ABI without host pointers
+        shell: pwsh
+        run: |
+          & ./build-wikipedia-guest/Release/anyios-getenv-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Guest-only getenv/envp ABI contract failed" }
+      - name: Validate bounded guest memory operations and failure atomicity
+        shell: pwsh
+        run: |
+          & ./build-wikipedia-guest/Release/anyios-libsystem-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Bounded libSystem contract failed" }
+      - name: Execute ORIGINAL Wikipedia ARM64 entry to first actual ABI failure
+        shell: pwsh
+        run: |
+          $binary = "compat-output/original/Wikipedia.app/Wikipedia"
+          $trace = & ./build-wikipedia-guest/Release/anyios-general-entry-probe.exe $binary 2>&1
+          $code = $LASTEXITCODE
+          $trace | Out-File compat-output/wikipedia-guest-x64-trace.txt
+          $trace | ForEach-Object { Write-Output $_ }
+          if ($code -ne 0 -and $code -ne 3) {
+            throw "Unexpected original ARM64 guest execution process crash: $code"
+          }
+          if ($trace -match "ENTRY_PROBE=original-unchanged-arm64-instructions" -and
+              $trace -match "GUEST_STEPS=[1-9][0-9]*" -and
+              $trace -match "SUPPORTED_NARROW_IMPORT=_os_log_create" -and
+              $trace -match "SUPPORTED_NARROW_IMPORT=_getenv" -and
+              $trace -match "SUPPORTED_NARROW_IMPORT=_os_log_type_enabled" -and
+              $trace -match "SUPPORTED_NARROW_IMPORT=_memcpy" -and
+              $trace -match "FIRST_RUNTIME_BLOCKER=" -and
+              -not ($trace -match "FIRST_RUNTIME_BLOCKER=_os_log_create") -and
+              -not ($trace -match "FIRST_RUNTIME_BLOCKER=_getenv") -and
+              -not ($trace -match "FIRST_RUNTIME_BLOCKER=_os_log_type_enabled") -and
+              -not ($trace -match "FIRST_RUNTIME_BLOCKER=_memcpy")) {
+            Write-Output "RESULT=original-wikipedia-past-bounded-guest-memcpy"
+          } elseif ($code -eq 3 -and
+                    $trace -match "ENTRY_PROBE=not-started" -and
+                    $trace -match "FIRST_LOADER_BLOCKER=") {
+            Write-Output "RESULT=blocked-original-wikipedia-MachO-loader-before-execution"
+          } else {
+            throw "Missing original ARM64 guest trace or explicit loader blocker"
+          }
+          Write-Output "WINDOW=not-created; GUEST_UI=not-supported; INPUT=not-supported; COUNTS_PROMOTED=0"
+      - name: Publish bounded original ARM64 instruction trace (NOT a UIKit app window)
+        uses: actions/upload-artifact@v4
+        with:
+          name: wikipedia-original-arm64-dynarmic-first-fault
+          path: compat-output/wikipedia-guest-x64-trace.txt
+          if-no-files-found: error
+          retention-days: 7
+      - name: Export identical Windows x64 Dynarmic executable for WinARM64 x64 emulation
+        uses: actions/upload-artifact@v4
+        with:
+          name: wikipedia-anyios-dynarmic-x64-host
+          path: build-wikipedia-guest/Release/anyios-general-entry-probe.exe
+          if-no-files-found: error
+          retention-days: 7
+
+  windows-arm64-x64-emulated-original-entry:
+    needs: [upstream-iphoneos-build, windows-x64-original-arm64-entry]
+    if: needs.upstream-iphoneos-build.outputs.built == 'true'
+    runs-on: windows-11-vs2026-arm
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: wikipedia-original-ios-intake
+          path: compat-output
+      - uses: actions/download-artifact@v4
+        with:
+          name: wikipedia-anyios-dynarmic-x64-host
+          path: x64-runtime
+      - name: Confirm Windows native host is ARM64 with x64 emulation
+        shell: pwsh
+        run: |
+          $platform = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
+          Write-Output "NATIVE_HOST_ARCH=$platform"
+          if ($platform -ne "Arm64") { throw "Not a Windows ARM64 runner" }
+          if (-not (Test-Path x64-runtime/anyios-general-entry-probe.exe)) {
+            throw "Previously verified source-built x64 Dynarmic runtime missing"
+          }
+      - name: Verify original source-built ARM64 Mach-O binary identity
+        shell: pwsh
+        run: |
+          mkdir -Force compat-output/original | Out-Null
+          tar -xzf compat-output/wikipedia-original-bundle.tar.gz -C compat-output/original
+          if ($LASTEXITCODE -ne 0) { throw "Cannot extract original Wikipedia arm64 app" }
+          $binary = "compat-output/original/Wikipedia.app/Wikipedia"
+          $report = Get-Content compat-output/wikipedia-report.json -Raw | ConvertFrom-Json
+          $original = @($report.binaries | Where-Object { $_.path -eq "Wikipedia" })
+          if ($report.target -ne "wikipedia-ios" -or $original.Count -ne 1) {
+            throw "Original source provenance unverifiable"
+          }
+          if ((Get-FileHash $binary -Algorithm SHA256).Hash.ToLowerInvariant() -ne $original[0].sha256) {
+            throw "Windows ARM64 saw a substituted or modified Wikipedia guest app"
+          }
+      - name: Execute unchanged Apple ARM64 guest through Windows x64 emulation plus Dynarmic
+        shell: pwsh
+        run: |
+          $output = & ./x64-runtime/anyios-general-entry-probe.exe compat-output/original/Wikipedia.app/Wikipedia 2>&1
+          $code = $LASTEXITCODE
+          $output | Out-File compat-output/wikipedia-winarm64-x64-emulation.txt
+          $output | ForEach-Object { Write-Output $_ }
+          if ($code -ne 0 -and $code -ne 3) { throw "WinARM64 x64-emu Dynarmic host crashed" }
+          if (-not ($output -match "ENTRY_PROBE=original-unchanged-arm64-instructions") -or
+              -not ($output -match "GUEST_STEPS=[1-9][0-9]*") -or
+              -not ($output -match "SUPPORTED_NARROW_IMPORT=_os_log_create") -or
+              -not ($output -match "FIRST_RUNTIME_BLOCKER=") -or
+              $output -match "FIRST_RUNTIME_BLOCKER=_os_log_create") {
+            throw "Original Wikipedia ARM64 guest did not progress beyond os_log_create through WinARM64 x64 emulation"
+          }
+          Write-Output "HOST=Windows-ARM64; X64-EMULATION=yes; GUEST=original-ARM64-via-Dynarmic"
+          Write-Output "NATIVE_APPLE_ARM64_EXECUTION=no; WINDOW=not-created; GUEST_UI=unsupported"
+      - name: Preserve real Windows ARM64 host guest-execution trace
+        uses: actions/upload-artifact@v4
+        with:
+          name: wikipedia-winarm64-x64-emulated-arm64-guest-trace
+          path: compat-output/wikipedia-winarm64-x64-emulation.txt
+          if-no-files-found: error
+          retention-days: 7

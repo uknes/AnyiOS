@@ -1,0 +1,146 @@
+name: Pinned iOS app runtime boundary
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  pinned-arm64-ios-app-entry:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download previously CI-verified original MIT iOS app Mach-O
+        uses: actions/download-artifact@v4
+        with:
+          name: anyios-compatibility-probe
+          run-id: 37798177618
+          github-token: ${{ github.token }}
+          path: compat-output
+      - name: Verify exact external binary SHA-256 and upstream metadata
+        shell: pwsh
+        run: |
+          $p = "compat-output/external/BitriseSimpleObjC"
+          if (-not (Test-Path $p)) { throw "Pinned Bitrise external Mach-O unavailable" }
+          $sha = (Get-FileHash -Path $p -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($sha -ne "dbea1e0888f997c6a04ac2d69b69a196a88dd056fb0baf68edf0ab808745bf7d") {
+            throw "Pinned app hash mismatch: $sha"
+          }
+          $metadata = Get-Content compat-output/external/bitrise-build-status.json -Raw | ConvertFrom-Json
+          if ($metadata.commit -ne "91fef6f5a096220669934793a9256128bc73f25b" -or
+              $metadata.status -ne "linked-with-unimplemented-imports" -or
+              $metadata.license -notmatch "MIT") {
+            throw "Unverified upstream revision, status, or license"
+          }
+          Write-Output "Exact previously verified external MIT Objective-C app Mach-O recovered"
+      - name: Install Dynarmic 0BSD build prerequisites
+        shell: pwsh
+        run: |
+          nuget install boost -Version 1.87.0 -OutputDirectory "$env:RUNNER_TEMP\anyios-deps" -ExcludeVersion -NonInteractive
+          $found = Get-ChildItem -Path "$env:RUNNER_TEMP\anyios-deps\boost" -Filter version.hpp -Recurse | Where-Object { $_.Directory.Name -eq 'boost' } | Select-Object -First 1
+          if (-not $found) { throw 'NuGet Boost package did not contain boost/version.hpp' }
+          $include = Split-Path -Parent $found.Directory.FullName
+          "BOOST_INCLUDEDIR=$include" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Configure guest runtime test
+        run: cmake -S . -B build-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
+      - name: Build guest runtime and portable ObjC identity contract
+        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests anyios-objc-objects-tests anyios-objc-registry-tests anyios-objc-selector-tests anyios-objc-signature-tests anyios-objc-dispatch-tests anyios-general-entry-probe --parallel 2
+      - name: Validate local guest ObjC class identity contract
+        shell: pwsh
+        run: |
+          & ./build-guest/Release/anyios-objc-identity-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "ObjC metadata identity contract failed" }
+      - name: Validate guest-owned Objective-C instance lifecycle
+        shell: pwsh
+        run: |
+          & ./build-guest/Release/anyios-objc-objects-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Guest ObjC instance contract failed" }
+      - name: Validate original-format guest Objective-C class registry
+        shell: pwsh
+        run: |
+          & ./build-guest/Release/anyios-objc-registry-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Guest ObjC class registry contract failed" }
+      - name: Validate bounded original guest selector identity
+        shell: pwsh
+        run: |
+          & ./build-guest/Release/anyios-objc-selector-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Guest ObjC compiled selector identity contract failed" }
+      - name: Validate narrow guest Objective-C method ABI signatures
+        shell: pwsh
+        run: |
+          & ./build-guest/Release/anyios-objc-signature-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "ObjC guest method ABI contract failed" }
+      - name: Verify class-owned guest BOOL dispatch boundary
+        shell: pwsh
+        run: |
+          & ./build-guest/Release/anyios-objc-dispatch-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Owned guest Objective-C BOOL dispatch contract failed" }
+      - name: Test general ARM64 guest first original missing import (no UIKit emulation)
+        shell: pwsh
+        run: |
+          $trace = & ./build-guest/Release/anyios-general-entry-probe.exe compat-output/external/BitriseSimpleObjC 2>&1
+          $code = $LASTEXITCODE
+          $trace | ForEach-Object { Write-Output $_ }
+          if ($code -ne 0 -or
+              -not ($trace -match "ENTRY_PROBE=original-unchanged-arm64-instructions") -or
+              -not ($trace -match "FIRST_RUNTIME_BLOCKER=_objc_autoreleasePoolPush") -or
+              -not ($trace -match "GUEST_STEPS=[1-9][0-9]*") -or
+              -not ($trace -match "WINDOW=not-created")) {
+            throw "General unchanged ARM64 entry did not reach genuine first missing import"
+          }
+      - name: Execute pinned third-party iOS app until next genuine blocker
+        shell: pwsh
+        run: |
+          $trace = & ./build-guest/Release/anyios-app-entry-probe.exe compat-output/external/BitriseSimpleObjC 2>&1
+          $exit = $LASTEXITCODE
+          $trace | Out-File compat-output/external/objc-runtime-next-barrier.txt
+          $trace | ForEach-Object { Write-Output $_ }
+          if ($exit -ne 0) { throw "Guest execution error (not a recognized blocker): exit=$exit" }
+          if (-not ($trace -match "SUPPORTED_NARROW_IMPORT=_objc_autoreleasePoolPush")) {
+            throw "Original external app did not execute verified empty-pool push"
+          }
+          if (-not ($trace -match "SUPPORTED_NARROW_IMPORT=_objc_msgSend") -or
+              -not ($trace -match "SELECTOR_IDENTITY=validated-guest-methname")) {
+            throw "Original external app did not dispatch with validated guest selector identity"
+          }
+          if (-not ($trace -match "DIAGNOSTIC_BRIDGE=_NSStringFromClass") -or
+              -not ($trace -match "CLASS_NAME=AppDelegate")) {
+            throw "Original app class-to-name bridge not reached"
+          }
+          if (-not ($trace -match "OBJC_LOCAL_CLASSES_REGISTERED=[1-9]")) {
+            throw "Original app did not register local Objective-C class metadata"
+          }
+          if (-not ($trace -match "GUEST_DELEGATE_INSTANCE=allocated-from-class-ro") -or
+              -not ($trace -match "GUEST_DELEGATE_ISA=original-guest-class") -or
+              -not ($trace -match "GUEST_DELEGATE_RELEASE=verified")) {
+            throw "Original AppDelegate did not receive and release a genuine guest-memory instance"
+          }
+          if (-not ($trace -match "APP_DELEGATE_TYPE_ENCODING=original-guest-validated") -or
+              -not ($trace -match "APP_DELEGATE_ABI=fixed-bool-self-cmd-two-objects")) {
+            throw "Original guest didFinishLaunching method ABI was not validated"
+          }
+          if (-not ($trace -match "APP_DELEGATE_METHOD_RESOLUTION=validated-local-guest-IMP")) {
+            throw "Original app guest IMP was not resolved by the class registry"
+          }
+          if (-not ($trace -match "OBJC_GUEST_MESSAGE_DISPATCH=validated-owned-ISA-original-IMP")) {
+            throw "Original ARM64 callback did not use guarded object/selector dispatcher"
+          }
+          if (-not ($trace -match "APP_DELEGATE_GUEST_IMP=executed") -or
+              -not ($trace -match "APP_DELEGATE_CALLBACK_RESULT=1")) {
+            throw "Original ARM64 AppDelegate callback was not executed successfully"
+          }
+          if (-not ($trace -match "FIRST_RUNTIME_BLOCKER=_UIApplicationMain") -or
+              -not ($trace -match "WINDOW=not-created")) {
+            throw "Probe must fail closed at UIKit instead of claiming GUI launch"
+          }
+      - name: Publish real external ARM64 execution trace
+        uses: actions/upload-artifact@v4
+        with:
+          name: anyios-pinned-mit-objc-entry-trace
+          path: compat-output/external/objc-runtime-next-barrier.txt
+          if-no-files-found: error
+          retention-days: 7

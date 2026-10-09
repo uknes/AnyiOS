@@ -27,6 +27,9 @@ constexpr std::uint32_t lc_exports_trie = 0x80000033;
 constexpr std::uint32_t lc_chained_fixups = 0x80000034;
 constexpr std::uint32_t lc_symtab = 0x2;
 constexpr std::uint32_t lc_dysymtab = 0xb;
+constexpr std::uint32_t lc_dyld_info = 0x22;
+constexpr std::uint32_t lc_dyld_info_only = 0x80000022;
+constexpr std::uint32_t lc_unixthread = 0x5;
 
 class Reader {
 public:
@@ -211,6 +214,30 @@ Image inspect_thin(std::span<const std::byte> bytes) {
             auto& slot = command == lc_chained_fixups ? chained : exports;
             if (slot.has_value()) throw FormatError("duplicate linkedit command");
             slot = range;
+        } else if (command == lc_dyld_info || command == lc_dyld_info_only) {
+            if (size < 48) throw FormatError("truncated LC_DYLD_INFO");
+            if (image.legacy_dyld) throw FormatError("duplicate LC_DYLD_INFO");
+            auto range = [&](std::size_t at, const char* label) -> std::optional<LinkeditRange> {
+                const auto offset = reader.u32(cursor + at, label);
+                const auto length = reader.u32(cursor + at + 4, label);
+                if (!length) return std::nullopt;
+                if (!offset || length > 16U * 1024U * 1024U) {
+                    throw FormatError(std::string(label) + " invalid legacy dyld range");
+                }
+                reader.require(offset, length, label);
+                return LinkeditRange{offset, length};
+            };
+            image.legacy_dyld = LegacyDyldInfo{
+                range(8, "legacy rebase opcodes"),
+                range(16, "legacy bind opcodes"),
+                range(24, "legacy weak-bind opcodes"),
+                range(32, "legacy lazy-bind opcodes"),
+                range(40, "legacy export trie")};
+        } else if (command == lc_unixthread) {
+            if (size < 16 || image.has_unixthread) {
+                throw FormatError("invalid or duplicate LC_UNIXTHREAD");
+            }
+            image.has_unixthread = true;
         } else if (command == lc_encryption_info_64) {
             if (size < 24) throw FormatError("truncated LC_ENCRYPTION_INFO_64");
             const auto offset = reader.u32(cursor + 8, "encrypted offset");

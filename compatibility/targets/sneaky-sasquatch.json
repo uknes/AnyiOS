@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "id": "sneaky-sasquatch",
+  "name": "Sneaky Sasquatch",
+  "developer": "RAC7 Games",
+  "store_url": "https://apps.apple.com/gb/app/sneaky-sasquatch/id1098342019",
+  "publisher_evidence": "https://www.apple.com/newsroom/2026/08/exciting-updates-for-sneaky-sasquatch-come-to-apple-arcade/",
+  "platform_scope": "iPhone/iPad Apple Arcade; no official Android release identified as of 2026-10-08",
+  "copyright": "Proprietary commercial Apple Arcade game. No redistribution rights assumed.",
+  "original_binary": {
+    "obtained": false,
+    "sha256": null,
+    "unmodified_binary_required": true,
+    "drm_bypass": false
+  },
+  "status": {
+    "binary": "not supplied",
+    "static_scan": "not attempted on proprietary binary",
+    "guest_boot": "not executed",
+    "window": "not created",
+    "controls": "not tested"
+  },
+  "runtime_gaps": [
+    "Original legally acquired unprotected ARM64 iOS Mach-O required for binary analysis",
+    "Objective-C + Foundation lifecycle and actual UIApplicationMain",
+    "UIKit scene/view lifecycle, input and rendering",
+    "Potential engine-specific graphics/shader APIs to inventory from original imports",
+    "Asset packaging, iOS sandbox filesystem, permissions, audio, controller handling",
+    "Game services / Apple Arcade entitlement: must be satisfied legitimately",
+    "Host renderer and full cross-framework ABI on Windows x86-64 and Windows ARM64"
+  ],
+  "policy": "Do not alter original app, inject game code, reproduce assets, decrypt FairPlay, fake entitlements or report it running without rendered/input evidence."
+}

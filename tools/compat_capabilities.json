@@ -1,0 +1,1136 @@
+{
+  "schema": 1,
+  "scope": "Explicitly tracked iOS compatibility work gates, not every OS feature, Apple API, or app requirement. Mark completed only to the exact narrow test scope.",
+  "completion_rules": "Verified means CI-backed narrow gate, not full framework. Partial never adds to completed percentage. Pending means not verified, not proof of impossibility.",
+  "groups": [
+    {
+      "name": "Mach-O formats",
+      "items": [
+        {
+          "name": "Thin ARM64 MH_EXECUTE and MH_DYLIB metadata",
+          "status": "verified",
+          "evidence": "https://github.com/uknes/AnyiOS/blob/main/tests/macho_tests.cpp"
+        },
+        {
+          "name": "Fat/FAT64 universal slice selection",
+          "status": "verified",
+          "evidence": "https://github.com/uknes/AnyiOS/blob/main/tests/m1_tests.cpp"
+        },
+        {
+          "name": "LC_MAIN and LC_UNIXTHREAD bootstrap",
+          "status": "pending"
+        },
+        {
+          "name": "Mach-O segment protections and page zero",
+          "status": "pending"
+        },
+        {
+          "name": "Symbol table and export trie lookup",
+          "status": "pending"
+        },
+        {
+          "name": "Encrypted binary detection and explicit rejection",
+          "status": "pending"
+        },
+        {
+          "name": "arm64e pointer authentication compatibility",
+          "status": "pending"
+        },
+        {
+          "name": "Versioned iOS platform and load-command variants",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "dyld and linking",
+      "items": [
+        {
+          "name": "Chained rebases and binds for owned fixtures",
+          "status": "partial",
+          "evidence": "_docs/DYLD_FIXUPS.md"
+        },
+        {
+          "name": "Classic binds, lazy binds and weak symbols",
+          "status": "pending"
+        },
+        {
+          "name": "Multi-dylib recursive load and @rpath resolution",
+          "status": "pending"
+        },
+        {
+          "name": "App/framework nested bundle resolution",
+          "status": "pending"
+        },
+        {
+          "name": "Stable ASLR and image slides",
+          "status": "pending"
+        },
+        {
+          "name": "dyld shared cache equivalent / substitute frameworks",
+          "status": "pending"
+        },
+        {
+          "name": "Objective-C category/selector initialization order",
+          "status": "pending"
+        },
+        {
+          "name": "C/C++ static constructors across images",
+          "status": "pending"
+        },
+        {
+          "name": "Thread local variable fixups across modules",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "ARM64 CPU / ABI",
+      "items": [
+        {
+          "name": "Windows x86-64 Dynarmic owned ARM64 instructions",
+          "status": "verified",
+          "evidence": "https://github.com/uknes/AnyiOS/actions/runs/37804003982"
+        },
+        {
+          "name": "Host-to-guest fixed-argument ABI callbacks",
+          "status": "partial",
+          "evidence": "include/anyios/abi_thunk.hpp"
+        },
+        {
+          "name": "Float/vector NEON and SIMD across callbacks",
+          "status": "pending"
+        },
+        {
+          "name": "Variadic calls, structs and ABI thunks",
+          "status": "pending"
+        },
+        {
+          "name": "Darwin SVC trap and Mach syscall handling",
+          "status": "partial",
+          "evidence": "src/darwin_syscall.cpp"
+        },
+        {
+          "name": "MRS/MSR platform register virtualization",
+          "status": "pending"
+        },
+        {
+          "name": "Exception, unwind and stack walkers",
+          "status": "pending"
+        },
+        {
+          "name": "Hardware atomics and memory ordering",
+          "status": "pending"
+        },
+        {
+          "name": "Instruction cache invalidation and self-modifying code",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Windows ARM64 execution",
+      "items": [
+        {
+          "name": "Trusted native ARM64 owned two-instruction fixture",
+          "status": "verified",
+          "evidence": "https://github.com/uknes/AnyiOS/blob/main/tests/native_a64_smoke.cpp"
+        },
+        {
+          "name": "General native guest Mach-O mapped executable pages",
+          "status": "pending"
+        },
+        {
+          "name": "Darwin service traps in native backend",
+          "status": "pending"
+        },
+        {
+          "name": "Guest TLS state isolation on native backend",
+          "status": "pending"
+        },
+        {
+          "name": "ABI interoperability and native exception safety",
+          "status": "pending"
+        },
+        {
+          "name": "Native ARM64 renderer/app integration",
+          "status": "pending"
+        },
+        {
+          "name": "Windows 11 ARM64 x64-emulated Dynarmic fallback",
+          "status": "partial",
+          "evidence": "https://github.com/uknes/AnyiOS/actions/runs/37823115275"
+        },
+        {
+          "name": "Cross-architecture same-app regression tests",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Guest memory / sandbox",
+      "items": [
+        {
+          "name": "Bounded W^X guest memory ranges",
+          "status": "partial",
+          "evidence": "src/guest_memory.cpp"
+        },
+        {
+          "name": "Large address-space sparse virtual memory",
+          "status": "pending"
+        },
+        {
+          "name": "mmap, mprotect and guard pages",
+          "status": "pending"
+        },
+        {
+          "name": "Memory allocation/free/heap fragmentation",
+          "status": "pending"
+        },
+        {
+          "name": "App sandbox path translation",
+          "status": "pending"
+        },
+        {
+          "name": "Virtual filesystem and document directories",
+          "status": "pending"
+        },
+        {
+          "name": "Host resource limits and watchdogs",
+          "status": "pending"
+        },
+        {
+          "name": "Input-binary validation and refusal of protected code",
+          "status": "verified",
+          "evidence": "https://github.com/uknes/AnyiOS/blob/main/src/macho.cpp"
+        },
+        {
+          "name": "Crash isolation from host UI",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Darwin libSystem",
+      "items": [
+        {
+          "name": "malloc/write/exit guest C fixture ABI",
+          "status": "partial",
+          "evidence": "tools/api_manifest.json"
+        },
+        {
+          "name": "calloc/realloc/free and aligned alloc",
+          "status": "pending"
+        },
+        {
+          "name": "Full memcpy/memmove/memset and string semantics",
+          "status": "pending"
+        },
+        {
+          "name": "posix files/read/write/seek/stat",
+          "status": "pending"
+        },
+        {
+          "name": "errno and libc thread state",
+          "status": "pending"
+        },
+        {
+          "name": "stdio, snprintf/vsnprintf/formatting",
+          "status": "pending"
+        },
+        {
+          "name": "clocks, timers, gettimeofday and sysctl",
+          "status": "pending"
+        },
+        {
+          "name": "sockets and POSIX DNS",
+          "status": "pending"
+        },
+        {
+          "name": "process arguments/envp/apple arrays",
+          "status": "partial",
+          "evidence": "src/process_bootstrap.cpp"
+        }
+      ]
+    },
+    {
+      "name": "Pthreads and dispatch",
+      "items": [
+        {
+          "name": "Owned Darwin guest TLV sequential threads",
+          "status": "partial",
+          "evidence": "src/guest_tls.cpp"
+        },
+        {
+          "name": "pthread creation, mutex, condvar and once",
+          "status": "pending"
+        },
+        {
+          "name": "dispatch queues, groups, semaphores",
+          "status": "pending"
+        },
+        {
+          "name": "Main-thread dispatch and runloop integration",
+          "status": "pending"
+        },
+        {
+          "name": "Thread-safe autorelease pools",
+          "status": "pending"
+        },
+        {
+          "name": "Thread cancel, join and teardown",
+          "status": "pending"
+        },
+        {
+          "name": "Atomic callbacks across guest and host threads",
+          "status": "pending"
+        },
+        {
+          "name": "Work queues/QoS scheduling",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Objective-C runtime",
+      "items": [
+        {
+          "name": "Classlist/selector metadata inspection",
+          "status": "partial",
+          "evidence": "src/objc_identity.cpp"
+        },
+        {
+          "name": "Class registry, metaclasses and inheritance",
+          "status": "partial",
+          "evidence": "tests/objc_registry_tests.cpp; https://github.com/uknes/AnyiOS/actions/runs/37850732319",
+          "scope": "Only compiler-emitted local classes and bounded guest name lookup; imported UIKit/Foundation superclasses, metaclasses, runtime registration and initialization remain unsupported."
+        },
+        {
+          "name": "General objc_msgSend instance/class/super dispatch",
+          "status": "pending"
+        },
+        {
+          "name": "alloc/init/retain/release/weak references",
+          "status": "pending"
+        },
+        {
+          "name": "Autorelease pool push/pop with actual objects",
+          "status": "pending"
+        },
+        {
+          "name": "Exceptions and Objective-C synchronized blocks",
+          "status": "pending"
+        },
+        {
+          "name": "Categories, protocols and dynamic method lookup",
+          "status": "pending"
+        },
+        {
+          "name": "KVO, blocks and associated objects",
+          "status": "pending"
+        },
+        {
+          "name": "Runtime-generated class and method interop",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Swift runtime",
+      "items": [
+        {
+          "name": "Swift metadata and type descriptors",
+          "status": "pending"
+        },
+        {
+          "name": "Swift retain/release ownership",
+          "status": "pending"
+        },
+        {
+          "name": "Value witness and protocol witness tables",
+          "status": "pending"
+        },
+        {
+          "name": "Generics, existential containers and bridging",
+          "status": "pending"
+        },
+        {
+          "name": "Swift concurrency actors/task scheduler",
+          "status": "pending"
+        },
+        {
+          "name": "Swift error handling, exceptions and unwinding",
+          "status": "pending"
+        },
+        {
+          "name": "Swift/Objective-C mixed dispatch",
+          "status": "pending"
+        },
+        {
+          "name": "Swift ABI-version compatibility",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "CoreFoundation",
+      "items": [
+        {
+          "name": "CFString and mutable strings",
+          "status": "pending"
+        },
+        {
+          "name": "CFArray/CFDictionary/CFSet ownership",
+          "status": "pending"
+        },
+        {
+          "name": "CFData/CFNumber/CFBoolean and date",
+          "status": "pending"
+        },
+        {
+          "name": "CFRunLoop and source/timer scheduling",
+          "status": "pending"
+        },
+        {
+          "name": "CFBundle/CFURL/CFPreferences",
+          "status": "pending"
+        },
+        {
+          "name": "CFError and bridging with Foundation",
+          "status": "pending"
+        },
+        {
+          "name": "CFNotificationCenter and observers",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Foundation",
+      "items": [
+        {
+          "name": "NSString, NSArray, NSDictionary classes",
+          "status": "pending"
+        },
+        {
+          "name": "NSData, NSNumber, NSDate, NSURL objects",
+          "status": "pending"
+        },
+        {
+          "name": "NSBundle resources and localization",
+          "status": "pending"
+        },
+        {
+          "name": "NSFileManager, URLs and path semantics",
+          "status": "pending"
+        },
+        {
+          "name": "NSUserDefaults and key-value persistence",
+          "status": "pending"
+        },
+        {
+          "name": "NSRunLoop, NSTimer and observers",
+          "status": "pending"
+        },
+        {
+          "name": "NSError, exceptions and NSNotificationCenter",
+          "status": "pending"
+        },
+        {
+          "name": "JSON parsing, serialization and regex",
+          "status": "pending"
+        },
+        {
+          "name": "NSOperationQueue and async APIs",
+          "status": "pending"
+        },
+        {
+          "name": "NSCoder, archiving, keyed storage",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "UIKit app lifecycle",
+      "items": [
+        {
+          "name": "UIApplicationMain and delegate construction",
+          "status": "pending"
+        },
+        {
+          "name": "UIApplication event loop and scenes",
+          "status": "pending"
+        },
+        {
+          "name": "Storyboard/NIB loading and object awakening",
+          "status": "pending"
+        },
+        {
+          "name": "UIWindow creation and visibility",
+          "status": "pending"
+        },
+        {
+          "name": "Root view controller and lifecycle callbacks",
+          "status": "pending"
+        },
+        {
+          "name": "App foreground/background lifecycle",
+          "status": "pending"
+        },
+        {
+          "name": "UIKit trait/environment state",
+          "status": "pending"
+        },
+        {
+          "name": "Status bar/appearance and accessibility hooks",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "UIKit views and controls",
+      "items": [
+        {
+          "name": "UIView hierarchy, transforms and layers",
+          "status": "pending"
+        },
+        {
+          "name": "Layout constraints and Auto Layout engine",
+          "status": "pending"
+        },
+        {
+          "name": "UIButton, UILabel, UIImageView and text rendering",
+          "status": "pending"
+        },
+        {
+          "name": "Scroll/table/collection views",
+          "status": "pending"
+        },
+        {
+          "name": "Navigation, modal presentation and alerts",
+          "status": "pending"
+        },
+        {
+          "name": "Text input, keyboard and IME",
+          "status": "pending"
+        },
+        {
+          "name": "Gestures, taps, touch dragging and multi-touch",
+          "status": "pending"
+        },
+        {
+          "name": "Clipboard, menus and context actions",
+          "status": "pending"
+        },
+        {
+          "name": "Animation, coordinate and hit-testing semantics",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "QuartzCore / animation",
+      "items": [
+        {
+          "name": "CALayer tree and compositing",
+          "status": "pending"
+        },
+        {
+          "name": "CADisplayLink vsync callbacks",
+          "status": "pending"
+        },
+        {
+          "name": "Animation transactions and timing",
+          "status": "pending"
+        },
+        {
+          "name": "Core Animation keyframes and easing",
+          "status": "pending"
+        },
+        {
+          "name": "Layer masks, opacity and blending",
+          "status": "pending"
+        },
+        {
+          "name": "Offscreen layer rendering and filters",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "CoreGraphics / CoreText",
+      "items": [
+        {
+          "name": "CGContext and image drawing",
+          "status": "pending"
+        },
+        {
+          "name": "Paths, clipping, transforms and strokes",
+          "status": "pending"
+        },
+        {
+          "name": "Color spaces and alpha blending",
+          "status": "pending"
+        },
+        {
+          "name": "Bitmap, JPEG/PNG asset decode and scaling",
+          "status": "pending"
+        },
+        {
+          "name": "Font shaping, text glyphs and CoreText",
+          "status": "pending"
+        },
+        {
+          "name": "2D compositing, clipping and performance",
+          "status": "pending"
+        },
+        {
+          "name": "Color management and HiDPI output",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Metal graphics",
+      "items": [
+        {
+          "name": "MTLDevice and GPU feature query",
+          "status": "pending"
+        },
+        {
+          "name": "MTLCommandQueue and command buffers",
+          "status": "pending"
+        },
+        {
+          "name": "Metal shader libraries and MSL compilation",
+          "status": "pending"
+        },
+        {
+          "name": "Textures, buffers, heaps and resources",
+          "status": "pending"
+        },
+        {
+          "name": "Render pass and pipeline states",
+          "status": "pending"
+        },
+        {
+          "name": "Depth/stencil and blend states",
+          "status": "pending"
+        },
+        {
+          "name": "Compute dispatch and barriers",
+          "status": "pending"
+        },
+        {
+          "name": "Indirect drawing and synchronization",
+          "status": "pending"
+        },
+        {
+          "name": "Metal swapchain via CAMetalLayer",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Legacy OpenGL ES",
+      "items": [
+        {
+          "name": "EAGLContext and framebuffer setup",
+          "status": "pending"
+        },
+        {
+          "name": "GLES2/GLES3 shader translator",
+          "status": "pending"
+        },
+        {
+          "name": "Textures, renderbuffers and framebuffer objects",
+          "status": "pending"
+        },
+        {
+          "name": "Buffer objects and vertex attribute streams",
+          "status": "pending"
+        },
+        {
+          "name": "Uniforms, draws, blending and depth",
+          "status": "pending"
+        },
+        {
+          "name": "Extensions and driver capability query",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "SpriteKit / SceneKit",
+      "items": [
+        {
+          "name": "SKView and SKScene lifecycle",
+          "status": "pending"
+        },
+        {
+          "name": "SKNode hierarchy and transforms",
+          "status": "pending"
+        },
+        {
+          "name": "SKSpriteNode sprite batching and texture atlas",
+          "status": "pending"
+        },
+        {
+          "name": "SKAction animations, scheduling and timing",
+          "status": "pending"
+        },
+        {
+          "name": "SKPhysicsBody collision and contacts",
+          "status": "pending"
+        },
+        {
+          "name": "SKEmitterNode particles and filters",
+          "status": "pending"
+        },
+        {
+          "name": "SCNScene node graph and asset import",
+          "status": "pending"
+        },
+        {
+          "name": "SceneKit lighting, geometry and rendering",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Game engine integration",
+      "items": [
+        {
+          "name": "Unity IL2CPP and Mono runtime compatibility",
+          "status": "pending"
+        },
+        {
+          "name": "Unreal engine iOS build architecture",
+          "status": "pending"
+        },
+        {
+          "name": "cocos2d and native C++ engine support",
+          "status": "pending"
+        },
+        {
+          "name": "AssetBundles, compressed game assets and codecs",
+          "status": "pending"
+        },
+        {
+          "name": "Frame pacing and shader-cache behavior",
+          "status": "pending"
+        },
+        {
+          "name": "Dynamic library and plugin sandbox",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Audio / media",
+      "items": [
+        {
+          "name": "CoreAudio device abstraction and timing",
+          "status": "pending"
+        },
+        {
+          "name": "AudioUnits and callback/render graph",
+          "status": "pending"
+        },
+        {
+          "name": "AVAudioEngine and playback APIs",
+          "status": "pending"
+        },
+        {
+          "name": "WAV/MP3/AAC/ALAC decoding",
+          "status": "pending"
+        },
+        {
+          "name": "AVPlayer video playback, synchronization",
+          "status": "pending"
+        },
+        {
+          "name": "Audio session categories and route events",
+          "status": "pending"
+        },
+        {
+          "name": "Microphone capture and permission mapping",
+          "status": "pending"
+        },
+        {
+          "name": "Hardware volume and Bluetooth behavior",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Input / controllers",
+      "items": [
+        {
+          "name": "Windows mouse to UITouch translation",
+          "status": "pending"
+        },
+        {
+          "name": "Keyboard, on-screen text and IME mapping",
+          "status": "pending"
+        },
+        {
+          "name": "Multi-touch gestures, drag and pinch",
+          "status": "pending"
+        },
+        {
+          "name": "GameController.framework profiles and analog axes",
+          "status": "pending"
+        },
+        {
+          "name": "Haptics/CoreHaptics vibration mapping",
+          "status": "pending"
+        },
+        {
+          "name": "Accelerometer/gyro synthetic sensors",
+          "status": "pending"
+        },
+        {
+          "name": "Gamepad reconnect and focus behavior",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Networking / services",
+      "items": [
+        {
+          "name": "NSURLSession HTTP(S) and URL loading",
+          "status": "pending"
+        },
+        {
+          "name": "CFNetwork TCP/TLS streams",
+          "status": "pending"
+        },
+        {
+          "name": "POSIX sockets and DNS resolver",
+          "status": "pending"
+        },
+        {
+          "name": "TLS certificate validation and pinning",
+          "status": "pending"
+        },
+        {
+          "name": "WebSockets, background transfers and proxies",
+          "status": "pending"
+        },
+        {
+          "name": "Bonjour/mDNS discovery and LAN permission",
+          "status": "pending"
+        },
+        {
+          "name": "Network path change callbacks",
+          "status": "pending"
+        },
+        {
+          "name": "Offline/cache and network reachability",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Security / crypto",
+      "items": [
+        {
+          "name": "Security.framework keychain APIs",
+          "status": "pending"
+        },
+        {
+          "name": "CommonCrypto hashing and encryption",
+          "status": "pending"
+        },
+        {
+          "name": "Secure random values and key APIs",
+          "status": "pending"
+        },
+        {
+          "name": "Biometric LocalAuthentication mapping",
+          "status": "pending"
+        },
+        {
+          "name": "Code signing identity vs runtime permissions",
+          "status": "pending"
+        },
+        {
+          "name": "File protection and app container encryption",
+          "status": "pending"
+        },
+        {
+          "name": "Trust stores, certificates and entitlement policy",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Data and persistence",
+      "items": [
+        {
+          "name": "SQLite bundled API coverage",
+          "status": "pending"
+        },
+        {
+          "name": "Core Data contexts and model migration",
+          "status": "pending"
+        },
+        {
+          "name": "iCloud/CloudKit record and sync API",
+          "status": "pending"
+        },
+        {
+          "name": "App sandbox documents and caches",
+          "status": "pending"
+        },
+        {
+          "name": "Resource bundles and localized assets",
+          "status": "pending"
+        },
+        {
+          "name": "Save state persistence and corruption recovery",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "GameKit / commerce",
+      "items": [
+        {
+          "name": "Game Center sign-in and achievements",
+          "status": "pending"
+        },
+        {
+          "name": "Leaderboards, match and invites",
+          "status": "pending"
+        },
+        {
+          "name": "In-app purchases and StoreKit receipts",
+          "status": "pending"
+        },
+        {
+          "name": "Subscription and entitlement validation",
+          "status": "pending"
+        },
+        {
+          "name": "Cloud saves and cross-device state",
+          "status": "pending"
+        },
+        {
+          "name": "Apple Arcade entitlement and licensing constraints",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Web / UI embeddings",
+      "items": [
+        {
+          "name": "WKWebView/WebKit DOM and JS engine",
+          "status": "pending"
+        },
+        {
+          "name": "JSCore guest/host JavaScript bridge",
+          "status": "pending"
+        },
+        {
+          "name": "Web content process isolation",
+          "status": "pending"
+        },
+        {
+          "name": "URL interception and custom schemes",
+          "status": "pending"
+        },
+        {
+          "name": "HTML forms, cookies and storage",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "App capabilities",
+      "items": [
+        {
+          "name": "Push notifications / APNs",
+          "status": "pending"
+        },
+        {
+          "name": "Camera, photo library and media selection",
+          "status": "pending"
+        },
+        {
+          "name": "Files picker and document providers",
+          "status": "pending"
+        },
+        {
+          "name": "Location and map views",
+          "status": "pending"
+        },
+        {
+          "name": "Background tasks and scheduling",
+          "status": "pending"
+        },
+        {
+          "name": "HealthKit, contacts and calendars",
+          "status": "pending"
+        },
+        {
+          "name": "WidgetKit and app extensions",
+          "status": "pending"
+        },
+        {
+          "name": "Universal links and URL handlers",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "System interoperability",
+      "items": [
+        {
+          "name": "Process startup and exit lifecycle",
+          "status": "partial",
+          "evidence": "src/process_bootstrap.cpp"
+        },
+        {
+          "name": "XPC/Mach IPC and bootstrap services",
+          "status": "pending"
+        },
+        {
+          "name": "CFPreferences and persistent settings",
+          "status": "pending"
+        },
+        {
+          "name": "Time zones, locale and encoding",
+          "status": "pending"
+        },
+        {
+          "name": "Environment/version/device capabilities",
+          "status": "pending"
+        },
+        {
+          "name": "Privacy prompts and permission persistence",
+          "status": "pending"
+        },
+        {
+          "name": "Accessibility tree and screen readers",
+          "status": "pending"
+        },
+        {
+          "name": "Error reporting, logs and symbolication",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Windows GUI backend",
+      "items": [
+        {
+          "name": "Actual resizable Win32 window with guest-driven pixels",
+          "status": "pending"
+        },
+        {
+          "name": "Presentation frame timing and resize",
+          "status": "pending"
+        },
+        {
+          "name": "Guest UI scene to Direct3D 11/12 compositor",
+          "status": "pending"
+        },
+        {
+          "name": "Input hit testing, cursor and touch dispatch",
+          "status": "pending"
+        },
+        {
+          "name": "DPI scaling, fullscreen and multiple monitors",
+          "status": "pending"
+        },
+        {
+          "name": "GDI fallbacks for test fixtures",
+          "status": "pending"
+        },
+        {
+          "name": "Multi-window, swapchain and compositor resources",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Compatibility tooling",
+      "items": [
+        {
+          "name": "Strict Mach-O inspection and import-gap report",
+          "status": "verified",
+          "evidence": "https://github.com/uknes/AnyiOS/blob/main/tools/macho_gap.py"
+        },
+        {
+          "name": "Per-framework unimplemented function catalog",
+          "status": "pending"
+        },
+        {
+          "name": "Function-level regression tests and stub classification",
+          "status": "pending"
+        },
+        {
+          "name": "Original IPA/.app metadata-only intake",
+          "status": "pending"
+        },
+        {
+          "name": "Unmodified app launch+render+input evidence gates",
+          "status": "pending"
+        },
+        {
+          "name": "Windows x64 CI and artifact packaging",
+          "status": "pending"
+        },
+        {
+          "name": "Windows ARM64 CI and artifact packaging",
+          "status": "pending"
+        },
+        {
+          "name": "Crash trace attribution and deterministic reproduction",
+          "status": "pending"
+        },
+        {
+          "name": "Golden screenshots and event replay",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "name": "Distribution / platform",
+      "items": [
+        {
+          "name": "Self-contained Windows x86-64 release package",
+          "status": "pending"
+        },
+        {
+          "name": "Windows ARM64 native runtime release package",
+          "status": "pending"
+        },
+        {
+          "name": "Bundled redistributable OSS license notices",
+          "status": "pending"
+        },
+        {
+          "name": "Auto-update, error reporting and diagnostics",
+          "status": "pending"
+        },
+        {
+          "name": "Installation, PATH/file associations and drag-drop",
+          "status": "pending"
+        },
+        {
+          "name": "Real-world GPU/CPU compatibility test matrix",
+          "status": "pending"
+        },
+        {
+          "name": "App-specific optional user supplied assets only",
+          "status": "pending"
+        }
+      ]
+    }
+  ]
+}

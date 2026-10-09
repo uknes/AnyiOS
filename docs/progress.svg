@@ -1,0 +1,1218 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="334" viewBox="0 0 1000 334" role="img" aria-label="AnyiOS implementation progress by API family and runtime subsystem">
+<rect x="0.00" y="0.00" width="1000.00" height="334.00" fill="#0d1117" stroke="#0d1117" stroke-width="0.00"/>
+<text x="3.00" y="22.00" font-size="15" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">iOS API exports*: 1.12% (3/269)</text>
+<g><title>Darwin file / process — 1 verified, 0 partial, 25 pending (26 tracked)
+_write
+_access
+_clock_gettime
+_close
+_fstat
+_getcwd
+_getenv
+_getpid
+_getppid
+_gettimeofday
+_lseek
+_mkdir
+_mmap
+_mprotect
+_munmap
+_nanosleep
+_open
+_openat
+_read
+_rename
+_rmdir
+_setenv
+... and 4 others; see progress.html</title>
+<rect x="0.80" y="34.80" width="19.96" height="23.32" fill="#2ea043" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="20.76" y="34.80" width="19.96" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="40.72" y="34.80" width="19.96" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="60.68" y="34.80" width="19.96" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="80.64" y="34.80" width="19.96" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="0.80" y="58.12" width="19.96" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="20.76" y="58.12" width="19.96" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="40.72" y="58.12" width="19.96" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="60.68" y="58.12" width="19.96" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="80.64" y="58.12" width="19.96" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="0.80" y="81.45" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="25.75" y="81.45" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="50.70" y="81.45" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="75.65" y="81.45" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="0.80" y="104.77" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="25.75" y="104.77" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="50.70" y="104.77" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="75.65" y="104.77" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="0.80" y="128.10" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="25.75" y="128.10" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="50.70" y="128.10" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="75.65" y="128.10" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="0.80" y="151.42" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="25.75" y="151.42" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="50.70" y="151.42" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="75.65" y="151.42" width="24.95" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="0.00" y="34.00" width="101.40" height="141.55" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="4.00" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Darwin file /</text>
+</g>
+<g><title>Objective-C ABI — 0 verified, 0 partial, 21 pending (21 tracked)
+_NSStringFromClass
+_class_getInstanceMethod
+_class_getSuperclass
+_objc_allocateClassPair
+_objc_autorelease
+_objc_autoreleasePoolPop
+_objc_autoreleasePoolPush
+_objc_getAssociatedObject
+_objc_getClass
+_objc_getMetaClass
+_objc_loadWeakRetained
+_objc_msgSend
+_objc_msgSendSuper2
+_objc_registerClassPair
+_objc_release
+_objc_retain
+_objc_setAssociatedObject
+_objc_storeStrong
+_objc_storeWeak
+_object_getClass
+_sel_registerName</title>
+<rect x="102.20" y="34.80" width="20.08" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="122.28" y="34.80" width="20.08" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="142.35" y="34.80" width="20.08" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="162.43" y="34.80" width="20.08" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="102.20" y="58.12" width="20.08" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="122.28" y="58.12" width="20.08" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="142.35" y="58.12" width="20.08" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="162.43" y="58.12" width="20.08" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="102.20" y="81.45" width="20.08" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="122.28" y="81.45" width="20.08" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="142.35" y="81.45" width="20.08" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="162.43" y="81.45" width="20.08" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="102.20" y="104.77" width="26.77" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="128.97" y="104.77" width="26.77" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="155.73" y="104.77" width="26.77" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="102.20" y="128.10" width="26.77" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="128.97" y="128.10" width="26.77" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="155.73" y="128.10" width="26.77" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="102.20" y="151.42" width="26.77" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="128.97" y="151.42" width="26.77" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="155.73" y="151.42" width="26.77" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="101.40" y="34.00" width="81.90" height="141.55" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="105.40" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Objective-</text>
+</g>
+<g><title>Foundation classes — 0 verified, 0 partial, 20 pending (20 tracked)
+_OBJC_CLASS_$_NSArray
+_OBJC_CLASS_$_NSBundle
+_OBJC_CLASS_$_NSData
+_OBJC_CLASS_$_NSDate
+_OBJC_CLASS_$_NSDictionary
+_OBJC_CLASS_$_NSError
+_OBJC_CLASS_$_NSFileManager
+_OBJC_CLASS_$_NSJSONSerialization
+_OBJC_CLASS_$_NSMutableArray
+_OBJC_CLASS_$_NSMutableDictionary
+_OBJC_CLASS_$_NSMutableString
+_OBJC_CLASS_$_NSNotificationCenter
+_OBJC_CLASS_$_NSNumber
+_OBJC_CLASS_$_NSObject
+_OBJC_CLASS_$_NSRunLoop
+_OBJC_CLASS_$_NSSet
+_OBJC_CLASS_$_NSString
+_OBJC_CLASS_$_NSTimer
+_OBJC_CLASS_$_NSURL
+_OBJC_CLASS_$_NSUserDefaults</title>
+<rect x="184.10" y="34.80" width="19.10" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="203.20" y="34.80" width="19.10" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="222.30" y="34.80" width="19.10" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="241.40" y="34.80" width="19.10" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="184.10" y="58.12" width="19.10" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="203.20" y="58.12" width="19.10" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="222.30" y="58.12" width="19.10" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="241.40" y="58.12" width="19.10" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="184.10" y="81.45" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="209.57" y="81.45" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="235.03" y="81.45" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="184.10" y="104.77" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="209.57" y="104.77" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="235.03" y="104.77" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="184.10" y="128.10" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="209.57" y="128.10" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="235.03" y="128.10" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="184.10" y="151.42" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="209.57" y="151.42" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="235.03" y="151.42" width="25.47" height="23.32" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="183.30" y="34.00" width="78.00" height="141.55" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="187.30" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Foundation</text>
+</g>
+<g><title>UIKit lifecycle / views — 0 verified, 0 partial, 20 pending (20 tracked)
+_OBJC_CLASS_$_UIApplication
+_OBJC_CLASS_$_UIApplicationDelegate
+_OBJC_CLASS_$_UIButton
+_OBJC_CLASS_$_UICollectionView
+_OBJC_CLASS_$_UIGestureRecognizer
+_OBJC_CLASS_$_UIImage
+_OBJC_CLASS_$_UIImageView
+_OBJC_CLASS_$_UILabel
+_OBJC_CLASS_$_UINavigationController
+_OBJC_CLASS_$_UIResponder
+_OBJC_CLASS_$_UIScreen
+_OBJC_CLASS_$_UIStackView
+_OBJC_CLASS_$_UIStoryboard
+_OBJC_CLASS_$_UITableView
+_OBJC_CLASS_$_UITextField
+_OBJC_CLASS_$_UITouch
+_OBJC_CLASS_$_UIView
+_OBJC_CLASS_$_UIViewController
+_OBJC_CLASS_$_UIWindow
+_UIApplicationMain</title>
+<rect x="0.80" y="176.35" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="19.98" y="176.35" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="39.16" y="176.35" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="58.35" y="176.35" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="77.53" y="176.35" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="96.71" y="176.35" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="115.89" y="176.35" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="0.80" y="202.90" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="19.98" y="202.90" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="39.16" y="202.90" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="58.35" y="202.90" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="77.53" y="202.90" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="96.71" y="202.90" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="115.89" y="202.90" width="19.18" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="0.80" y="229.45" width="22.38" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="23.18" y="229.45" width="22.38" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="45.56" y="229.45" width="22.38" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="67.94" y="229.45" width="22.38" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="90.32" y="229.45" width="22.38" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="112.70" y="229.45" width="22.38" height="26.55" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="0.00" y="175.55" width="135.88" height="81.26" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="4.00" y="190.55" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">UIKit lifecycle / </text>
+</g>
+<g><title>CoreGraphics / text — 0 verified, 0 partial, 19 pending (19 tracked)
+_CGBitmapContextCreate
+_CGColorCreate
+_CGColorRelease
+_CGColorSpaceCreateDeviceRGB
+_CGContextConcatCTM
+_CGContextDrawImage
+_CGContextFillRect
+_CGContextSetFillColorWithColor
+_CGContextSetLineWidth
+_CGContextSetStrokeColorWithColor
+_CGContextStrokePath
+_CGDataProviderCreateWithData
+_CGImageCreate
+_CGImageRelease
+_CGPathAddLineToPoint
+_CGPathCreateMutable
+_CGPathRelease
+_CTFontCreateWithName
+_CTLineCreateWithAttributedString</title>
+<rect x="0.80" y="257.61" width="19.18" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="19.98" y="257.61" width="19.18" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="39.16" y="257.61" width="19.18" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="58.35" y="257.61" width="19.18" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="77.53" y="257.61" width="19.18" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="96.71" y="257.61" width="19.18" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="115.89" y="257.61" width="19.18" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="0.80" y="282.80" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="23.18" y="282.80" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="45.56" y="282.80" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="67.94" y="282.80" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="90.32" y="282.80" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="112.70" y="282.80" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="0.80" y="308.00" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="23.18" y="308.00" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="45.56" y="308.00" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="67.94" y="308.00" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="90.32" y="308.00" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="112.70" y="308.00" width="22.38" height="25.20" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="0.00" y="256.81" width="135.88" height="77.19" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="4.00" y="271.81" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">CoreGraphics / tex</text>
+</g>
+<g><title>Darwin memory / strings — 2 verified, 0 partial, 17 pending (19 tracked)
+_exit
+_malloc
+_abort
+_bzero
+_calloc
+_free
+_memcmp
+_memcpy
+_memmove
+_memset
+_realloc
+_strchr
+_strcmp
+_strdup
+_strlcat
+_strlcpy
+_strlen
+_strncmp
+_strstr</title>
+<rect x="136.68" y="176.35" width="24.76" height="20.51" fill="#2ea043" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="161.44" y="176.35" width="24.76" height="20.51" fill="#2ea043" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="186.21" y="176.35" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="210.97" y="176.35" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="235.74" y="176.35" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="136.68" y="196.86" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="161.44" y="196.86" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="186.21" y="196.86" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="210.97" y="196.86" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="235.74" y="196.86" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="136.68" y="217.36" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="161.44" y="217.36" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="186.21" y="217.36" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="210.97" y="217.36" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="235.74" y="217.36" width="24.76" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="136.68" y="237.87" width="30.96" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="167.63" y="237.87" width="30.96" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="198.59" y="237.87" width="30.96" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="229.54" y="237.87" width="30.96" height="20.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="135.88" y="175.55" width="125.42" height="83.63" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="139.88" y="190.55" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Darwin memory / s</text>
+</g>
+<g><title>OpenGL ES — 0 verified, 0 partial, 17 pending (17 tracked)
+_glBindTexture
+_glClear
+_glClearColor
+_glCompileShader
+_glCreateProgram
+_glCreateShader
+_glDrawArrays
+_glDrawElements
+_glEnableVertexAttribArray
+_glGenTextures
+_glGetError
+_glGetString
+_glLinkProgram
+_glTexImage2D
+_glUseProgram
+_glVertexAttribPointer
+_glViewport</title>
+<rect x="136.68" y="259.98" width="20.64" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="157.31" y="259.98" width="20.64" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="177.95" y="259.98" width="20.64" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="198.59" y="259.98" width="20.64" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="219.23" y="259.98" width="20.64" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="239.86" y="259.98" width="20.64" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="136.68" y="284.38" width="20.64" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="157.31" y="284.38" width="20.64" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="177.95" y="284.38" width="20.64" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="198.59" y="284.38" width="20.64" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="219.23" y="284.38" width="20.64" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="239.86" y="284.38" width="20.64" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="136.68" y="308.79" width="24.76" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="161.44" y="308.79" width="24.76" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="186.21" y="308.79" width="24.76" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="210.97" y="308.79" width="24.76" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="235.74" y="308.79" width="24.76" height="24.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="135.88" y="259.18" width="125.42" height="74.82" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="139.88" y="274.18" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">OpenGL ES</text>
+</g>
+<g><title>CoreFoundation — 0 verified, 0 partial, 15 pending (15 tracked)
+_CFArrayCreate
+_CFArrayGetCount
+_CFBundleGetMainBundle
+_CFDataCreate
+_CFDictionaryCreate
+_CFDictionaryGetValue
+_CFNotificationCenterGetLocalCenter
+_CFRelease
+_CFRetain
+_CFRunLoopGetMain
+_CFRunLoopRun
+_CFStringCreateWithCString
+_CFStringGetCString
+_CFStringGetLength
+_CFURLCreateWithFileSystemPath</title>
+<rect x="262.10" y="34.80" width="24.39" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="286.49" y="34.80" width="24.39" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="310.87" y="34.80" width="24.39" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="335.26" y="34.80" width="24.39" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="262.10" y="55.28" width="24.39" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="286.49" y="55.28" width="24.39" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="310.87" y="55.28" width="24.39" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="335.26" y="55.28" width="24.39" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="262.10" y="75.76" width="24.39" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="286.49" y="75.76" width="24.39" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="310.87" y="75.76" width="24.39" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="335.26" y="75.76" width="24.39" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="262.10" y="96.24" width="32.51" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="294.62" y="96.24" width="32.51" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="327.13" y="96.24" width="32.51" height="20.48" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="261.30" y="34.00" width="99.14" height="83.52" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="265.30" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">CoreFoundatio</text>
+</g>
+<g><title>Audio / AVFoundation — 0 verified, 0 partial, 13 pending (13 tracked)
+_AudioComponentFindNext
+_AudioComponentInstanceNew
+_AudioOutputUnitStart
+_AudioQueueEnqueueBuffer
+_AudioQueueNewOutput
+_AudioQueueStart
+_AudioQueueStop
+_AudioUnitInitialize
+_ExtAudioFileOpenURL
+_OBJC_CLASS_$_AVAudioEngine
+_OBJC_CLASS_$_AVAudioPlayer
+_OBJC_CLASS_$_AVAudioSession
+_OBJC_CLASS_$_AVPlayer</title>
+<rect x="262.10" y="118.32" width="19.51" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="281.61" y="118.32" width="19.51" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="301.12" y="118.32" width="19.51" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="320.63" y="118.32" width="19.51" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="340.14" y="118.32" width="19.51" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="262.10" y="141.92" width="24.39" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="286.49" y="141.92" width="24.39" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="310.87" y="141.92" width="24.39" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="335.26" y="141.92" width="24.39" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="262.10" y="165.51" width="24.39" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="286.49" y="165.51" width="24.39" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="310.87" y="165.51" width="24.39" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="335.26" y="165.51" width="24.39" height="23.59" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="261.30" y="117.52" width="99.14" height="72.38" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="265.30" y="132.52" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Audio / AVFou</text>
+</g>
+<g><title>Darwin dispatch / blocks — 0 verified, 0 partial, 13 pending (13 tracked)
+__Block_copy
+__Block_release
+_dispatch_after
+_dispatch_async
+_dispatch_group_create
+_dispatch_group_enter
+_dispatch_group_leave
+_dispatch_once_f
+_dispatch_queue_create
+_dispatch_semaphore_create
+_dispatch_semaphore_signal
+_dispatch_semaphore_wait
+_dispatch_sync</title>
+<rect x="361.25" y="34.80" width="18.99" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="380.24" y="34.80" width="18.99" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="399.23" y="34.80" width="18.99" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="418.23" y="34.80" width="18.99" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="437.22" y="34.80" width="18.99" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="456.21" y="34.80" width="18.99" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="475.21" y="34.80" width="18.99" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="361.25" y="60.67" width="22.16" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="383.41" y="60.67" width="22.16" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="405.56" y="60.67" width="22.16" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="427.72" y="60.67" width="22.16" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="449.88" y="60.67" width="22.16" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="472.04" y="60.67" width="22.16" height="25.87" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="360.45" y="34.00" width="134.55" height="53.34" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="364.45" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Darwin dispatch / </text>
+</g>
+<g><title>Darwin threads / locks — 0 verified, 1 partial, 12 pending (13 tracked)
+__tlv_bootstrap
+_pthread_cond_signal
+_pthread_cond_wait
+_pthread_create
+_pthread_getspecific
+_pthread_join
+_pthread_key_create
+_pthread_mutex_init
+_pthread_mutex_lock
+_pthread_mutex_unlock
+_pthread_once
+_pthread_self
+_pthread_setspecific</title>
+<rect x="361.25" y="88.14" width="17.09" height="25.24" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="378.34" y="88.14" width="17.09" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="395.43" y="88.14" width="17.09" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="412.52" y="88.14" width="17.09" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="361.25" y="113.38" width="22.79" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="384.04" y="113.38" width="22.79" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="406.82" y="113.38" width="22.79" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="361.25" y="138.62" width="22.79" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="384.04" y="138.62" width="22.79" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="406.82" y="138.62" width="22.79" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="361.25" y="163.86" width="22.79" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="384.04" y="163.86" width="22.79" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="406.82" y="163.86" width="22.79" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="360.45" y="87.34" width="69.97" height="102.57" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="364.45" y="102.34" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Darwin th</text>
+</g>
+<g><title>Network / IPC — 0 verified, 0 partial, 12 pending (12 tracked)
+_CFHTTPMessageCreateRequest
+_CFReadStreamCreateForHTTPRequest
+_OBJC_CLASS_$_NSURLConnection
+_OBJC_CLASS_$_NSURLRequest
+_OBJC_CLASS_$_NSURLSession
+_connect
+_getaddrinfo
+_poll
+_recv
+_select
+_send
+_socket</title>
+<rect x="431.21" y="88.14" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="452.21" y="88.14" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="473.20" y="88.14" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="431.21" y="113.38" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="452.21" y="113.38" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="473.20" y="113.38" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="431.21" y="138.62" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="452.21" y="138.62" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="473.20" y="138.62" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="431.21" y="163.86" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="452.21" y="163.86" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="473.20" y="163.86" width="21.00" height="25.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="430.41" y="87.34" width="64.59" height="102.57" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="434.41" y="102.34" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Network </text>
+</g>
+<g><title>Swift ABI — 0 verified, 0 partial, 11 pending (11 tracked)
+_swift_allocObject
+_swift_beginAccess
+_swift_bridgeObjectRelease
+_swift_bridgeObjectRetain
+_swift_deallocClassInstance
+_swift_endAccess
+_swift_getTypeByMangledNameInContext
+_swift_getWitnessTable
+_swift_once
+_swift_release
+_swift_retain</title>
+<rect x="262.10" y="190.71" width="18.89" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="280.99" y="190.71" width="18.89" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="299.88" y="190.71" width="18.89" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="318.77" y="190.71" width="18.89" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="337.66" y="190.71" width="18.89" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="356.55" y="190.71" width="18.89" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="262.10" y="216.32" width="22.67" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="284.77" y="216.32" width="22.67" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="307.43" y="216.32" width="22.67" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="330.10" y="216.32" width="22.67" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="352.77" y="216.32" width="22.67" height="25.62" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="261.30" y="189.91" width="114.93" height="52.83" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="265.30" y="204.91" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Swift ABI</text>
+</g>
+<g><title>Persistence / CloudKit — 0 verified, 0 partial, 10 pending (10 tracked)
+_OBJC_CLASS_$_CKContainer
+_OBJC_CLASS_$_CKDatabase
+_OBJC_CLASS_$_NSManagedObjectContext
+_OBJC_CLASS_$_NSPersistentStoreCoordinator
+_sqlite3_bind_text
+_sqlite3_close
+_sqlite3_finalize
+_sqlite3_open
+_sqlite3_prepare_v2
+_sqlite3_step</title>
+<rect x="262.10" y="243.54" width="19.63" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="281.73" y="243.54" width="19.63" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="301.36" y="243.54" width="19.63" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="262.10" y="265.96" width="19.63" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="281.73" y="265.96" width="19.63" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="301.36" y="265.96" width="19.63" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="262.10" y="288.37" width="29.45" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="291.55" y="288.37" width="29.45" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="262.10" y="310.79" width="29.45" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="291.55" y="310.79" width="29.45" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="261.30" y="242.74" width="60.49" height="91.26" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="265.30" y="257.74" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Persist</text>
+</g>
+<g><title>Security / keychain — 0 verified, 0 partial, 9 pending (9 tracked)
+_CCCrypt
+_CC_SHA256
+_OBJC_CLASS_$_LAContext
+_SecItemAdd
+_SecItemCopyMatching
+_SecItemDelete
+_SecItemUpdate
+_SecKeyCreateRandomKey
+_SecRandomCopyBytes</title>
+<rect x="322.59" y="243.54" width="17.61" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="340.21" y="243.54" width="17.61" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="357.82" y="243.54" width="17.61" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="322.59" y="265.96" width="26.42" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="349.01" y="265.96" width="26.42" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="322.59" y="288.37" width="26.42" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="349.01" y="288.37" width="26.42" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="322.59" y="310.79" width="26.42" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="349.01" y="310.79" width="26.42" height="22.41" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="321.79" y="242.74" width="54.44" height="91.26" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="325.79" y="257.74" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Securi</text>
+</g>
+<g><title>SpriteKit — 0 verified, 0 partial, 9 pending (9 tracked)
+_OBJC_CLASS_$_SKAction
+_OBJC_CLASS_$_SKEmitterNode
+_OBJC_CLASS_$_SKLabelNode
+_OBJC_CLASS_$_SKNode
+_OBJC_CLASS_$_SKPhysicsBody
+_OBJC_CLASS_$_SKScene
+_OBJC_CLASS_$_SKSpriteNode
+_OBJC_CLASS_$_SKTexture
+_OBJC_CLASS_$_SKView</title>
+<rect x="377.03" y="190.71" width="20.43" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="397.46" y="190.71" width="20.43" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="417.89" y="190.71" width="20.43" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="377.03" y="216.51" width="20.43" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="397.46" y="216.51" width="20.43" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="417.89" y="216.51" width="20.43" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="377.03" y="242.32" width="20.43" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="397.46" y="242.32" width="20.43" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="417.89" y="242.32" width="20.43" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="376.23" y="189.91" width="62.88" height="79.02" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="380.23" y="204.91" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">SpriteKi</text>
+</g>
+<g><title>QuartzCore — 0 verified, 0 partial, 8 pending (8 tracked)
+_CACurrentMediaTime
+_OBJC_CLASS_$_CAAnimation
+_OBJC_CLASS_$_CABasicAnimation
+_OBJC_CLASS_$_CADisplayLink
+_OBJC_CLASS_$_CAKeyframeAnimation
+_OBJC_CLASS_$_CALayer
+_OBJC_CLASS_$_CAMediaTimingFunction
+_OBJC_CLASS_$_CATransaction</title>
+<rect x="439.91" y="190.71" width="18.10" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="458.01" y="190.71" width="18.10" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="476.10" y="190.71" width="18.10" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="439.91" y="216.51" width="18.10" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="458.01" y="216.51" width="18.10" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="476.10" y="216.51" width="18.10" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="439.91" y="242.32" width="27.14" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="467.06" y="242.32" width="27.14" height="25.81" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="439.11" y="189.91" width="55.89" height="79.02" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="443.11" y="204.91" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">QuartzC</text>
+</g>
+<g><title>GameKit / stores — 0 verified, 0 partial, 7 pending (7 tracked)
+_OBJC_CLASS_$_GKAchievement
+_OBJC_CLASS_$_GKLeaderboard
+_OBJC_CLASS_$_GKLocalPlayer
+_OBJC_CLASS_$_GKMatch
+_OBJC_CLASS_$_SKPaymentQueue
+_OBJC_CLASS_$_SKProduct
+_OBJC_CLASS_$_SKProductsRequest</title>
+<rect x="377.03" y="269.73" width="19.26" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="396.30" y="269.73" width="19.26" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="415.56" y="269.73" width="19.26" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="377.03" y="290.88" width="28.89" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="405.93" y="290.88" width="28.89" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="377.03" y="312.04" width="28.89" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="405.93" y="312.04" width="28.89" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="376.23" y="268.93" width="59.38" height="65.07" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="380.23" y="283.93" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">GameKit</text>
+</g>
+<g><title>Metal / MetalKit — 0 verified, 0 partial, 7 pending (7 tracked)
+_MTLCreateSystemDefaultDevice
+_OBJC_CLASS_$_CAMetalLayer
+_OBJC_CLASS_$_MTKView
+_OBJC_CLASS_$_MTLCompileOptions
+_OBJC_CLASS_$_MTLDepthStencilDescriptor
+_OBJC_CLASS_$_MTLRenderPassDescriptor
+_OBJC_CLASS_$_MTLTextureDescriptor</title>
+<rect x="436.42" y="269.73" width="19.26" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="455.68" y="269.73" width="19.26" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="474.94" y="269.73" width="19.26" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="436.42" y="290.88" width="28.89" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="465.31" y="290.88" width="28.89" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="436.42" y="312.04" width="28.89" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="465.31" y="312.04" width="28.89" height="21.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="435.62" y="268.93" width="59.38" height="65.07" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="439.62" y="283.93" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Metal /</text>
+</g>
+<text x="508.00" y="22.00" font-size="15" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Compatibility work gates*: 2.51% (6/239)</text>
+<g><title>Foundation — 0 verified, 0 partial, 10 pending (10 tracked)
+JSON parsing, serialization and regex
+NSBundle resources and localization
+NSCoder, archiving, keyed storage
+NSData, NSNumber, NSDate, NSURL objects
+NSError, exceptions and NSNotificationCenter
+NSFileManager, URLs and path semantics
+NSOperationQueue and async APIs
+NSRunLoop, NSTimer and observers
+NSString, NSArray, NSDictionary classes
+NSUserDefaults and key-value persistence</title>
+<rect x="505.80" y="34.80" width="21.79" height="27.30" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="527.59" y="34.80" width="21.79" height="27.30" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="549.38" y="34.80" width="21.79" height="27.30" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="571.17" y="34.80" width="21.79" height="27.30" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="592.96" y="34.80" width="21.79" height="27.30" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="505.80" y="62.10" width="21.79" height="27.30" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="527.59" y="62.10" width="21.79" height="27.30" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="549.38" y="62.10" width="21.79" height="27.30" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="571.17" y="62.10" width="21.79" height="27.30" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="592.96" y="62.10" width="21.79" height="27.30" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="505.00" y="34.00" width="110.55" height="56.21" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="509.00" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Foundation</text>
+</g>
+<g><title>ARM64 CPU / ABI — 1 verified, 2 partial, 6 pending (9 tracked)
+Windows x86-64 Dynarmic owned ARM64 instructions
+Darwin SVC trap and Mach syscall handling
+Host-to-guest fixed-argument ABI callbacks
+Exception, unwind and stack walkers
+Float/vector NEON and SIMD across callbacks
+Hardware atomics and memory ordering
+Instruction cache invalidation and self-modifying code
+MRS/MSR platform register virtualization
+Variadic calls, structs and ABI thunks</title>
+<rect x="505.80" y="91.01" width="17.89" height="24.89" fill="#2ea043" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="523.69" y="91.01" width="17.89" height="24.89" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="541.58" y="91.01" width="17.89" height="24.89" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="505.80" y="115.90" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="532.64" y="115.90" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="505.80" y="140.79" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="532.64" y="140.79" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="505.80" y="165.68" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="532.64" y="165.68" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="505.00" y="90.21" width="55.27" height="101.17" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="509.00" y="105.21" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">ARM64 </text>
+</g>
+<g><title>Compatibility tooling — 1 verified, 0 partial, 8 pending (9 tracked)
+Strict Mach-O inspection and import-gap report
+Crash trace attribution and deterministic reproduction
+Function-level regression tests and stub classification
+Golden screenshots and event replay
+Original IPA/.app metadata-only intake
+Per-framework unimplemented function catalog
+Unmodified app launch+render+input evidence gates
+Windows ARM64 CI and artifact packaging
+Windows x64 CI and artifact packaging</title>
+<rect x="561.07" y="91.01" width="17.89" height="24.89" fill="#2ea043" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="578.96" y="91.01" width="17.89" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="596.86" y="91.01" width="17.89" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="561.07" y="115.90" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="587.91" y="115.90" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="561.07" y="140.79" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="587.91" y="140.79" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="561.07" y="165.68" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="587.91" y="165.68" width="26.84" height="24.89" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="560.27" y="90.21" width="55.27" height="101.17" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="564.27" y="105.21" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Compat</text>
+</g>
+<g><title>Darwin libSystem — 0 verified, 2 partial, 7 pending (9 tracked)
+malloc/write/exit guest C fixture ABI
+process arguments/envp/apple arrays
+Full memcpy/memmove/memset and string semantics
+calloc/realloc/free and aligned alloc
+clocks, timers, gettimeofday and sysctl
+errno and libc thread state
+posix files/read/write/seek/stat
+sockets and POSIX DNS
+stdio, snprintf/vsnprintf/formatting</title>
+<rect x="616.35" y="34.80" width="23.16" height="25.70" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="639.50" y="34.80" width="23.16" height="25.70" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="662.66" y="34.80" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="616.35" y="60.50" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="639.50" y="60.50" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="662.66" y="60.50" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="616.35" y="86.19" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="639.50" y="86.19" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="662.66" y="86.19" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="615.55" y="34.00" width="71.07" height="78.69" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="619.55" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Darwin li</text>
+</g>
+<g><title>dyld and linking — 0 verified, 1 partial, 8 pending (9 tracked)
+Chained rebases and binds for owned fixtures
+App/framework nested bundle resolution
+C/C++ static constructors across images
+Classic binds, lazy binds and weak symbols
+Multi-dylib recursive load and @rpath resolution
+Objective-C category/selector initialization order
+Stable ASLR and image slides
+Thread local variable fixups across modules
+dyld shared cache equivalent / substitute frameworks</title>
+<rect x="687.41" y="34.80" width="23.16" height="25.70" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="710.57" y="34.80" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="733.72" y="34.80" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="687.41" y="60.50" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="710.57" y="60.50" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="733.72" y="60.50" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="687.41" y="86.19" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="710.57" y="86.19" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="733.72" y="86.19" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="686.61" y="34.00" width="71.07" height="78.69" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="690.61" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">dyld and </text>
+</g>
+<g><title>Guest memory / sandbox — 1 verified, 1 partial, 7 pending (9 tracked)
+Input-binary validation and refusal of protected code
+Bounded W^X guest memory ranges
+App sandbox path translation
+Crash isolation from host UI
+Host resource limits and watchdogs
+Large address-space sparse virtual memory
+Memory allocation/free/heap fragmentation
+Virtual filesystem and document directories
+mmap, mprotect and guard pages</title>
+<rect x="616.35" y="113.49" width="23.16" height="25.70" fill="#2ea043" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="639.50" y="113.49" width="23.16" height="25.70" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="662.66" y="113.49" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="616.35" y="139.18" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="639.50" y="139.18" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="662.66" y="139.18" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="616.35" y="164.88" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="639.50" y="164.88" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="662.66" y="164.88" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="615.55" y="112.69" width="71.07" height="78.69" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="619.55" y="127.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Guest mem</text>
+</g>
+<g><title>Metal graphics — 0 verified, 0 partial, 9 pending (9 tracked)
+Compute dispatch and barriers
+Depth/stencil and blend states
+Indirect drawing and synchronization
+MTLCommandQueue and command buffers
+MTLDevice and GPU feature query
+Metal shader libraries and MSL compilation
+Metal swapchain via CAMetalLayer
+Render pass and pipeline states
+Textures, buffers, heaps and resources</title>
+<rect x="687.41" y="113.49" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="710.57" y="113.49" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="733.72" y="113.49" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="687.41" y="139.18" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="710.57" y="139.18" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="733.72" y="139.18" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="687.41" y="164.88" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="710.57" y="164.88" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="733.72" y="164.88" width="23.16" height="25.70" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="686.61" y="112.69" width="71.07" height="78.69" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="690.61" y="127.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Metal gra</text>
+</g>
+<g><title>Objective-C runtime — 0 verified, 2 partial, 7 pending (9 tracked)
+Class registry, metaclasses and inheritance
+Classlist/selector metadata inspection
+Autorelease pool push/pop with actual objects
+Categories, protocols and dynamic method lookup
+Exceptions and Objective-C synchronized blocks
+General objc_msgSend instance/class/super dispatch
+KVO, blocks and associated objects
+Runtime-generated class and method interop
+alloc/init/retain/release/weak references</title>
+<rect x="505.80" y="192.18" width="22.33" height="23.88" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="528.13" y="192.18" width="22.33" height="23.88" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="550.47" y="192.18" width="22.33" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="572.80" y="192.18" width="22.33" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="595.14" y="192.18" width="22.33" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="505.80" y="216.06" width="27.92" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="533.72" y="216.06" width="27.92" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="561.63" y="216.06" width="27.92" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="589.55" y="216.06" width="27.92" height="23.88" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="505.00" y="191.38" width="113.27" height="49.37" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="509.00" y="206.38" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Objective-C run</text>
+</g>
+<g><title>UIKit views and controls — 0 verified, 0 partial, 9 pending (9 tracked)
+Animation, coordinate and hit-testing semantics
+Clipboard, menus and context actions
+Gestures, taps, touch dragging and multi-touch
+Layout constraints and Auto Layout engine
+Navigation, modal presentation and alerts
+Scroll/table/collection views
+Text input, keyboard and IME
+UIButton, UILabel, UIImageView and text rendering
+UIView hierarchy, transforms and layers</title>
+<rect x="505.80" y="241.55" width="19.46" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="525.26" y="241.55" width="19.46" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="544.71" y="241.55" width="19.46" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="505.80" y="264.46" width="29.18" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="534.98" y="264.46" width="29.18" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="505.80" y="287.37" width="29.18" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="534.98" y="287.37" width="29.18" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="505.80" y="310.29" width="29.18" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="534.98" y="310.29" width="29.18" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="505.00" y="240.75" width="59.97" height="93.25" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="509.00" y="255.75" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">UIKit v</text>
+</g>
+<g><title>App capabilities — 0 verified, 0 partial, 8 pending (8 tracked)
+Background tasks and scheduling
+Camera, photo library and media selection
+Files picker and document providers
+HealthKit, contacts and calendars
+Location and map views
+Push notifications / APNs
+Universal links and URL handlers
+WidgetKit and app extensions</title>
+<rect x="565.77" y="241.55" width="25.85" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="591.62" y="241.55" width="25.85" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="565.77" y="264.46" width="25.85" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="591.62" y="264.46" width="25.85" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="565.77" y="287.37" width="25.85" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="591.62" y="287.37" width="25.85" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="565.77" y="310.29" width="25.85" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="591.62" y="310.29" width="25.85" height="22.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="564.97" y="240.75" width="53.30" height="93.25" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="568.97" y="255.75" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">App ca</text>
+</g>
+<g><title>Audio / media — 0 verified, 0 partial, 8 pending (8 tracked)
+AVAudioEngine and playback APIs
+AVPlayer video playback, synchronization
+Audio session categories and route events
+AudioUnits and callback/render graph
+CoreAudio device abstraction and timing
+Hardware volume and Bluetooth behavior
+Microphone capture and permission mapping
+WAV/MP3/AAC/ALAC decoding</title>
+<rect x="619.07" y="192.18" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="641.77" y="192.18" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="664.47" y="192.18" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="619.07" y="215.41" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="641.77" y="215.41" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="664.47" y="215.41" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="619.07" y="238.65" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="653.12" y="238.65" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="618.27" y="191.38" width="69.70" height="71.31" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="622.27" y="206.38" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Audio / m</text>
+</g>
+<g><title>Mach-O formats — 2 verified, 0 partial, 6 pending (8 tracked)
+Fat/FAT64 universal slice selection
+Thin ARM64 MH_EXECUTE and MH_DYLIB metadata
+Encrypted binary detection and explicit rejection
+LC_MAIN and LC_UNIXTHREAD bootstrap
+Mach-O segment protections and page zero
+Symbol table and export trie lookup
+Versioned iOS platform and load-command variants
+arm64e pointer authentication compatibility</title>
+<rect x="688.77" y="192.18" width="22.70" height="23.24" fill="#2ea043" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="711.48" y="192.18" width="22.70" height="23.24" fill="#2ea043" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="734.18" y="192.18" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="688.77" y="215.41" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="711.48" y="215.41" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="734.18" y="215.41" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="688.77" y="238.65" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="722.83" y="238.65" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="687.97" y="191.38" width="69.70" height="71.31" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="691.97" y="206.38" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Mach-O fo</text>
+</g>
+<g><title>Networking / services — 0 verified, 0 partial, 8 pending (8 tracked)
+Bonjour/mDNS discovery and LAN permission
+CFNetwork TCP/TLS streams
+NSURLSession HTTP(S) and URL loading
+Network path change callbacks
+Offline/cache and network reachability
+POSIX sockets and DNS resolver
+TLS certificate validation and pinning
+WebSockets, background transfers and proxies</title>
+<rect x="619.07" y="263.49" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="641.77" y="263.49" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="664.47" y="263.49" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="619.07" y="286.73" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="641.77" y="286.73" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="664.47" y="286.73" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="619.07" y="309.96" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="653.12" y="309.96" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="618.27" y="262.69" width="69.70" height="71.31" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="622.27" y="277.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Networkin</text>
+</g>
+<g><title>Pthreads and dispatch — 0 verified, 1 partial, 7 pending (8 tracked)
+Owned Darwin guest TLV sequential threads
+Atomic callbacks across guest and host threads
+Main-thread dispatch and runloop integration
+Thread cancel, join and teardown
+Thread-safe autorelease pools
+Work queues/QoS scheduling
+dispatch queues, groups, semaphores
+pthread creation, mutex, condvar and once</title>
+<rect x="688.77" y="263.49" width="22.70" height="23.24" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="711.48" y="263.49" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="734.18" y="263.49" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="688.77" y="286.73" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="711.48" y="286.73" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="734.18" y="286.73" width="22.70" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="688.77" y="309.96" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="722.83" y="309.96" width="34.05" height="23.24" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="687.97" y="262.69" width="69.70" height="71.31" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="691.97" y="277.69" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Pthreads </text>
+</g>
+<g><title>SpriteKit / SceneKit — 0 verified, 0 partial, 8 pending (8 tracked)
+SCNScene node graph and asset import
+SKAction animations, scheduling and timing
+SKEmitterNode particles and filters
+SKNode hierarchy and transforms
+SKPhysicsBody collision and contacts
+SKSpriteNode sprite batching and texture atlas
+SKView and SKScene lifecycle
+SceneKit lighting, geometry and rendering</title>
+<rect x="758.48" y="34.80" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="779.13" y="34.80" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="799.78" y="34.80" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="758.48" y="60.34" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="779.13" y="60.34" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="799.78" y="60.34" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="758.48" y="85.87" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="789.46" y="85.87" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="757.68" y="34.00" width="63.56" height="78.21" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="761.68" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">SpriteKi</text>
+</g>
+<g><title>Swift runtime — 0 verified, 0 partial, 8 pending (8 tracked)
+Generics, existential containers and bridging
+Swift ABI-version compatibility
+Swift concurrency actors/task scheduler
+Swift error handling, exceptions and unwinding
+Swift metadata and type descriptors
+Swift retain/release ownership
+Swift/Objective-C mixed dispatch
+Value witness and protocol witness tables</title>
+<rect x="822.04" y="34.80" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="842.69" y="34.80" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="863.34" y="34.80" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="822.04" y="60.34" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="842.69" y="60.34" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="863.34" y="60.34" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="822.04" y="85.87" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="853.02" y="85.87" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="821.24" y="34.00" width="63.56" height="78.21" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="825.24" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Swift ru</text>
+</g>
+<g><title>System interoperability — 0 verified, 1 partial, 7 pending (8 tracked)
+Process startup and exit lifecycle
+Accessibility tree and screen readers
+CFPreferences and persistent settings
+Environment/version/device capabilities
+Error reporting, logs and symbolication
+Privacy prompts and permission persistence
+Time zones, locale and encoding
+XPC/Mach IPC and bootstrap services</title>
+<rect x="758.48" y="113.01" width="20.65" height="25.54" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="779.13" y="113.01" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="799.78" y="113.01" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="758.48" y="138.54" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="779.13" y="138.54" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="799.78" y="138.54" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="758.48" y="164.08" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="789.46" y="164.08" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="757.68" y="112.21" width="63.56" height="78.21" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="761.68" y="127.21" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">System i</text>
+</g>
+<g><title>UIKit app lifecycle — 0 verified, 0 partial, 8 pending (8 tracked)
+App foreground/background lifecycle
+Root view controller and lifecycle callbacks
+Status bar/appearance and accessibility hooks
+Storyboard/NIB loading and object awakening
+UIApplication event loop and scenes
+UIApplicationMain and delegate construction
+UIKit trait/environment state
+UIWindow creation and visibility</title>
+<rect x="822.04" y="113.01" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="842.69" y="113.01" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="863.34" y="113.01" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="822.04" y="138.54" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="842.69" y="138.54" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="863.34" y="138.54" width="20.65" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="822.04" y="164.08" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="853.02" y="164.08" width="30.98" height="25.54" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="821.24" y="112.21" width="63.56" height="78.21" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="825.24" y="127.21" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">UIKit ap</text>
+</g>
+<g><title>Windows ARM64 execution — 1 verified, 1 partial, 6 pending (8 tracked)
+Trusted native ARM64 owned two-instruction fixture
+Windows 11 ARM64 x64-emulated Dynarmic fallback
+ABI interoperability and native exception safety
+Cross-architecture same-app regression tests
+Darwin service traps in native backend
+General native guest Mach-O mapped executable pages
+Guest TLS state isolation on native backend
+Native ARM64 renderer/app integration</title>
+<rect x="885.60" y="34.80" width="19.95" height="26.43" fill="#2ea043" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="905.54" y="34.80" width="19.95" height="26.43" fill="#d29922" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="925.49" y="34.80" width="19.95" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="885.60" y="61.23" width="19.95" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="905.54" y="61.23" width="19.95" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="925.49" y="61.23" width="19.95" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="885.60" y="87.67" width="29.92" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="915.52" y="87.67" width="29.92" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="884.80" y="34.00" width="61.44" height="80.90" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="888.80" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Windows</text>
+</g>
+<g><title>CoreFoundation — 0 verified, 0 partial, 7 pending (7 tracked)
+CFArray/CFDictionary/CFSet ownership
+CFBundle/CFURL/CFPreferences
+CFData/CFNumber/CFBoolean and date
+CFError and bridging with Foundation
+CFNotificationCenter and observers
+CFRunLoop and source/timer scheduling
+CFString and mutable strings</title>
+<rect x="947.04" y="34.80" width="17.39" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="964.43" y="34.80" width="17.39" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="981.81" y="34.80" width="17.39" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="947.04" y="61.23" width="26.08" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="973.12" y="61.23" width="26.08" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="947.04" y="87.67" width="26.08" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="973.12" y="87.67" width="26.08" height="26.43" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="946.24" y="34.00" width="53.76" height="80.90" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="950.24" y="49.00" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">CoreFo</text>
+</g>
+<g><title>CoreGraphics / CoreText — 0 verified, 0 partial, 7 pending (7 tracked)
+2D compositing, clipping and performance
+Bitmap, JPEG/PNG asset decode and scaling
+CGContext and image drawing
+Color management and HiDPI output
+Color spaces and alpha blending
+Font shaping, text glyphs and CoreText
+Paths, clipping, transforms and strokes</title>
+<rect x="885.60" y="115.70" width="18.67" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="904.26" y="115.70" width="18.67" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="922.93" y="115.70" width="18.67" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="885.60" y="140.34" width="28.00" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="913.60" y="140.34" width="28.00" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="885.60" y="164.97" width="28.00" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="913.60" y="164.97" width="28.00" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="884.80" y="114.90" width="57.60" height="75.51" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="888.80" y="129.90" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">CoreGra</text>
+</g>
+<g><title>Distribution / platform — 0 verified, 0 partial, 7 pending (7 tracked)
+App-specific optional user supplied assets only
+Auto-update, error reporting and diagnostics
+Bundled redistributable OSS license notices
+Installation, PATH/file associations and drag-drop
+Real-world GPU/CPU compatibility test matrix
+Self-contained Windows x86-64 release package
+Windows ARM64 native runtime release package</title>
+<rect x="943.20" y="115.70" width="18.67" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="961.87" y="115.70" width="18.67" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="980.53" y="115.70" width="18.67" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="943.20" y="140.34" width="28.00" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="971.20" y="140.34" width="28.00" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="943.20" y="164.97" width="28.00" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="971.20" y="164.97" width="28.00" height="24.64" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="942.40" y="114.90" width="57.60" height="75.51" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="946.40" y="129.90" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Distrib</text>
+</g>
+<g><title>Input / controllers — 0 verified, 0 partial, 7 pending (7 tracked)
+Accelerometer/gyro synthetic sensors
+GameController.framework profiles and analog axes
+Gamepad reconnect and focus behavior
+Haptics/CoreHaptics vibration mapping
+Keyboard, on-screen text and IME mapping
+Multi-touch gestures, drag and pinch
+Windows mouse to UITouch translation</title>
+<rect x="758.48" y="191.21" width="18.94" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="777.42" y="191.21" width="18.94" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="796.36" y="191.21" width="18.94" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="758.48" y="215.49" width="28.41" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="786.89" y="215.49" width="28.41" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="758.48" y="239.78" width="28.41" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="786.89" y="239.78" width="28.41" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="757.68" y="190.41" width="58.42" height="74.45" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="761.68" y="205.41" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Input /</text>
+</g>
+<g><title>Security / crypto — 0 verified, 0 partial, 7 pending (7 tracked)
+Biometric LocalAuthentication mapping
+Code signing identity vs runtime permissions
+CommonCrypto hashing and encryption
+File protection and app container encryption
+Secure random values and key APIs
+Security.framework keychain APIs
+Trust stores, certificates and entitlement policy</title>
+<rect x="816.89" y="191.21" width="18.94" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="835.83" y="191.21" width="18.94" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="854.77" y="191.21" width="18.94" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="816.89" y="215.49" width="28.41" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="845.30" y="215.49" width="28.41" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="816.89" y="239.78" width="28.41" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="845.30" y="239.78" width="28.41" height="24.28" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="816.09" y="190.41" width="58.42" height="74.45" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="820.09" y="205.41" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Securit</text>
+</g>
+<g><title>Windows GUI backend — 0 verified, 0 partial, 7 pending (7 tracked)
+Actual resizable Win32 window with guest-driven pixels
+DPI scaling, fullscreen and multiple monitors
+GDI fallbacks for test fixtures
+Guest UI scene to Direct3D 11/12 compositor
+Input hit testing, cursor and touch dispatch
+Multi-window, swapchain and compositor resources
+Presentation frame timing and resize</title>
+<rect x="758.48" y="265.66" width="20.44" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="778.91" y="265.66" width="20.44" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="799.35" y="265.66" width="20.44" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="758.48" y="288.18" width="30.66" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="789.13" y="288.18" width="30.66" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="758.48" y="310.69" width="30.66" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="789.13" y="310.69" width="30.66" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="757.68" y="264.86" width="62.91" height="69.14" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="761.68" y="279.86" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Windows </text>
+</g>
+<g><title>Data and persistence — 0 verified, 0 partial, 6 pending (6 tracked)
+App sandbox documents and caches
+Core Data contexts and model migration
+Resource bundles and localized assets
+SQLite bundled API coverage
+Save state persistence and corruption recovery
+iCloud/CloudKit record and sync API</title>
+<rect x="821.39" y="265.66" width="26.16" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="847.55" y="265.66" width="26.16" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="821.39" y="288.18" width="26.16" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="847.55" y="288.18" width="26.16" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="821.39" y="310.69" width="26.16" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="847.55" y="310.69" width="26.16" height="22.51" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="820.59" y="264.86" width="53.92" height="69.14" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="824.59" y="279.86" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Data a</text>
+</g>
+<g><title>Game engine integration — 0 verified, 0 partial, 6 pending (6 tracked)
+AssetBundles, compressed game assets and codecs
+Dynamic library and plugin sandbox
+Frame pacing and shader-cache behavior
+Unity IL2CPP and Mono runtime compatibility
+Unreal engine iOS build architecture
+cocos2d and native C++ engine support</title>
+<rect x="875.31" y="191.21" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="895.69" y="191.21" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="916.07" y="191.21" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="875.31" y="220.12" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="895.69" y="220.12" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="916.07" y="220.12" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="874.51" y="190.41" width="62.74" height="59.42" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="878.51" y="205.41" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Game eng</text>
+</g>
+<g><title>GameKit / commerce — 0 verified, 0 partial, 6 pending (6 tracked)
+Apple Arcade entitlement and licensing constraints
+Cloud saves and cross-device state
+Game Center sign-in and achievements
+In-app purchases and StoreKit receipts
+Leaderboards, match and invites
+Subscription and entitlement validation</title>
+<rect x="938.06" y="191.21" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="958.44" y="191.21" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="978.82" y="191.21" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="938.06" y="220.12" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="958.44" y="220.12" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="978.82" y="220.12" width="20.38" height="28.91" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="937.26" y="190.41" width="62.74" height="59.42" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="941.26" y="205.41" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">GameKit </text>
+</g>
+<g><title>Legacy OpenGL ES — 0 verified, 0 partial, 6 pending (6 tracked)
+Buffer objects and vertex attribute streams
+EAGLContext and framebuffer setup
+Extensions and driver capability query
+GLES2/GLES3 shader translator
+Textures, renderbuffers and framebuffer objects
+Uniforms, draws, blending and depth</title>
+<rect x="875.31" y="250.63" width="21.34" height="27.52" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="896.66" y="250.63" width="21.34" height="27.52" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="875.31" y="278.15" width="21.34" height="27.52" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="896.66" y="278.15" width="21.34" height="27.52" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="875.31" y="305.68" width="21.34" height="27.52" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="896.66" y="305.68" width="21.34" height="27.52" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="874.51" y="249.83" width="44.29" height="84.17" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="878.51" y="264.83" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Legac</text>
+</g>
+<g><title>QuartzCore / animation — 0 verified, 0 partial, 6 pending (6 tracked)
+Animation transactions and timing
+CADisplayLink vsync callbacks
+CALayer tree and compositing
+Core Animation keyframes and easing
+Layer masks, opacity and blending
+Offscreen layer rendering and filters</title>
+<rect x="919.60" y="250.63" width="26.53" height="22.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="946.13" y="250.63" width="26.53" height="22.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="972.67" y="250.63" width="26.53" height="22.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="919.60" y="272.78" width="26.53" height="22.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="946.13" y="272.78" width="26.53" height="22.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="972.67" y="272.78" width="26.53" height="22.16" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="918.80" y="249.83" width="81.20" height="45.91" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="922.80" y="264.83" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">QuartzCore</text>
+</g>
+<g><title>Web / UI embeddings — 0 verified, 0 partial, 5 pending (5 tracked)
+HTML forms, cookies and storage
+JSCore guest/host JavaScript bridge
+URL interception and custom schemes
+WKWebView/WebKit DOM and JS engine
+Web content process isolation</title>
+<rect x="919.60" y="296.54" width="26.53" height="18.33" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="946.13" y="296.54" width="26.53" height="18.33" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="972.67" y="296.54" width="26.53" height="18.33" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="919.60" y="314.87" width="39.80" height="18.33" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="959.40" y="314.87" width="39.80" height="18.33" fill="#6e7681" stroke="#0d1117" stroke-width="0.55"/>
+<rect x="918.80" y="295.74" width="81.20" height="38.26" fill="none" stroke="#0d1117" stroke-width="2"/>
+<text x="922.80" y="310.74" font-size="12" font-family="Arial,DejaVu Sans,sans-serif" fill="#ffffff" font-weight="600">Web / UI e</text>
+</g>
+</svg>

@@ -1,3 +1,20 @@
+## First external Objective-C iOS app compatibility checkpoint (verified on PR head)
+
+- Pinned external target: Bitrise `sample-apps-ios-simple-objc` commit `91fef6f5a096220669934793a9256128bc73f25b`; actual upstream LICENSE is MIT. Original `main.m`, `AppDelegate.m`, `ViewController.m` compiled without Apple SDK using **project-authored declaration-only headers**; link uses **metadata-only unresolved symbol TAPI** (not UIKit/Foundation/CoreData/ObjC implementations).
+- **Static gap:** 29 distinct imported symbols, 9 imported external ObjC classes, 40 method-name candidates, 24 unresolved encoded selector pointers. No imported symbol from this app is satisfied by the verified guest shim subset. Analyzer uses static occurrence evidence, not runtime call frequencies.
+- **Windows x64 static stage passed:** loader mapped external arm64 Mach-O sections and chained fixups, entry `81920`, with 29 deliberately unresolved placeholders. CI run **37798177618**, job `ios-gap-windows-x64`, step `Stage original Objective-C app Mach-O on Windows x64; no guest execution`.
+- **Windows x64 Dynarmic first actual external app entry execution passed:** bounded instruction execution reached and **stopped at `_objc_autoreleasePoolPush`**. Constructor/ObjC class registration intentionally not executed. CI run **37798177618**, job `ios-entry-windows-x64`, step `Execute real app entry until first missing iOS runtime import (fail closed)`; earlier verified run **37798025355** passed same step. This is **not an app launch**.
+- Main CI and compatibility workflows green on PR #4 exact head `bcd3dd32bd29a81999b273becff28176939a2b2b`: runs **37798177768** (14/14 jobs) and **37798177618** (3/3 jobs). Merged into main as `860218415c6b03898deb9acd984e06ff27170cf0`. Main-branch post-merge run verification tracked separately.
+- **Not implemented:** ObjC autorelease pools/messaging/class registration, Foundation, UIKit, Core Data, UI/window/touch, full app initializer order; five-app cross-application ranking. PR #3 memory-string, overlap-safe chunked copy, errno/abort/stdio/pthread, ObjC ABI notes and hot-path ADR still pending.
+
+## TLS resource and teardown limits (owned-fixture subset)
+
+- Guest thread exit and TLS destructor/teardown are **unsupported**; `finish_thread` refuses rather than reporting success.
+- TLV allocation is **one 16 KiB page per (guest thread, module) pair**, drawn from a **1 MiB arena**; this is not general dynamic Darwin TLS allocation.
+- The guest thread header is mapped **read/write (RW)**; do not describe it as immutable or read-only.
+- The TLV descriptor's reserved word **must be zero**. Nonzero reserved fields are rejected.
+- These restrictions apply even though owned Clang two-thread TLV execution passed Windows x64 Dynarmic in CI run **37770789789**, step `Execute owned Clang iOS TLV process in two guest threads`. No concurrent host-thread or native Windows ARM64 TLS support is claimed.
+
 # AnyiOS evidence checkpoint
 
 Updated 2026-10-08. Committed source + successful GitHub Actions job evidence is authoritative.

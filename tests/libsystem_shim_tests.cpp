@@ -86,6 +86,26 @@ int main() {
                 std::string_view::npos) throw;
         }
         require(memory.read(a, 1) == 'a', "failed call mutated guest source");
+        // Validate the entire range before writing even its first byte.
+        const auto guarded = 0x80000ULL;
+        require(memory.map(guarded, 4096, 3) && memory.write(guarded+4095, 0x5a, 1),
+                "boundary destination fixture");
+        auto rejects_copy=[&](std::uint64_t dst,std::uint64_t src,std::uint64_t size){
+            bool rejected=false;
+            try{(void)lib.invoke("_memcpy",{dst,src,size});}
+            catch(const std::runtime_error&){rejected=true;}
+            require(rejected,"unsafe guest copy accepted");
+        };
+        rejects_copy(guarded+4095,a,2);
+        require(memory.read(guarded+4095,1)==0x5a,"partial destination changed on failure");
+        require(memory.write(b,0x5a,1),"source failure fixture");
+        rejects_copy(b,UINT64_MAX,2);
+        rejects_copy(b,0x90000,2);
+        require(memory.read(b,1)==0x5a,"unreadable source changed destination");
+        require(memory.map(0x82000,4096,1),"readonly destination fixture");
+        rejects_copy(0x82000,a,1);
+        rejects_copy(a,a,1);
+        rejects_copy(b,a,UINT64_MAX);
         std::cout << "Minimal host libSystem _malloc/_write/_exit contract passed\n";
         return 0;
     } catch (const std::exception& e) {

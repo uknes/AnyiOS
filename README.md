@@ -4,6 +4,17 @@ Research into a clean-room compatibility layer for legally accessible, unprotect
 
 **Current status:** AnyiOS can inspect ARM64 Mach-O metadata and execute a project-owned compiled ARM64 Mach-O function on Windows x86-64 through Dynarmic. A restricted synthetic executable loader, experimental Darwin syscall bridge, and limited dyld dependency planner exist. **It cannot currently launch a complete iOS `.app`.**
 
+## Status
+
+[![iOS API exports](docs/badge-apis.svg)](docs/progress.md) [![runtime gates](docs/badge-runtime.svg)](docs/progress.md)
+
+[![progress map](docs/progress.svg)](docs/progress.md)
+
+<sub>* **iOS APIs:** explicitly inventoried candidate exports in [19 API families](tools/api_inventory.json); **runtime:** implementation gates covering [31 subsystems](tools/compat_capabilities.json). Green = narrowly verified with evidence, amber = partial, gray = pending or unverified. Partial implementations are **not** counted as complete. These totals are **not all Apple APIs, all iOS versions, or a percentage of iOS app compatibility**. They grow as real binaries and frameworks reveal more requirements. Read the [full function-by-function and gate-by-gate GitHub checklist](docs/progress.md) and [counting rules](_docs/PROGRESS.md).*</sub>
+
+**High-coverage original application stress target:** [Wikipedia for iOS (MIT, original upstream commit)](compatibility/targets/wikipedia-ios.json) — [reproducible unmodified ARM64 iPhoneOS build and honest static-gap workflow](_docs/WIKIPEDIA_TARGET.md). **Neither a Windows launch nor guest-originated pixels have been verified.** A match to 269 candidate API symbols or 239 runtime gates is **not** automatic compatibility. Test the original app on both Windows architectures before promoting any count.
+\n**Additional protected-game research target:** [Sneaky Sasquatch — unchanged-binary intake](compatibility/targets/sneaky-sasquatch.json). This Apple Arcade game has **not** been obtained or launched. The [read-only original IPA inspection tool](tools/unchanged_ipa_probe.py) reports missing/incompatible APIs without modifying game files or bypassing protection. [App compatibility evidence](_docs/APP_COMPATIBILITY.md).
+
 ## Build and test
 
 Requires CMake 3.20+ and a C++20 compiler (Linux GCC/Clang, Windows MSVC, and macOS Clang are tested).

@@ -31,3 +31,18 @@ All 64-bit returned pointers are guest virtual addresses, never host addresses. 
 - Bounded host contract CTest: `minimal-libsystem-host-contract`, with out-of-range, overlap, unmapped and low-int-width negative checks.
 - Actual SDK-free Clang iOS ARM64 `MemoryStringApp` imports, checked by `sdkfree_link.py`, then execute on Windows x64 Dynarmic and verify LC_MAIN returns **27**.
 - All supported-platform CTest matrix and `windows-a64-translation` job green before marking this verified in `STATE.md`.
+
+## Original Wikipedia execution acceptance
+
+Prior exact source-built unchanged Wikipedia trace in 37914916684 handled
+os_log_type_enabled at instruction 53 and stopped at _memcpy at instruction 74.
+The general entry probe now calls this actual bounded memory-copy implementation
+with original x0/x1/x2, returns the original guest destination in x0, and retains
+explicit failure for unmapped, protected, overlapping or excessive ranges.
+The Wikipedia workflow requires SUPPORTED_NARROW_IMPORT=_memcpy followed by a
+different actual blocker, with original executable SHA verification, before
+acceptance. No original application source/binary changes. The fixed 64 KiB cap
+is a research limitation; do not claim complete memcpy/libc or promote API/gate
+inventories from this subset. Tests also prove no partial destination write when
+a source is unreadable or a destination crosses an unmapped boundary.
+Reference: https://pubs.opengroup.org/onlinepubs/9699919799/functions/memcpy.html
