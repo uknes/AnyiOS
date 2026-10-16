@@ -1,5 +1,6 @@
 #include <anyios/guest_dlfcn.hpp>
 #include <anyios/guest_autorelease_pool.hpp>
+#include <anyios/foundation_string.hpp>
 #include <anyios/objc_dispatch.hpp>
 #include <anyios/objc_identity.hpp>
 #include <anyios/objc_registry.hpp>
@@ -138,6 +139,7 @@ int main(int argc, char** argv) {
         // Deliberately construct only when the original guest actually calls
         // an Objective-C import. Other apps' earlier blockers must not be
         // obscured by unsupported metadata layouts.
+        std::unique_ptr<anyios::darwin::GuestFoundationStringStorage> foundation_strings;
         std::unique_ptr<anyios::darwin::ObjcIdentityProbe> objc;
         std::unique_ptr<anyios::darwin::GuestObjcClassRegistry> classes;
         std::unique_ptr<anyios::darwin::GuestObjcSelectorRegistry> selectors;
@@ -219,15 +221,39 @@ int main(int argc, char** argv) {
                     continue;
                 }
                 if (symbol == "_NSStringFromClass") {
-                    ensure_objc();
-                    const auto name = objc->local_class_name(at.x[0]);
-                    if (name && classes->find(*name) == at.x[0]) {
-                        std::cout << "CLASS_NAME=" << *name << "\n";
+                    // Apple documents NSStringFromClass(nil) == nil. This case
+                    // needs no Foundation object and can return an actual zero.
+                    if (at.x[0] == 0) {
+                        auto resumed = at;
+                        resumed.x[0] = 0;
+                        cpu->set_state(resumed);
+                        std::cout << "SUPPORTED_NARROW_IMPORT=_NSStringFromClass\n"
+                                  << "FOUNDATION_NAME_SCOPE=nil-class-only\n";
+                        continue;
                     }
-                    // NSString is not implemented. Returning a pointer here
-                    // would fabricate a Foundation object, so fail closed.
+                    ensure_objc();
+                    if (!foundation_strings) {
+                        foundation_strings =
+                            std::make_unique<anyios::darwin::GuestFoundationStringStorage>(
+                                memory, 0x16B00000);
+                    }
+                    const auto probe = anyios::darwin::preflight_foundation_class_name(
+                        *objc, *classes, *foundation_strings, at.x[0]);
+                    if (probe.status ==
+                        anyios::darwin::ClassNamePreflightStatus::valid_utf16_snapshot &&
+                        probe.snapshot) {
+                        const auto name = objc->local_class_name(at.x[0]);
+                        std::cout << "CLASS_NAME=" << *name << "\n"
+                                  << "CLASS_NAME_UTF16_UNITS=" << probe.snapshot->code_units << "\n"
+                                  << "FOUNDATION_STRING_PREFLIGHT=verified-guest-UTF16-not-NSString\n";
+                    } else {
+                        std::cout << "FOUNDATION_STRING_PREFLIGHT=unsupported-class-or-string\n";
+                    }
+                    // This UTF-16 guest buffer is NOT an NSString object.
+                    // Never hand it to guest ObjC or UIKit as a Foundation
+                    // object: lifecycle, ISA and dispatch are not implemented.
                     std::cout << "FIRST_RUNTIME_BLOCKER=_NSStringFromClass\n"
-                              << "REASON=Foundation-NSString-unimplemented\n"
+                              << "REASON=Foundation-NSString-object-unimplemented\n"
                               << "WINDOW=not-created\n";
                     return 0;
                 }
