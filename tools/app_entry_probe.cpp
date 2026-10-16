@@ -7,6 +7,7 @@
 #include <anyios/objc_objects.hpp>
 #include <anyios/objc_registry.hpp>
 #include <anyios/objc_dispatch.hpp>
+#include <anyios/guest_autorelease_pool.hpp>
 #include <anyios/objc_signature.hpp>
 #include <anyios/objc_selectors.hpp>
 #include <anyios/process_bootstrap.hpp>
@@ -121,7 +122,7 @@ int main(int argc, char** argv) {
         // a push yields a unique opaque guest token; pop must match LIFO.
         // No autoreleased objects, retain/release, nested drain callbacks,
         // exceptions, or cross-thread semantics are claimed.
-        std::vector<std::uint64_t> empty_pools;
+        anyios::darwin::GuestAutoreleasePools empty_pools(memory, 0x3A0000);
         std::optional<std::uint64_t> bridged_delegate_class;
         std::optional<std::string> bridged_delegate_name;
         constexpr std::uint64_t kProbeNameHandle = 0x360000;
@@ -147,13 +148,12 @@ int main(int argc, char** argv) {
             }
             const auto& symbol = image.chained_imports[static_cast<std::size_t>(state.x[16])];
             if (symbol == "_objc_autoreleasePoolPush") {
-                if (empty_pools.size() >= 16) {
-                    std::cerr << "ENTRY_PROBE=pool-depth-exceeded\n";
+                const auto token = empty_pools.push(state.guest_thread_id);
+                if (!token) {
+                    std::cerr << "ENTRY_PROBE=pool-budget-exceeded\n";
                     return 3;
                 }
-                const std::uint64_t token = 0x300000 + empty_pools.size() * 16;
-                empty_pools.push_back(token);
-                state.x[0] = token;
+                state.x[0] = *token;
                 cpu->set_state(state);
                 std::cout << "SUPPORTED_NARROW_IMPORT=_objc_autoreleasePoolPush"
                           << "\nPOOL_SCOPE=empty-only\n";
@@ -282,11 +282,10 @@ int main(int argc, char** argv) {
                 return 0;
             }
             if (symbol == "_objc_autoreleasePoolPop") {
-                if (empty_pools.empty() || empty_pools.back() != state.x[0]) {
+                if (!empty_pools.pop(state.guest_thread_id, state.x[0])) {
                     std::cerr << "ENTRY_PROBE=invalid-empty-pool-token\n";
                     return 3;
                 }
-                empty_pools.pop_back();
                 cpu->set_state(state);
                 std::cout << "SUPPORTED_NARROW_IMPORT=_objc_autoreleasePoolPop"
                           << "\nPOOL_SCOPE=empty-only\n";
