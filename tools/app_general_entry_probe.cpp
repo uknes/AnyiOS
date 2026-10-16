@@ -1,6 +1,7 @@
 #include <anyios/guest_dlfcn.hpp>
 #include <anyios/guest_autorelease_pool.hpp>
 #include <anyios/foundation_string.hpp>
+#include <anyios/foundation_objects.hpp>
 #include <anyios/objc_dispatch.hpp>
 #include <anyios/objc_identity.hpp>
 #include <anyios/objc_registry.hpp>
@@ -140,6 +141,7 @@ int main(int argc, char** argv) {
         // an Objective-C import. Other apps' earlier blockers must not be
         // obscured by unsupported metadata layouts.
         std::unique_ptr<anyios::darwin::GuestFoundationStringStorage> foundation_strings;
+        std::unique_ptr<anyios::darwin::GuestHleFoundationStringObjects> foundation_objects;
         std::unique_ptr<anyios::darwin::ObjcIdentityProbe> objc;
         std::unique_ptr<anyios::darwin::GuestObjcClassRegistry> classes;
         std::unique_ptr<anyios::darwin::GuestObjcSelectorRegistry> selectors;
@@ -243,9 +245,39 @@ int main(int argc, char** argv) {
                         anyios::darwin::ClassNamePreflightStatus::valid_utf16_snapshot &&
                         probe.snapshot) {
                         const auto name = objc->local_class_name(at.x[0]);
+                        if (!foundation_objects) {
+                            // This private class-token model is deliberately
+                            // NOT registered as NSString in Objective-C.
+                            foundation_objects = std::make_unique<
+                                anyios::darwin::GuestHleFoundationStringObjects>(
+                                    memory, *foundation_strings,
+                                    0x16C00000, 0x16D00000);
+                        }
+                        const auto owned = foundation_objects->create(*name);
+                        if (!owned ||
+                            foundation_objects->utf16_length(*owned) != probe.snapshot->code_units ||
+                            foundation_objects->code_unit(*owned, 0) !=
+                                foundation_strings->code_unit(probe.snapshot->guest_data, 0) ||
+                            !foundation_objects->class_token(*owned)) {
+                            std::cout << "FIRST_RUNTIME_BLOCKER=_NSStringFromClass\n"
+                                      << "REASON=private-HLE-object-preflight-failed\n";
+                            return 0;
+                        }
+                        // Test retain and final release before returning a
+                        // diagnostic stop; NO private token is sent to guest.
+                        if (!foundation_objects->retain(*owned) ||
+                            !foundation_objects->release(*owned) ||
+                            !foundation_objects->release(*owned) ||
+                            foundation_objects->is_live(*owned)) {
+                            std::cout << "FIRST_RUNTIME_BLOCKER=_NSStringFromClass\n"
+                                      << "REASON=private-HLE-object-lifetime-failed\n";
+                            return 0;
+                        }
                         std::cout << "CLASS_NAME=" << *name << "\n"
                                   << "CLASS_NAME_UTF16_UNITS=" << probe.snapshot->code_units << "\n"
-                                  << "FOUNDATION_STRING_PREFLIGHT=verified-guest-UTF16-not-NSString\n";
+                                  << "FOUNDATION_STRING_PREFLIGHT=verified-guest-UTF16-not-NSString\n"
+                                  << "FOUNDATION_HLE_STRING_OBJECT=private-isa-not-NSString\n"
+                                  << "FOUNDATION_HLE_STRING_RELEASE=verified\n";
                     } else {
                         std::cout << "FOUNDATION_STRING_PREFLIGHT=unsupported-class-or-string\n";
                     }
