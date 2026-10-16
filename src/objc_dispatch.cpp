@@ -6,6 +6,18 @@
 
 namespace anyios::darwin {
 
+std::optional<std::uint64_t> resolve_local_class_identity(
+    const ObjcIdentityProbe& metadata, const GuestObjcClassRegistry& classes,
+    GuestObjcSelectorRegistry& selectors, std::uint64_t guest_receiver,
+    std::uint64_t guest_selector) {
+    const auto name = metadata.local_class_name(guest_receiver);
+    if (!name || classes.find(*name) != guest_receiver) return std::nullopt;
+    const auto canonical = selectors.intern_compiled_selector(guest_selector);
+    if (!canonical) return std::nullopt;
+    return metadata.invoke_class_identity(guest_receiver, *canonical);
+}
+
+
 std::optional<std::uint64_t> invoke_owned_bool_launch(
     cpu::CpuBackend& backend, const ObjcIdentityProbe& metadata,
     const GuestObjcClassRegistry& classes,
