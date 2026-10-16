@@ -82,7 +82,7 @@ jobs:
       - name: Configure guest runtime test
         run: cmake -S . -B build-guest -DANYIOS_WITH_DYNARMIC=ON -DBUILD_TESTING=ON -DBoost_NO_BOOST_CMAKE=ON -DBoost_INCLUDE_DIR="$env:BOOST_INCLUDEDIR"
       - name: Build guest runtime and portable ObjC identity contract
-        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests anyios-objc-objects-tests anyios-objc-registry-tests anyios-objc-selector-tests anyios-objc-signature-tests anyios-objc-dispatch-tests anyios-autorelease-pool-tests anyios-general-entry-probe --parallel 2
+        run: cmake --build build-guest --config Release --target anyios-app-entry-probe anyios-objc-identity-tests anyios-objc-objects-tests anyios-objc-registry-tests anyios-objc-selector-tests anyios-objc-signature-tests anyios-objc-dispatch-tests anyios-autorelease-pool-tests anyios-foundation-string-tests anyios-general-entry-probe --parallel 2
       - name: Validate local guest ObjC class identity contract
         shell: pwsh
         run: |
@@ -118,6 +118,11 @@ jobs:
         run: |
           & ./build-guest/Release/anyios-autorelease-pool-tests.exe
           if ($LASTEXITCODE -ne 0) { throw "Guest ObjC pool contract failed" }
+      - name: Validate bounded UTF-8 and guest UTF-16 Foundation substrate
+        shell: pwsh
+        run: |
+          & ./build-guest/Release/anyios-foundation-string-tests.exe
+          if ($LASTEXITCODE -ne 0) { throw "Guest UTF-16 Foundation substrate failed" }
       - name: Test general ARM64 guest class-identity dispatch to next Foundation blocker
         shell: pwsh
         run: |
@@ -131,6 +136,8 @@ jobs:
               -not ($trace -match "SUPPORTED_NARROW_IMPORT=_objc_msgSend") -or
               -not ($trace -match 'METHOD=\+class-local-identity') -or
               -not ($trace -match "CLASS_NAME=AppDelegate") -or
+              -not ($trace -match "CLASS_NAME_UTF16_UNITS=11") -or
+              -not ($trace -match "FOUNDATION_STRING_PREFLIGHT=verified-guest-UTF16-not-NSString") -or
               -not ($trace -match "FIRST_RUNTIME_BLOCKER=_NSStringFromClass") -or
               -not ($trace -match "GUEST_STEPS=[1-9][0-9]*") -or
               -not ($trace -match "WINDOW=not-created")) {
