@@ -9,18 +9,52 @@ permissions:
   actions: read
 
 jobs:
+  rebuild-pinned-objc-binary:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned-major SDK-free Mach-O toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-19 lld-19 llvm-19
+      - name: Rebuild ORIGINAL MIT Objective-C sources at pinned upstream commit
+        run: python3 tests/build_bitrise_probe.py --clang clang-19 --linker ld64.lld-19 --nm llvm-nm-19 --output-dir compat-output/external
+      - name: Reject changed binary or incomplete upstream build
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, pathlib
+          directory = pathlib.Path('compat-output/external')
+          info = json.loads((directory / 'bitrise-build-status.json').read_text(encoding='utf-8'))
+          binary = directory / 'BitriseSimpleObjC'
+          assert info['commit'] == '91fef6f5a096220669934793a9256128bc73f25b'
+          assert info['status'] == 'linked-with-unimplemented-imports'
+          assert info['license'].startswith('MIT')
+          assert binary.is_file()
+          sha = hashlib.sha256(binary.read_bytes()).hexdigest()
+          assert sha == 'dbea1e0888f997c6a04ac2d69b69a196a88dd056fb0baf68edf0ab808745bf7d', sha
+          assert sha == info['binary_sha256']
+          print('Original MIT Objective-C binary was rebuilt with exact SHA-256 identity')
+          PY
+      - name: Transfer verified binary inside THIS workflow run
+        uses: actions/upload-artifact@v4
+        with:
+          name: anyios-pinned-objc-current-run
+          path: compat-output/external/
+          if-no-files-found: error
+          retention-days: 7
+
   pinned-arm64-ios-app-entry:
+    needs: rebuild-pinned-objc-binary
     runs-on: windows-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
-      - name: Download previously CI-verified original MIT iOS app Mach-O
+      - name: Retrieve same-run SHA-verified original MIT iOS app Mach-O
         uses: actions/download-artifact@v4
         with:
-          name: anyios-compatibility-probe
-          run-id: 37798177618
-          github-token: ${{ github.token }}
-          path: compat-output
+          name: anyios-pinned-objc-current-run
+          path: compat-output/external
       - name: Verify exact external binary SHA-256 and upstream metadata
         shell: pwsh
         run: |
