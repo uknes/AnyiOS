@@ -129,7 +129,7 @@ jobs:
               -not ($trace -match "SUPPORTED_NARROW_IMPORT=_objc_autoreleasePoolPush") -or
               -not ($trace -match "POOL_SCOPE=empty-only-thread-bound-LIFO") -or
               -not ($trace -match "SUPPORTED_NARROW_IMPORT=_objc_msgSend") -or
-              -not ($trace -match "METHOD=+class-local-identity".Replace("+", "\+")) -or
+              -not ($trace -match 'METHOD=\+class-local-identity') -or
               -not ($trace -match "CLASS_NAME=AppDelegate") -or
               -not ($trace -match "FIRST_RUNTIME_BLOCKER=_NSStringFromClass") -or
               -not ($trace -match "GUEST_STEPS=[1-9][0-9]*") -or
