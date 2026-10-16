@@ -71,7 +71,7 @@ void run() {
           "boundary UTF-16 storage/terminator failed");
     while (strings.size() < GuestFoundationStringStorage::kMaxEntries) {
         auto value = strings.stage_utf8("unique-" + std::to_string(strings.size()));
-        check(value, "guest string store refused a valid unique entry");
+        check(value.has_value(), "guest string store refused a valid unique entry");
     }
     check(!strings.stage_utf8("overflow") &&
           strings.size() == GuestFoundationStringStorage::kMaxEntries &&
