@@ -1,0 +1,84 @@
+name: Merged branch hygiene
+
+on:
+  pull_request:
+    types: [closed]
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/merged-branch-hygiene.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: anyios-merged-branch-hygiene
+  cancel-in-progress: false
+
+jobs:
+  delete-verified-merged-head:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Delete merged feature ref only after ancestry verification
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const currentRepo = owner + '/' + repo;
+            let targets = [];
+            if (context.eventName === 'pull_request') {
+              const pr = context.payload.pull_request;
+              if (!pr?.merged || pr.head?.repo?.full_name !== currentRepo) {
+                core.info('Not a merged, same-repository pull request.');
+                return;
+              }
+              targets = [{name: pr.head.ref, sha: pr.head.sha}];
+            } else {
+              // One-time bootstrap of already merged PR #43. A SHA lease
+              // prevents deleting a branch if somebody reused its name.
+              targets = [{
+                name: 'feature/foundation-runtime',
+                sha: '10a88372bff0e660f946b65f74961399388abd62'
+              }];
+            }
+            const open = await github.paginate(github.rest.pulls.list, {
+              owner, repo, state: 'open', per_page: 100
+            });
+            const busy = new Set(open.flatMap(p => [p.head.ref, p.base.ref]));
+            for (const {name, sha} of targets) {
+              if (!name || name === 'main' || busy.has(name)) {
+                core.info('Preserving default branch or branch used by an open PR: ' + name);
+                continue;
+              }
+              let ref;
+              try {
+                ref = await github.rest.git.getRef({
+                  owner, repo, ref: 'heads/' + name
+                });
+              } catch (e) {
+                if (e.status === 404) {
+                  core.info('Branch already absent: ' + name);
+                  continue;
+                }
+                throw e;
+              }
+              if (ref.data.object.sha !== sha) {
+                core.warning('Branch tip changed; preserving ' + name);
+                continue;
+              }
+              const diff = await github.rest.repos.compareCommits({
+                owner, repo, base: 'main', head: name
+              });
+              if (diff.data.ahead_by !== 0) {
+                core.warning('Branch has unmerged commits; preserving ' + name);
+                continue;
+              }
+              // Never force-update or touch any other branch.
+              await github.rest.git.deleteRef({
+                owner, repo, ref: 'heads/' + name
+              });
+              core.info('Safely deleted merged branch: ' + name);
+            }
