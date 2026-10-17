@@ -78,3 +78,14 @@ branch, an open PR's head/base branch, or a branch whose head SHA changed.
 Cleanup should make no changes to source files. The seven preserved branches
 will be revisited separately and can be archived after their useful work is
 carried forward intentionally.
+
+## Subsequent verified milestone — PR #43
+
+[PR #43](https://github.com/uknes/AnyiOS/pull/43) merged scoped private
+Foundation HLE autorelease into `main` at
+`c9857ae0d06d44cf7a158cb394aba03da8d2b208`.
+The merge-tree SHA `8a09cc51f9d789a79a94b2530743bea50eb83d1b`
+was verified identical to the exact-head six-workflow-passing PR branch.
+The now-redundant `feature/foundation-runtime` ref was pinned at
+`10a88372bff0e660f946b65f74961399388abd62` for safe automated
+cleanup. Its commits are retained in `main`.
