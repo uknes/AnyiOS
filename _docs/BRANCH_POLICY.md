@@ -23,8 +23,11 @@ Enable **Settings → General → Pull Requests → Automatically delete head
 branches** on GitHub where allowed, so merged branches disappear after PR
 merges. This setting is not modified by the current connector.
 
-Cleanup runs through a one-time, allowlisted GitHub Actions workflow for
-the already reviewed merged/ancestor refs and never deletes a branch whose
-tip diverges from `main`.
+The initial 35-branch cleanup was completed using an audited SHA allowlist,
+with recovery SHAs in `_docs/BRANCH_CLEANUP_2026-10-17.md`. For future work,
+`.github/workflows/merged-branch-hygiene.yml` runs after merged pull requests
+and deletes only same-repository feature branches that have no open PR, retain
+their expected merge-time SHA, and contain no commits absent from `main`.
+The workflow never force-pushes or deletes the default branch.
 
 No branch proliferation: prefer updating an existing current feature branch.
