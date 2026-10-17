@@ -1,4 +1,5 @@
 #include <anyios/objc_dispatch.hpp>
+#include <anyios/foundation_string.hpp>
 
 #include <array>
 #include <cstddef>
@@ -117,6 +118,26 @@ void owned_guest_dispatch_regression() {
            !anyios::darwin::resolve_local_class_identity(
                metadata, classes, selectors, 0x20000, UINT64_MAX),
            "forged class or unsupported selector dispatched");
+    anyios::darwin::GuestFoundationStringStorage string_storage(memory, 0x70000);
+    const auto named = anyios::darwin::preflight_foundation_class_name(
+        metadata, classes, string_storage, 0x20000);
+    ensure(named.status ==
+               anyios::darwin::ClassNamePreflightStatus::valid_utf16_snapshot &&
+           named.snapshot && named.snapshot->code_units == 11 &&
+           string_storage.code_unit(named.snapshot->guest_data, 0) == 'A' &&
+           string_storage.code_unit(named.snapshot->guest_data, 3) == 'D',
+           "legitimate local Objective-C class name UTF-16 preflight failed");
+    const auto null_name = anyios::darwin::preflight_foundation_class_name(
+        metadata, classes, string_storage, 0);
+    ensure(null_name.status == anyios::darwin::ClassNamePreflightStatus::nil_class &&
+           !null_name.snapshot,
+           "NSStringFromClass nil-class semantic preflight failed");
+    const auto forged_name = anyios::darwin::preflight_foundation_class_name(
+        metadata, classes, string_storage, 0x21000);
+    ensure(forged_name.status ==
+               anyios::darwin::ClassNamePreflightStatus::unsupported_class_or_string &&
+           !forged_name.snapshot && string_storage.size() == 1,
+           "forged Objective-C class created a Foundation UTF-16 snapshot");
     GuardedMockCpu cpu(*guest, 0x16000);
     const auto initial = cpu.state();
 
