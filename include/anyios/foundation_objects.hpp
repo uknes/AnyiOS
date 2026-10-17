@@ -35,6 +35,7 @@ public:
     bool release(std::uint64_t object) noexcept;
 
     bool is_live(std::uint64_t object) const noexcept;
+    std::optional<std::uint32_t> reference_count(std::uint64_t object) const noexcept;
     std::optional<std::uint64_t> class_token(std::uint64_t object) const noexcept;
     std::optional<std::size_t> utf16_length(std::uint64_t object) const noexcept;
     std::optional<std::uint16_t> code_unit(std::uint64_t object,
