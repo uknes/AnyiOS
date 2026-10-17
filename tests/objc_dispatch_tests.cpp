@@ -98,6 +98,25 @@ void owned_guest_dispatch_regression() {
     anyios::darwin::GuestObjcObjectArena arena(memory, 0x60000, 0x4000);
     const auto guest = arena.allocate(metadata, 0x20000);
     ensure(guest.has_value(), "original class-owned guest allocation failed");
+    constexpr char class_method[] = "class";
+    ensure(memory.load(0x16080, std::span<const std::byte>(
+               reinterpret_cast<const std::byte*>(class_method),
+               sizeof(class_method))), "could not stage validated class selector");
+    ensure(anyios::darwin::resolve_local_class_identity(
+               metadata, classes, selectors, 0x20000, 0x16080) == 0x20000,
+           "registered class and valid +class selector failed");
+    ensure(!anyios::darwin::resolve_local_class_identity(
+               metadata, classes, selectors, 0x20000, 0x16000),
+           "unimplemented selector was accepted as +class");
+    ensure(!anyios::darwin::resolve_local_class_identity(
+               metadata, classes, selectors, 0x20008, 0x16080) &&
+           !anyios::darwin::resolve_local_class_identity(
+               metadata, classes, selectors, 0x21000, 0x16080) &&
+           !anyios::darwin::resolve_local_class_identity(
+               metadata, classes, selectors, 0x20000, 0x17000) &&
+           !anyios::darwin::resolve_local_class_identity(
+               metadata, classes, selectors, 0x20000, UINT64_MAX),
+           "forged class or unsupported selector dispatched");
     GuardedMockCpu cpu(*guest, 0x16000);
     const auto initial = cpu.state();
 

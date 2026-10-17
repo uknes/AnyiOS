@@ -1,5 +1,9 @@
 #include <anyios/guest_dlfcn.hpp>
 #include <anyios/guest_autorelease_pool.hpp>
+#include <anyios/objc_dispatch.hpp>
+#include <anyios/objc_identity.hpp>
+#include <anyios/objc_registry.hpp>
+#include <anyios/objc_selectors.hpp>
 #include <anyios/cpu_backend.hpp>
 #include <anyios/guest_memory.hpp>
 #include <anyios/guest_os_log.hpp>
@@ -15,6 +19,7 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -130,6 +135,26 @@ int main(int argc, char** argv) {
         anyios::dyld::GuestDlState dynamic(memory, modules, 0x16800000);
         anyios::darwin::GuestAutoreleasePools pools(memory, 0x16A00000);
         bool modules_ready = false;
+        // Deliberately construct only when the original guest actually calls
+        // an Objective-C import. Other apps' earlier blockers must not be
+        // obscured by unsupported metadata layouts.
+        std::unique_ptr<anyios::darwin::ObjcIdentityProbe> objc;
+        std::unique_ptr<anyios::darwin::GuestObjcClassRegistry> classes;
+        std::unique_ptr<anyios::darwin::GuestObjcSelectorRegistry> selectors;
+        const auto ensure_objc = [&] {
+            if (objc) return;
+            auto inspected = std::make_unique<anyios::darwin::ObjcIdentityProbe>(
+                image, memory, loaded.guest_base);
+            auto registered =
+                std::make_unique<anyios::darwin::GuestObjcClassRegistry>(
+                    *inspected, memory);
+            auto interned =
+                std::make_unique<anyios::darwin::GuestObjcSelectorRegistry>(
+                    *inspected);
+            objc = std::move(inspected);
+            classes = std::move(registered);
+            selectors = std::move(interned);
+        };
         auto cpu = anyios::cpu::make_dynarmic_backend(memory);
         anyios::cpu::CpuState state{};
         state.pc = loaded.guest_entry;
@@ -159,6 +184,53 @@ int main(int argc, char** argv) {
                 at.pc == imports[static_cast<std::size_t>(at.x[16])] + 8) {
                 const auto& symbol = import_names[
                     static_cast<std::size_t>(at.x[16])];
+                if (symbol == "_objc_msgSend") {
+                    ensure_objc();
+                    const auto identity = anyios::darwin::resolve_local_class_identity(
+                        *objc, *classes, *selectors, at.x[0], at.x[1]);
+                    if (!identity) {
+                        std::cout << "FIRST_RUNTIME_BLOCKER=_objc_msgSend\n"
+                                  << "UNSUPPORTED_SELECTOR="
+                                  << objc->selector_name(at.x[1]).value_or("(invalid-selector)")
+                                  << "\nREASON=unhandled-guest-class-or-selector\n";
+                        return 0;
+                    }
+                    auto resumed = at;
+                    resumed.x[0] = *identity;
+                    cpu->set_state(resumed);
+                    std::cout << "SUPPORTED_NARROW_IMPORT=_objc_msgSend\n"
+                              << "METHOD=+class-local-identity\n"
+                              << "OBJC_SCOPE=registered-local-class-only\n";
+                    continue;
+                }
+                if (symbol == "_objc_getClass") {
+                    ensure_objc();
+                    const auto value = classes->find_guest_name(at.x[0]);
+                    if (!value) {
+                        std::cout << "FIRST_RUNTIME_BLOCKER=_objc_getClass\n"
+                                  << "REASON=unregistered-or-invalid-guest-class-name\n";
+                        return 0;
+                    }
+                    auto resumed = at;
+                    resumed.x[0] = *value;
+                    cpu->set_state(resumed);
+                    std::cout << "SUPPORTED_NARROW_IMPORT=_objc_getClass\n"
+                              << "OBJC_SCOPE=registered-local-class-only\n";
+                    continue;
+                }
+                if (symbol == "_NSStringFromClass") {
+                    ensure_objc();
+                    const auto name = objc->local_class_name(at.x[0]);
+                    if (name && classes->find(*name) == at.x[0]) {
+                        std::cout << "CLASS_NAME=" << *name << "\n";
+                    }
+                    // NSString is not implemented. Returning a pointer here
+                    // would fabricate a Foundation object, so fail closed.
+                    std::cout << "FIRST_RUNTIME_BLOCKER=_NSStringFromClass\n"
+                              << "REASON=Foundation-NSString-unimplemented\n"
+                              << "WINDOW=not-created\n";
+                    return 0;
+                }
                 if (symbol == "_objc_autoreleasePoolPush") {
                     const auto token = pools.push(at.guest_thread_id);
                     if (!token) {

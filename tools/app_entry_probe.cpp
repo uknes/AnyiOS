@@ -161,10 +161,8 @@ int main(int argc, char** argv) {
             }
             if (symbol == "_objc_msgSend") {
                 const auto selector = objc.selector_name(state.x[1]);
-                const auto canonical = selectors.intern_compiled_selector(state.x[1]);
-                const auto identity = canonical
-                    ? objc.invoke_class_identity(state.x[0], *canonical)
-                    : std::nullopt;
+                const auto identity = anyios::darwin::resolve_local_class_identity(
+                    objc, registry, selectors, state.x[0], state.x[1]);
                 if (identity) {
                     state.x[0] = *identity;
                     cpu->set_state(state);
