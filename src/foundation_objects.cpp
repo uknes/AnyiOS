@@ -104,6 +104,13 @@ bool GuestHleFoundationStringObjects::is_live(std::uint64_t object) const noexce
     return checked(object) != nullptr;
 }
 
+std::optional<std::uint32_t> GuestHleFoundationStringObjects::reference_count(
+    std::uint64_t object) const noexcept {
+    const auto entry = checked(object);
+    return entry ? std::optional<std::uint32_t>{entry->references}
+                 : std::nullopt;
+}
+
 std::optional<std::uint64_t> GuestHleFoundationStringObjects::class_token(
     std::uint64_t object) const noexcept {
     return checked(object) ? std::optional<std::uint64_t>{class_base_}
