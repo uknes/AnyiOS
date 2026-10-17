@@ -2,6 +2,7 @@
 #include <anyios/guest_autorelease_pool.hpp>
 #include <anyios/foundation_string.hpp>
 #include <anyios/foundation_objects.hpp>
+#include <anyios/foundation_autorelease.hpp>
 #include <anyios/objc_dispatch.hpp>
 #include <anyios/objc_identity.hpp>
 #include <anyios/objc_registry.hpp>
@@ -263,21 +264,29 @@ int main(int argc, char** argv) {
                                       << "REASON=private-HLE-object-preflight-failed\n";
                             return 0;
                         }
-                        // Test retain and final release before returning a
-                        // diagnostic stop; NO private token is sent to guest.
-                        if (!foundation_objects->retain(*owned) ||
-                            !foundation_objects->release(*owned) ||
-                            !foundation_objects->release(*owned) ||
-                            foundation_objects->is_live(*owned)) {
+                        // Diagnostic-only pool, intentionally separate from
+                        // the actual unchanged iOS application's empty pool.
+                        // No private HLE object is returned to the guest.
+                        anyios::darwin::GuestAutoreleasePools private_tokens(
+                            memory, 0x16E00000);
+                        anyios::darwin::GuestFoundationAutoreleaseScopes private_scopes(
+                            private_tokens, *foundation_objects);
+                        const auto private_token = private_scopes.push(at.guest_thread_id);
+                        if (!private_token ||
+                            !private_scopes.enqueue(at.guest_thread_id, *owned) ||
+                            !private_scopes.pop(at.guest_thread_id, *private_token) ||
+                            foundation_objects->is_live(*owned) ||
+                            !private_scopes.finish_thread(at.guest_thread_id)) {
                             std::cout << "FIRST_RUNTIME_BLOCKER=_NSStringFromClass\n"
-                                      << "REASON=private-HLE-object-lifetime-failed\n";
+                                      << "REASON=private-HLE-autorelease-preflight-failed\n";
                             return 0;
                         }
                         std::cout << "CLASS_NAME=" << *name << "\n"
                                   << "CLASS_NAME_UTF16_UNITS=" << probe.snapshot->code_units << "\n"
                                   << "FOUNDATION_STRING_PREFLIGHT=verified-guest-UTF16-not-NSString\n"
                                   << "FOUNDATION_HLE_STRING_OBJECT=private-isa-not-NSString\n"
-                                  << "FOUNDATION_HLE_STRING_RELEASE=verified\n";
+                                  << "FOUNDATION_HLE_STRING_RELEASE=verified\n"
+                                  << "FOUNDATION_HLE_AUTORELEASE=private-scoped-drain-only\n";
                     } else {
                         std::cout << "FOUNDATION_STRING_PREFLIGHT=unsupported-class-or-string\n";
                     }
