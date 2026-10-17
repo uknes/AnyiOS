@@ -1,4 +1,5 @@
 #include <anyios/guest_dlfcn.hpp>
+#include <anyios/guest_autorelease_pool.hpp>
 #include <anyios/cpu_backend.hpp>
 #include <anyios/guest_memory.hpp>
 #include <anyios/guest_os_log.hpp>
@@ -23,8 +24,9 @@ namespace {
 constexpr std::size_t kMaxFile = 128U * 1024U * 1024U;
 constexpr std::size_t kMaxImports = 8192;
 constexpr std::size_t kMaxSteps = 10000;
-constexpr std::array<std::string_view, 6> kRuntimeExports{
-    "_os_log_create", "_os_log_type_enabled", "_getenv", "_memcpy", "_dlsym", "_dlerror"
+constexpr std::array<std::string_view, 8> kRuntimeExports{
+    "_os_log_create", "_os_log_type_enabled", "_getenv", "_memcpy",
+    "_dlsym", "_dlerror", "_objc_autoreleasePoolPush", "_objc_autoreleasePoolPop"
 };
 constexpr std::uint64_t kStub = 0x10000000;
 constexpr std::uint64_t kStack = 0x14000000;
@@ -126,6 +128,7 @@ int main(int argc, char** argv) {
         anyios::darwin::LibSystemShim libsystem(memory, 0x15800000, 0x100000);
         anyios::dyld::GuestModuleRegistry modules(memory);
         anyios::dyld::GuestDlState dynamic(memory, modules, 0x16800000);
+        anyios::darwin::GuestAutoreleasePools pools(memory, 0x16A00000);
         bool modules_ready = false;
         auto cpu = anyios::cpu::make_dynarmic_backend(memory);
         anyios::cpu::CpuState state{};
@@ -156,6 +159,31 @@ int main(int argc, char** argv) {
                 at.pc == imports[static_cast<std::size_t>(at.x[16])] + 8) {
                 const auto& symbol = import_names[
                     static_cast<std::size_t>(at.x[16])];
+                if (symbol == "_objc_autoreleasePoolPush") {
+                    const auto token = pools.push(at.guest_thread_id);
+                    if (!token) {
+                        std::cout << "FIRST_RUNTIME_BLOCKER=_objc_autoreleasePoolPush\n"
+                                  << "REASON=empty-guest-pool-limit\n";
+                        return 0;
+                    }
+                    auto resumed = at;
+                    resumed.x[0] = *token;
+                    cpu->set_state(resumed);
+                    std::cout << "SUPPORTED_NARROW_IMPORT=_objc_autoreleasePoolPush\n"
+                              << "POOL_SCOPE=empty-only-thread-bound-LIFO\n";
+                    continue;
+                }
+                if (symbol == "_objc_autoreleasePoolPop") {
+                    if (!pools.pop(at.guest_thread_id, at.x[0])) {
+                        std::cout << "FIRST_RUNTIME_BLOCKER=_objc_autoreleasePoolPop\n"
+                                  << "REASON=invalid-or-cross-thread-pool-token\n";
+                        return 0;
+                    }
+                    cpu->set_state(at);
+                    std::cout << "SUPPORTED_NARROW_IMPORT=_objc_autoreleasePoolPop\n"
+                              << "POOL_SCOPE=empty-only-thread-bound-LIFO\n";
+                    continue;
+                }
                 if (symbol == "_memcpy") {
                     try {
                         const auto result = libsystem.invoke(symbol, {at.x[0], at.x[1], at.x[2]});
